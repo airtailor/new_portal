@@ -1,0 +1,7 @@
+<h1> All Users </h1> 
+<%= link_to "Create New User", admin_new_user_path %>
+<% @users.each do |user| %>
+  <p><%= user.email %></p>
+  <%= link_to "More about this user", admin_user_path(user) %>
+  <%= link_to "Edit this user", admin_edit_user_path(user) %>
+<% end %> 
