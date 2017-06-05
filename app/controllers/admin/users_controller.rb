@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController 
-  before_action :authenticate_user!
+  before_action :authorize_admin
   before_action :set_user, only: [:show, :edit, :update]
-  #before_action :is_admin
+  load_and_authorize_resource :user
 
   def index 
     @users = User.all
