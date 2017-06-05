@@ -13,7 +13,7 @@ RSpec.describe User, type: :model do
 
   context "when email is already taken" do
     it "is invalid" do
-      valid_user = FactoryGirl.create(:user, email: Faker::Internet.email)
+      valid_user = FactoryGirl.create(:user)
       invalid_user = FactoryGirl.build(:user, email: valid_user.email)
 
       expect(invalid_user).to_not be_valid
@@ -23,7 +23,7 @@ RSpec.describe User, type: :model do
   describe "admin?" do 
     context "when user has the role 'admin'" do 
       it "returns true" do 
-        admin_user = FactoryGirl.create(:user, email: Faker::Internet.email)
+        admin_user = FactoryGirl.create(:user)
         admin_user.add_role :admin
 
         expect(admin_user.has_role? :admin).to eq(true)
@@ -32,7 +32,7 @@ RSpec.describe User, type: :model do
 
     context "when user does not have the role 'admin'" do 
       it "returns false" do 
-        tailor_user = FactoryGirl.create(:user, email: Faker::Internet.email)
+        tailor_user = FactoryGirl.create(:user)
         tailor_user.add_role :tailor
 
         expect(tailor_user.has_role? :admin).to eq(false)
