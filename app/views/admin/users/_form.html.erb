@@ -16,9 +16,29 @@
     <%= f.text_field :email %>
   </div>
 
+  <label>Role</label><br />
+  <fieldset>
+    <legend>User Roles</legend>
+    <% @roles.each do |role| %>
+      <%= f.label(:role) do %>
+        <%= role %>:
+        <%= hidden_field_tag(role, 0) %>
+        <%= check_box_tag(role, 1, @user.has_role?(role)) %>
+      <% end %>
+    <% end %>
+  </fieldset>
+
   <div class="field">
-    <%= f.label :password %><br />
-    <%= f.text_field :password %>
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
   </div>
 
   <div class="actions">

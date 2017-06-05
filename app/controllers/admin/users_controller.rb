@@ -1,6 +1,7 @@
 class Admin::UsersController < ApplicationController 
   before_action :authorize_admin
   before_action :set_user, only: [:show, :edit, :update]
+  before_action :set_roles, only: [:new, :edit]
   load_and_authorize_resource :user
 
   def index 
@@ -15,8 +16,8 @@ class Admin::UsersController < ApplicationController
   end
 
   def create 
-    @user = User.create(user_params)
     if @user.save 
+      update_user_roles params
       redirect_to [:admin, @user], notice: "User created successfully"
     else 
       render action: :new, alert: "Oops something went wrong"
@@ -27,7 +28,9 @@ class Admin::UsersController < ApplicationController
   end
 
   def update 
+    check_for_empty_password
     if @user.update_attributes(user_params)
+      update_user_roles
       redirect_to [:admin, @user], notice: "User successfully updated"
     else 
       render action: :edit, alert: "Oops something went wrong"

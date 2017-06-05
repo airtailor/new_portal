@@ -9,4 +9,8 @@ class User < ApplicationRecord
   def admin? 
     self.has_role? :admin
   end
+
+  def delete_role(role_name)
+    roles.delete(roles.where(:id => self.roles.ids))
+  end
 end
