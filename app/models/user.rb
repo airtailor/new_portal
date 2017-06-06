@@ -10,6 +10,10 @@ class User < ApplicationRecord
     self.has_role? :admin
   end
 
+  def tailor? 
+    self.has_role? :tailor 
+  end
+
   def delete_role(role_name)
     roles.delete(roles.where(name: role_name)
       .where(:id => self.roles.ids))

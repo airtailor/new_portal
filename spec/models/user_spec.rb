@@ -24,16 +24,36 @@ RSpec.describe User, type: :model do
         admin_user = valid_user
         admin_user.add_role :admin
 
-        expect(admin_user.has_role? :admin).to eq(true)
+        expect(admin_user.admin?).to eq(true)
       end
     end
 
     context "when user does not have the role 'admin'" do 
       it "returns false" do 
-        tailor_user = valid_user 
+        admin_user = valid_user 
+        admin_user.add_role :tailor 
+
+        expect(admin_user.admin?).to eq(false)
+      end
+    end
+  end
+
+  describe "tailor?" do 
+    context "when user has the role 'tailor'" do 
+      it "returns true" do 
+        tailor_user = valid_user
         tailor_user.add_role :tailor
 
-        expect(tailor_user.has_role? :admin).to eq(false)
+        expect(tailor_user.tailor?).to eq(true)
+      end
+    end
+
+    context "when user does not have the role 'tailor'" do 
+      it "returns false" do 
+        tailor_user = valid_user 
+        tailor_user.add_role :admin
+
+        expect(tailor_user.tailor?).to eq(false)
       end
     end
   end

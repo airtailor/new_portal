@@ -10,5 +10,4 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   Dir[File.dirname(__FILE__) + "/support/*.rb"].each {|f| require f }
-
 end

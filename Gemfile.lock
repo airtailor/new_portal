@@ -55,6 +55,7 @@ GEM
     chartkick (2.2.4)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
+    database_cleaner (1.6.1)
     delighted (1.5.1)
       multi_json
     devise (4.3.0)
@@ -243,6 +244,7 @@ DEPENDENCIES
   byebug
   cancancan
   chartkick
+  database_cleaner
   delighted
   devise
   dotenv-rails

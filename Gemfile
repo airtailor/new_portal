@@ -36,7 +36,8 @@ group :development, :test do
   gem 'pry'
   gem 'dotenv-rails'
   gem 'rspec-rails'
-  gem 'rails-controller-testing'
+  gem 'rails-controller-testing' 
+  gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'faker'
 end
