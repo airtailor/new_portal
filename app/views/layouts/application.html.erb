@@ -17,7 +17,7 @@
           <li>Hello, <%= current_user.email %></li>
 
           <% if can? :manage, :all %>
-            <li><%= link_to "Admin", admin_users_path %></li>
+            <li><%= link_to "Users", admin_users_path, id: "admin-users-link" %></li>
           <% end %>
 
           <li><%= link_to 'Logout', destroy_user_session_path, :method => :delete %> </li>

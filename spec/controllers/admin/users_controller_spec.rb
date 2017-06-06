@@ -36,7 +36,6 @@ RSpec.describe Admin::UsersController, type: :controller do
   describe "GET #new" do 
     before :each do 
       get :new
-      @user = User.new 
     end
 
     it "assigns @user" do 

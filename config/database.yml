@@ -6,7 +6,7 @@ development:
   username: 
   password:
 
-test: &TEST
+test: &test
   adapter: postgresql
   encoding: utf8
   database: new-airtailor-portal_test
@@ -21,3 +21,6 @@ production:
   pool: 5
   username: 
   password:
+
+cucumber:
+  <<: *test

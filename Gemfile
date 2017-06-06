@@ -37,9 +37,12 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'rspec-rails'
   gem 'rails-controller-testing' 
+  gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'faker'
+  gem 'capybara'
+  gem 'launchy'
 end
 
 group :development do

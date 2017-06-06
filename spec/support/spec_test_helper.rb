@@ -12,4 +12,8 @@ module SpecTestHelper
     sign_in(user)
     user
   end
+
+  def invalid_user_email
+
+  end
 end
