@@ -19,7 +19,7 @@ class Admin::UsersController < ApplicationController
   def create 
     @user = User.create(user_params)
     if @user.save 
-      update_user_roles(params)
+      @user.update_roles(params[:user])
       redirect_to [:admin, @user], notice: "User created successfully"
     else 
       render action: :new, alert: "Oops something went wrong"
@@ -31,14 +31,12 @@ class Admin::UsersController < ApplicationController
 
   def update 
     if @user.update_attributes(user_params)
-      # consider moving this to a model method
-      update_user_roles(params)
+      @user.update_roles(params[:user])
       redirect_to [:admin, @user], notice: "User successfully updated"
     else 
       render action: :edit, alert: "Oops something went wrong"
     end
   end
-
 
   private
 

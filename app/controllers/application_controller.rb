@@ -15,20 +15,6 @@ class ApplicationController < ActionController::Base
 
   private 
 
-  def update_user_roles(params)
-    if params[:admin] == "1"
-      @user.grant(:admin)
-    else params[:admin] == "0"
-      @user.delete_role(:admin)
-    end
-
-    if params[:tailor] == "1"
-      @user.grant(:tailor)
-    else params[:tailor] == "0"
-      @user.delete_role(:tailor)
-    end
-  end
-
   def set_roles
     @roles = [:admin, :tailor]
   end

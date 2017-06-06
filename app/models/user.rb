@@ -16,6 +16,20 @@ class User < ApplicationRecord
 
   def delete_role(role_name)
     roles.delete(roles.where(name: role_name)
-      .where(:id => self.roles.ids))
+      .where(id: self.roles.ids))
+  end
+
+  def update_roles(user_params)
+    if user_params[:admin] == "1"
+      self.grant(:admin)
+    else user_params[:admin] == "0"
+      self.delete_role(:admin)
+    end
+
+    if user_params[:tailor] == "1"
+      self.grant(:tailor)
+    else user_params[:tailor] == "0"
+      self.delete_role(:tailor)
+    end
   end
 end
