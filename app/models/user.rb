@@ -11,6 +11,7 @@ class User < ApplicationRecord
   end
 
   def delete_role(role_name)
-    roles.delete(roles.where(name: role_name).where(:id => self.roles.ids))
+    roles.delete(roles.where(name: role_name)
+      .where(:id => self.roles.ids))
   end
 end
