@@ -1,4 +1,4 @@
-Feature: Admin Panel
+Feature: Admin Panel Access
 
     Scenario: Admin user can access admin panel
       Given I am on the "/users/sign_in" page

@@ -10,6 +10,11 @@ Then(/^I should be redirected to the "([^"]*)" page$/) do |route|
   page.current_path.should == route
 end
 
+Then(/^I should be brought to the "([^"]*)" page$/) do |route|
+  page.current_path.should == route
+end
+
+
 
 
 
