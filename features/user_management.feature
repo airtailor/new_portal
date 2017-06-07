@@ -23,3 +23,18 @@ Feature: User Management
         | tailor    |
         | admin     |
     
+    Scenario Outline: Updating Users
+      Given a "user" exists
+      And user has role "<role>"
+      When I click the "Edit this user" link
+      Then I should see "Edit User"
+      And I should see the "user"'s "<attribute>"
+      And I should see the list of the user's roles
+      When I change the user's "<attribute>"
+      And I click the "Update User" button
+      Then I should see the "user"'s "<attribute>"
+
+      Examples: 
+        | role      | attribute |
+        | tailor    | email     |
+        | admin     |           |
