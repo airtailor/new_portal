@@ -18,12 +18,15 @@
 
   <fieldset>
     <legend>User Roles</legend>
-    <% @roles.each do |role| %>
-      <%= f.label(:role) do %>
-        <%= role %>:
-        <%= hidden_field_tag(role, 0) %>
-        <%= check_box_tag(role, 1, @user.has_role?(role)) %>
-      <% end %>
+    <%= f.label(:admin) do %>
+      Admin:
+      <%= hidden_field_tag(:admin, 0) %>
+      <%= check_box_tag(:admin, 1, @user.has_role?(:admin)) %>
+    <% end %>
+    <%= f.label(:tailor) do %>
+      Tailor:
+      <%= hidden_field_tag(:tailor, 0) %>
+      <%= check_box_tag(:tailor, 1, @user.has_role?(:tailor)) %>
     <% end %>
   </fieldset>
 

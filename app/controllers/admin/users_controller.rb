@@ -19,7 +19,7 @@ class Admin::UsersController < ApplicationController
   def create 
     @user = User.create(user_params)
     if @user.save 
-      @user.update_roles(params[:user])
+      update_roles
       redirect_to [:admin, @user], notice: "User created successfully"
     else 
       render action: :new, alert: "Oops something went wrong"
@@ -31,7 +31,7 @@ class Admin::UsersController < ApplicationController
 
   def update 
     if @user.update_attributes(user_params)
-      @user.update_roles(params[:user])
+      update_roles
       redirect_to [:admin, @user], notice: "User successfully updated"
     else 
       render action: :edit, alert: "Oops something went wrong"
@@ -39,6 +39,10 @@ class Admin::UsersController < ApplicationController
   end
 
   private
+
+  def update_roles
+    @user.update_roles(params)
+  end
 
   def set_user
     @user = User.find(params[:id])

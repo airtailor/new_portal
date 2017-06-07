@@ -15,8 +15,8 @@ Feature: User Management
       When I create a new "<user_type>" user
       And I click the "Create User" button
       Then I should see "User created successfully"
-      And I should see the new user's "email"
-      And I should see the new user's "role"
+      #And I should see the new user's "email"
+      #And I should see the new user's "role"
 
       Examples: 
         | user_type | 
