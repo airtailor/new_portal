@@ -78,6 +78,3 @@ class Message
   belongs_to :order
 end
 
-class Shipping 
-  belongs_to :order
-end
