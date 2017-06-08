@@ -1,0 +1,2 @@
+class Headquarters < Store 
+end
