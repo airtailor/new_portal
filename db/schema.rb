@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605154946) do
+ActiveRecord::Schema.define(version: 20170608194915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "companies", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
@@ -23,6 +29,22 @@ ActiveRecord::Schema.define(version: 20170605154946) do
     t.datetime "updated_at"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
     t.index ["name"], name: "index_roles_on_name", using: :btree
+  end
+
+  create_table "stores", force: :cascade do |t|
+    t.integer  "company_id"
+    t.integer  "primary_contact_id"
+    t.string   "phone"
+    t.string   "street1"
+    t.string   "street2"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "country"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.index ["company_id"], name: "index_stores_on_company_id", using: :btree
+    t.index ["primary_contact_id"], name: "index_stores_on_primary_contact_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
