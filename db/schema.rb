@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170608214053) do
+ActiveRecord::Schema.define(version: 20170609154646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,43 @@ ActiveRecord::Schema.define(version: 20170608214053) do
     t.datetime "updated_at",  null: false
     t.integer  "hq_store_id"
     t.index ["hq_store_id"], name: "index_companies_on_hq_store_id", using: :btree
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.integer  "shopify_id"
+    t.string   "first_name", null: false
+    t.string   "last_name",  null: false
+    t.string   "email",      null: false
+    t.string   "phone",      null: false
+    t.string   "street1",    null: false
+    t.string   "street2",    null: false
+    t.string   "city",       null: false
+    t.string   "state",      null: false
+    t.string   "country",    null: false
+    t.string   "zip",        null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string   "source",                          null: false
+    t.integer  "source_order_id"
+    t.integer  "customer_id",                     null: false
+    t.string   "type"
+    t.boolean  "fulfilled",       default: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.boolean  "arrived",         default: false
+    t.boolean  "late",            default: false
+    t.text     "requester_notes"
+    t.text     "provider_notes"
+    t.float    "subtotal",                        null: false
+    t.float    "total",                           null: false
+    t.float    "discount"
+    t.integer  "provider_id"
+    t.integer  "requester_id"
+    t.index ["provider_id"], name: "index_orders_on_provider_id", using: :btree
+    t.index ["requester_id"], name: "index_orders_on_requester_id", using: :btree
   end
 
   create_table "roles", force: :cascade do |t|
@@ -35,7 +72,7 @@ ActiveRecord::Schema.define(version: 20170608214053) do
 
   create_table "stores", force: :cascade do |t|
     t.integer  "company_id"
-    t.integer  "primary_contact_id"
+    t.string   "primary_contact_id"
     t.string   "phone"
     t.string   "street1"
     t.string   "street2"
@@ -62,8 +99,10 @@ ActiveRecord::Schema.define(version: 20170608214053) do
     t.inet     "last_sign_in_ip"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "username"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+    t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|

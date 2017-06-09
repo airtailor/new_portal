@@ -7,6 +7,8 @@ class Ability
 
     if user.has_role? :admin
       can :manage, :all
+    elsif user.has_role? :tailor 
+      can :manage, :tailor_orders, tailor: user.store
     else 
       # no abilities by default
     end
