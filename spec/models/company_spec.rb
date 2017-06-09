@@ -14,11 +14,11 @@ RSpec.describe Company, type: :model do
       expect(valid_company.hq_store).to eq(valid_hq)
     end
 
-    #it "will not associate with a store that is not an hq store" do 
-    #  valid_company = FactoryGirl.create(:company)
-    #  invalid_hq = FactoryGirl.create(:store, company: valid_company)
-    #  expect(valid_company.hq_store = invalid_hq).to raise_error
-    #end
+    it "will not associate with a store that is not an hq store" do 
+      valid_company = FactoryGirl.create(:company)
+      invalid_hq = FactoryGirl.create(:store, company: valid_company)
+      expect { valid_company.hq_store = invalid_hq }.to raise_error
+    end
   end
 
   describe "#stores" do 

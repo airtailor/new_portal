@@ -1,0 +1,2 @@
+class Tailor < Store
+end
