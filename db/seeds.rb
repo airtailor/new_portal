@@ -5,3 +5,18 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Company.destroy_all
+Store.destroy_all
+
+air_tailor = Company.create(name: "Air Tailor")
+burberry = Company.create(name: "Burberry")
+joes = Company.create(name: "Joe's Tailor")
+
+FactoryGirl.create(:retailer, name: "Air Tailor", company: air_tailor )
+FactoryGirl.create(:retailer, name: "Burberry 57th St", company: burberry )
+joes = FactoryGirl.create(:tailor, name: "Joe's on Main Street", company: joes)
+
+customer = FactoryGirl.create(:shopify_customer)
+
+FactoryGirl.create(:shoppify_tailor_order, customer: customer, tailor: joes)
