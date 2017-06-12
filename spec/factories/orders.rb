@@ -5,7 +5,7 @@ FactoryGirl.define do
     retailer { FactoryGirl.create(:retailer) }
   end
 
-  factory :shoppify_tailor_order, class: TailorOrder, parent: :order do
+  factory :shopify_tailor_order, class: TailorOrder, parent: :order do
     customer { FactoryGirl.create(:shopify_customer) }
     tailor { FactoryGirl.create(:tailor) }
   end
