@@ -10,20 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170613025917) do
+ActiveRecord::Schema.define(version: 20170613040425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "alteration_items", id: false, force: :cascade do |t|
+    t.integer "alteration_id"
+    t.integer "item_id"
+  end
 
   create_table "alterations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "name"
-  end
-
-  create_table "alterations_items", id: false, force: :cascade do |t|
-    t.integer "alteration_id"
-    t.integer "item_id"
   end
 
   create_table "companies", force: :cascade do |t|
@@ -55,13 +55,12 @@ ActiveRecord::Schema.define(version: 20170613025917) do
   end
 
   create_table "items", force: :cascade do |t|
-    t.integer  "type_id"
+    t.integer  "order_id"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "order_id"
+    t.integer  "type_id"
     t.index ["order_id"], name: "index_items_on_order_id", using: :btree
-    t.index ["type_id"], name: "index_items_on_type_id", using: :btree
   end
 
   create_table "orders", force: :cascade do |t|
