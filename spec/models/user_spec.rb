@@ -18,77 +18,77 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "admin?" do 
-    before :each do 
+  describe "admin?" do
+    before :each do
       @user = valid_user
     end
 
-    context "when user has the role 'admin'" do 
-      it "returns true" do 
+    context "when user has the role 'admin'" do
+      it "returns true" do
         @user.add_role :admin
         expect(@user.admin?).to eq(true)
       end
     end
 
-    context "when user does not have the role 'admin'" do 
-      it "returns false" do 
-        @user.add_role :tailor 
+    context "when user does not have the role 'admin'" do
+      it "returns false" do
+        @user.add_role :tailor
         expect(@user.admin?).to eq(false)
       end
     end
   end
 
-  describe "tailor?" do 
-    before :each do 
+  describe "tailor?" do
+    before :each do
       @user = valid_user
     end
 
-    context "when user has the role 'tailor'" do 
-      it "returns true" do 
+    context "when user has the role 'tailor'" do
+      it "returns true" do
         @user.add_role :tailor
         expect(@user.tailor?).to eq(true)
       end
     end
 
-    context "when user does not have the role 'tailor'" do 
-      it "returns false" do 
+    context "when user does not have the role 'tailor'" do
+      it "returns false" do
         @user.add_role :admin
         expect(@user.tailor?).to eq(false)
       end
     end
   end
 
-  describe "delete_role" do 
-    before :each do 
+  describe "delete_role" do
+    before :each do
       @user = valid_user
       @user.add_role :admin
       @user.add_role :tailor
       @user.delete_role :tailor
     end
 
-    it "deletes removes a specific role from the user" do 
+    it "deletes removes a specific role from the user" do
         expect(@user.has_role? :admin).to be(true)
         expect(@user.has_role? :tailor).to be(false)
     end
 
-    it "does not delete the role from the database" do 
+    it "does not delete the role from the database" do
         expect(Role.count).to eq(2)
     end
   end
 
-  describe "update_roles" do 
-    before :each do 
+  describe "update_roles" do
+    before :each do
       @user = valid_user
       @user.add_role :tailor
-      params = { tailor: "0", admin: "1" } 
+      params = { tailor: "0", admin: "1" }
       @user.update_roles(params)
     end
 
-    it "adds new roles correctly" do 
-      expect(@user.has_role? :admin).to be(true)    
+    it "adds new roles correctly" do
+      expect(@user.has_role? :admin).to be(true)
     end
 
-    it "removes roles correctly" do 
+    it "removes roles correctly" do
       expect(@user.has_role? :tailor).to be(false)
     end
   end

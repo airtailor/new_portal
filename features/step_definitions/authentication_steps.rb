@@ -10,20 +10,20 @@ Given(/^I log in as a "([^\"]*)" user$/) do |user_type|
   if user_type == "admin"
     email = "test@airtailor.com"
     password = "airtailor"
-    role = :admin 
+    role = :admin
   elsif user_type == "tailor"
     email = "test@joestailor.com"
     password = "joestailor"
     role = :tailor
-  else 
+  else
     byebug
   end
 
   User.create(email: email, password: password, password_confirmation: password)
-  User.last.add_role role 
+  User.last.add_role role
 
   visit "/users/sign_in"
-  fill_in "user_email", :with => email 
+  fill_in "user_email", :with => email
   fill_in "user_password", :with => password
   click_button "Log in"
 end

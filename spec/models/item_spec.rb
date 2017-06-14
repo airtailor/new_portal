@@ -6,8 +6,13 @@ RSpec.describe Item, type: :model do
     expect(invalid_item).to be_invalid
   end
 
-  it "is invalid without an alteration" do 
-    invalid_item = FactoryGirl.build(:item, alterations: nil)
-    expect { invalid_item }.to raise_error 
+  it "is invalid without a name" do
+    invalid_item = FactoryGirl.build(:item, name: nil)
+    expect(invalid_item).to be_invalid
+  end
+
+  it "is invalid without an order" do
+    invalid_item = FactoryGirl.build(:item, order: nil)
+    expect(invalid_item).to be_invalid
   end
 end

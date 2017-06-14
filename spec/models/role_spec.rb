@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Role, type: :model do
   before(:each) do
-    @user = valid_user 
+    @user = valid_user
   end
 
   it "should not approve incorrect roles" do

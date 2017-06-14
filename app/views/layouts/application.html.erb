@@ -16,7 +16,8 @@
         <% if current_user %>
           <li>Hello, <%= current_user.email %></li>
 
-          <% if can? :manage, :all %>
+          <% if current_user.admin? %>
+
             <li><%= link_to "Users", admin_users_path, id: "admin-users-link" %></li>
           <% end %>
 
