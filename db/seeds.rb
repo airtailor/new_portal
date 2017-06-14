@@ -11,6 +11,18 @@ Store.destroy_all
 Order.destroy_all
 Alteration.destroy_all
 Item.destroy_all
+ItemType.create([
+  {
+    name: "Pants",
+    name: "Tie",
+    name: "Shirt",
+    name: "Sweater",
+    name: "Jacket",
+    name: "Suit",
+    name: "Dress",
+    name: "Skirt"
+  }
+])
 #AlterationItem.destroy_all
 
 air_tailor = Company.create(name: "Air Tailor")
@@ -28,4 +40,4 @@ FactoryGirl.create(:shopify_tailor_order, customer: customer, tailor: joes)
 pants = ItemType.create(name: "Pants")
 grey_pants = Item.create(name: "Grey Pants", item_type: pants, order: Order.first)
 hem = Alteration.create(name: "Hem")
-AlterationItem.create(alteration: hem, item: grey_pants) 
+AlterationItem.create(alteration: hem, item: grey_pants)

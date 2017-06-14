@@ -69,7 +69,6 @@ RSpec.describe TailorOrder, type: :model do
     end
   end
 
-
   describe "#fulfilled" do
     before :each do
         @valid_shopify_tailor_order = FactoryGirl.create(:shopify_tailor_order)

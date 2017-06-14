@@ -6,7 +6,7 @@ RSpec.describe Alteration, type: :model do
   end
 
   it "cannot use the same name twice" do
-    FactoryGirl.create(:alteration, name: "Pants")
-    expect(FactoryGirl.build(:alteration, name: "Pants")).to be_invalid
+    FactoryGirl.create(:alteration, name: "Shorten Sleeves")
+    expect(FactoryGirl.build(:alteration, name: "Shorten Sleeves")).to be_invalid
   end
 end

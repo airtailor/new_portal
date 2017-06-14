@@ -6,15 +6,21 @@ class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
 
+  def set_fulfilled
+    self.fulfilled = true
+    set_fulfilled_date
+  end
+
+  def grab_items_by_type(item_name)
+    self.items.select do |item|
+      item.item_type.name == item_name
+    end
+  end
+
   def set_arrived
     self.arrived = true
     set_arrival_date
     set_due_date
-  end
-
-  def set_fulfilled
-    self.fulfilled = true
-    set_fulfilled_date
   end
 
   private
