@@ -154,7 +154,7 @@ FactoryGirl.define do
      quantity { Faker::Number.number(1) }
      price { Faker::Commerce.price }
      grams { Faker::Number.number(4) }
-     variant_title { "#{items.sample} #{alterations.sample}" }
+     variant_title { "#{title.split(" ")[0]} #{alterations.sample}" }
      skip_create
      initialize_with { attributes }
   end

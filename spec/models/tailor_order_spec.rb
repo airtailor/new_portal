@@ -11,10 +11,17 @@ RSpec.describe TailorOrder, type: :model do
     expect(invalid_shopify_tailor_order).to be_invalid
   end
 
-  it "is invalid without a tailor" do
+  it "is valid without a tailor" do
     valid_retailer= FactoryGirl.create(:retailer)
     invalid_shopify_tailor_order = FactoryGirl.build(:shopify_tailor_order, tailor: nil, retailer: valid_retailer)
-    expect(invalid_shopify_tailor_order).to be_invalid
+    expect(invalid_shopify_tailor_order).to be_valid
+  end
+
+  it "is valid with a tailor" do
+    valid_retailer= FactoryGirl.create(:retailer)
+    valid_tailor = FactoryGirl.create(:tailor)
+    invalid_shopify_tailor_order = FactoryGirl.build(:shopify_tailor_order, tailor: valid_tailor, retailer: valid_retailer)
+    expect(invalid_shopify_tailor_order).to be_valid
   end
 
   describe "has relationships with tailor, retailer, items, alterations, customers" do

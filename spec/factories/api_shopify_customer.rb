@@ -3,12 +3,12 @@ FactoryGirl.define do
     skip_create
 
     id { Faker::Number.number(8) }
+    email { Faker::Internet.email }
 
     ignore do
       first_name { Faker::Name.first_name }
       last_name { Faker::Name.last_name }
       company { Faker::Company.name }
-
       address1 { Faker::Address.street_address }
       address2 { Faker::Address.secondary_address }
       city { Faker::Address.city }
@@ -16,7 +16,6 @@ FactoryGirl.define do
       zip { Faker::Address.zip }
       country_name { Faker::Address.country }
       phone { Faker::Number.number(10) }
-
     end
 
     default_address do

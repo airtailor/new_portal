@@ -6,20 +6,39 @@ class Api::ShopifyController < ApplicationController
   # receive request
   # create or find customer
   # determine if tailor order or welcomekit
+
   # create order
   # create items
   # for each item, add alteration
-  # may need to check if order already exists (multiple requests)
+  # may need to check if order already exists (multiple requests for same orer)
   # make shipping thing
 
   def receive
     data = JSON.parse(request.body.read)
-    byebug
+
+    customer = Customer.find_or_create(data["customer"])
+    order_type = tailor_order_or_welcome_kit(data)
+    order = order_type.find_or_create(data, customer)
+    Item.create_items_for(order, data["line_items"])
     puts "\n\n\nBLAHHHHHHHHHHhHHHHHHHHHHH\n\n\n"
     {sup: "Hi"}.to_json
   end
 
   private
+
+  def tailor_order_or_welcome_kit(order_info)
+    if order_info["line_items"].first["title"] === "Air Tailor Welcome Kit"
+      WelcomeKit
+    else
+      TailorOrder
+    end
+  end
+
+  # def find_or_create_customer(customer)
+  #   if Customer.find_by(shopify_id: customer["id"])
+
+  #   byebug
+  # end
 
   # def welcome_kit_or_tailor_order
   #   puts "Welcome Kit or Tailor Order"

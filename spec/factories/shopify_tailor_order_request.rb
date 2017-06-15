@@ -1,5 +1,4 @@
 FactoryGirl.define do
-
   factory :shopify_tailor_order_request, class: Hash do
     id { Faker::Number.number(10) }
     email { Faker::Internet.email }

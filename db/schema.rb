@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170614214849) do
+ActiveRecord::Schema.define(version: 20170615221319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20170614214849) do
 
   create_table "orders", force: :cascade do |t|
     t.string   "source",                          null: false
-    t.integer  "source_order_id"
+    t.bigint   "source_order_id"
     t.integer  "customer_id",                     null: false
     t.string   "type"
     t.boolean  "fulfilled",       default: false
@@ -84,6 +84,7 @@ ActiveRecord::Schema.define(version: 20170614214849) do
     t.datetime "due_date"
     t.datetime "arrival_date"
     t.datetime "fulfilled_date"
+    t.float    "weight"
     t.index ["provider_id"], name: "index_orders_on_provider_id", using: :btree
     t.index ["requester_id"], name: "index_orders_on_requester_id", using: :btree
   end
