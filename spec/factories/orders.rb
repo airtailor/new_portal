@@ -10,7 +10,6 @@ FactoryGirl.define do
     source_order_id { Faker::Number.number(4) }
   end
 
-
   factory :shopify_tailor_order, class: TailorOrder, parent: :order do
     retailer { FactoryGirl.create(:retailer, name: "Air Tailor") }
     customer { FactoryGirl.create(:shopify_customer) }
