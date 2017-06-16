@@ -3,14 +3,14 @@ class Api::ShopifyController < ApplicationController
   before_action :authenticate_user!, :except => [:receive]
   #before_filter: :welcome_kit_or_tailor_order
 
-  # receive request
-  # create or find customer
-  # determine if tailor order or welcomekit
+  # receive request yes
+  # create or find customer yes
+  # determine if tailor order or welcomekit ?
 
-  # create order
-  # create items
-  # for each item, add alteration
-  # may need to check if order already exists (multiple requests for same orer)
+  # create order yes
+  # create items yes
+  # for each item, add alteration yes
+  # may need to check if order already exists (multiple requests for same orer) ?
   # make shipping thing
 
   def receive
@@ -19,6 +19,7 @@ class Api::ShopifyController < ApplicationController
     customer = Customer.find_or_create(data["customer"])
     order_type = tailor_order_or_welcome_kit(data)
     order = order_type.find_or_create(data, customer)
+    #byebug
     Item.create_items_for(order, data["line_items"])
     puts "\n\n\nBLAHHHHHHHHHHhHHHHHHHHHHH\n\n\n"
     {sup: "Hi"}.to_json
