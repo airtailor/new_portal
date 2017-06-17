@@ -1,7 +1,6 @@
 class Api::ShopifyController < ApplicationController
   protect_from_forgery :except => :recieve
   before_action :authenticate_user!, :except => [:receive]
-  #before_filter: :welcome_kit_or_tailor_order
 
   # receive request yes
   # create or find customer yes

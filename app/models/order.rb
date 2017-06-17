@@ -15,6 +15,7 @@ class Order < ApplicationRecord
 
   def self.find_or_create(order_info, customer, source = "Shopify")
     self.find_or_create_by(source_order_id: order_info["id"], source: source, customer: customer) do |order|
+      puts "####!!!!!!!!!!!!!!!!!!!!!!#{source}"
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
       order.discount = order_info["total_discounts"]
@@ -35,7 +36,7 @@ class Order < ApplicationRecord
   end
 
   def set_arrived
-    self.arrived = true
+    self.update_attributes(arrived: true)
     set_arrival_date
     set_due_date
   end
@@ -43,15 +44,15 @@ class Order < ApplicationRecord
   private
 
   def set_arrival_date
-    self.arrival_date = DateTime.now.in_time_zone.midnight
+    self.update_attributes(arrival_date: DateTime.now.in_time_zone.midnight)
   end
 
   def set_due_date
-    self.due_date = 5.days.from_now.in_time_zone.midnight
+    self.update_attributes(due_date: 5.days.from_now.in_time_zone.midnight)
   end
 
   def set_fulfilled_date
-    self.fulfilled_date = DateTime.now
+    self.update_attributes(fulfilled_date: DateTime.now)
   end
 
 end
