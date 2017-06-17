@@ -1,0 +1,17 @@
+<h3><%= @store.name %> Dashboard</h3>
+
+<h5>Orders</h5>
+
+<% @store.orders.each do |order| %>
+	<p>Customer: <%= order.customer.first_name %> <%= order.customer.last_name %></p>
+	<h7>Items</h7>
+
+	<% order.items.each do |item| %>
+		<p><%= item.name %> -
+
+		<% item.alterations.each do |alt| %>
+			<%= alt.name %><%= "," if !item.alterations.last %>
+		<% end %>
+		</p>
+	<% end %>
+<% end %>

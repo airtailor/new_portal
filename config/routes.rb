@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
   devise_for :users
+
   root to: "home#index"
+
+  resources :stores do
+    resources :orders do
+      resources :items
+    end
+  end
 
   namespace :admin  do
     get "/users", to: "users#index", as: :users

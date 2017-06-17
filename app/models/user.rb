@@ -6,12 +6,14 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  def admin? 
+  belongs_to :store
+
+  def admin?
     self.has_role? :admin
   end
 
-  def tailor? 
-    self.has_role? :tailor 
+  def tailor?
+    self.has_role? :tailor
   end
 
   def delete_role(role_name)

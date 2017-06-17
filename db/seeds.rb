@@ -11,18 +11,18 @@ Store.destroy_all
 Order.destroy_all
 Alteration.destroy_all
 Item.destroy_all
-ItemType.create([
-  {
-    name: "Pants",
-    name: "Tie",
-    name: "Shirt",
-    name: "Sweater",
-    name: "Jacket",
-    name: "Suit",
-    name: "Dress",
-    name: "Skirt"
-  }
-])
+# ItemType.create([
+#   {
+#     name: "Pants",
+#     name: "Tie",
+#     name: "Shirt",
+#     name: "Sweater",
+#     name: "Jacket",
+#     name: "Suit",
+#     name: "Dress",
+#     name: "Skirt"
+#   }
+# ])
 #AlterationItem.destroy_all
 
 air_tailor = Company.create(name: "Air Tailor")
@@ -32,6 +32,9 @@ joes = Company.create(name: "Joe's Tailor")
 FactoryGirl.create(:retailer, name: "Air Tailor", company: air_tailor )
 FactoryGirl.create(:retailer, name: "Burberry 57th St", company: burberry )
 joes = FactoryGirl.create(:tailor, name: "Joe's on Main Street", company: joes)
+
+joe = User.create(email: "joe@joestailor.com", password: "joejoejoe", store: joes)
+joe.add_role :tailor
 
 customer = FactoryGirl.create(:shopify_customer)
 
