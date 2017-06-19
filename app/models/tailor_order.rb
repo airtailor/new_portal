@@ -4,4 +4,8 @@ class TailorOrder < Order
   def stores
     [self.retailer, self.tailor]
   end
+
+  # def self.model_name
+  #   Order.model_name
+  # end
 end

@@ -3,10 +3,15 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
+  # resources :stores do
+  #   resources :orders do
+  #     resources :items
+  #   end
+  # end
+
   resources :stores do
-    resources :orders do
-      resources :items
-    end
+    resources :orders, controller: "orders"
+    # resources :tailor_orders, controller: 'orders'
   end
 
   namespace :admin  do

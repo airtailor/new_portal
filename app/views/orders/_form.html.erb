@@ -1,0 +1,8 @@
+  <% order = @order if @order %>
+
+  <%= form_for order.becomes(Order) do |f| %>
+    <%= f.label :arrived, "Read and Write", value: true %>
+    <%= f.radio_button :arrived, true, value: true %>
+
+    <%= f.submit "Save changes" %>
+<% end %>

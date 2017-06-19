@@ -1,17 +1,7 @@
 <h3><%= @store.name %> Dashboard</h3>
 
-<h5>Orders</h5>
+<%= render "orders", orders: @active_orders, title: "Active Orders" %>
 
-<% @store.orders.each do |order| %>
-	<p>Customer: <%= order.customer.first_name %> <%= order.customer.last_name %></p>
-	<h7>Items</h7>
+<%= render "orders", orders: @new_orders, title: "New Orders" %>
 
-	<% order.items.each do |item| %>
-		<p><%= item.name %> -
-
-		<% item.alterations.each do |alt| %>
-			<%= alt.name %><%= "," if !item.alterations.last %>
-		<% end %>
-		</p>
-	<% end %>
-<% end %>
+<%= render "orders", orders: @archived_orders, title: "Archived Orders" %>
