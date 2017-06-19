@@ -22,4 +22,8 @@ class Customer < ApplicationRecord
       customer.country = cust_details["country_name"]
     end
   end
+
+  def name
+    "#{self.first_name} #{self.last_name}"
+  end
 end

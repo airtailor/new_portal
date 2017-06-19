@@ -1,0 +1,8 @@
+<% if !orders.empty? %>
+	<h5><%= title %></h5>
+
+	<% orders.each do |order| %>
+		<p><%= link_to "Order: #{order.id} \n#{order.customer.name}", store_order_path(@store, order) %></p>
+	<% end %>
+
+<% end %>

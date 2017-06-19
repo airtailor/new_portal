@@ -1,13 +1,27 @@
  <% order = @order if @order %>
 
-<% if order.class.name == "TailorOrder" %>
-	<p> TAYLO RAAAADER </p>
-<% else %>
+<% if !order.arrived %>
 
 	<%= form_for order do |f| %>
-	  <%= f.label :arrived, "Read and Write", value: true %>
-	  <%= f.radio_button :arrived, true, value: true %>
-
-	  <%= f.submit "Save changes" %>
+	  <%= f.hidden_field :arrived, value: true %>
+	  <%= f.submit "Mark As Arrived" %>
 	<% end %>
+
+<% else %>
+
+	<p>Order has been marked as Arrived</p>
+
+	<% if !order.fulfilled %>
+	  <%= form_for order do |f| %>
+	    <%= f.hidden_field :fulfilled, value: true %>
+	    <%= f.submit "Mark As Fulfilled" %>
+	  <% end %>
+
+  <% else %>
+	  <p>Order has been marked as Fulfilled</p>
+  <% end %>
+
 <% end %>
+
+
+

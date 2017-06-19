@@ -1,7 +1,7 @@
 <h3><%= @store.name %> Dashboard</h3>
 
-<%= render "orders", orders: @active_orders, title: "Active Orders" %>
+<%= render "shared/orders", orders: @new_orders, title: "New Orders" %>
 
-<%= render "orders", orders: @new_orders, title: "New Orders" %>
+<%= render "shared/orders", orders: @active_orders, title: "Active Orders" %>
 
-<%= render "orders", orders: @archived_orders, title: "Archived Orders" %>
+<%= render "shared/orders", orders: @archived_orders, title: "Archived Orders" %>
