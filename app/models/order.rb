@@ -53,5 +53,4 @@ class Order < ApplicationRecord
   def set_fulfilled_date
     self.update_attributes(fulfilled_date: DateTime.now)
   end
-
 end

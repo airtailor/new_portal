@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # end
 
   resources :stores do
-    resources :orders, controller: "orders"
+    resources :orders
     # resources :tailor_orders, controller: 'orders'
   end
 
