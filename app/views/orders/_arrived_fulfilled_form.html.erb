@@ -9,16 +9,11 @@
 
 <% else %>
 
-	<p>Order has been marked as Arrived</p>
-
 	<% if !order.fulfilled %>
 	  <%= form_for order do |f| %>
 	    <%= f.hidden_field :fulfilled, value: true %>
 	    <%= f.submit "Mark As Fulfilled" %>
 	  <% end %>
-
-  <% else %>
-	  <p>Order has been marked as Fulfilled</p>
   <% end %>
 
 <% end %>

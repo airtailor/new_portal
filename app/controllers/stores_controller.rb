@@ -2,8 +2,12 @@ class StoresController < ApplicationController
   def show
     @store = current_user.store
     orders = @store.orders
-    @new_orders = orders.where(arrived: false)
-    @active_orders = orders.where(arrived: true, fulfilled: false)
-    @archived_orders = orders.where(fulfilled: true)
+
+    @assigned_orders = orders.assigned
+    @new_orders = @assigned_orders.where(arrived: false)
+    @active_orders = @assigned_orders.where(arrived: true, fulfilled: false)
+    @archived_orders = @assigned_orders.where(fulfilled: true)
+
+    @unassigned_orders = orders.needs_assigned
   end
 end

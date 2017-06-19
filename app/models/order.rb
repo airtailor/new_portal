@@ -3,6 +3,8 @@ class Order < ApplicationRecord
   has_many :alterations, through: :items
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
+  belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id", optional: true
+
 
   validates :retailer, presence: true
   after_initialize :init
@@ -38,6 +40,18 @@ class Order < ApplicationRecord
     self.update_attributes(arrived: true)
     set_arrival_date
     set_due_date
+  end
+
+  def assigned?
+    self.tailor != nil
+  end
+
+  def self.assigned
+    self.where("orders.provider_id IS NOT NULL")
+  end
+
+  def self.needs_assigned
+    self.where("orders.provider_id IS NULL")
   end
 
   private

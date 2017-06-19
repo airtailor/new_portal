@@ -1,8 +1,14 @@
-<% if !orders.empty? %>
-	<h5><%= title %></h5>
+<h5><%= title %> (<%= orders.count %>)</h5>
 
-	<% orders.each do |order| %>
-		<p><%= link_to "Order: #{order.id} \n#{order.customer.name}", store_order_path(@store, order) %></p>
-	<% end %>
+<% orders.each do |order| %>
 
+   <% if @store.type == "Tailor" %>
+     <% display_store = order.retailer %>
+   <% elsif @store.type == "Retailer" %>
+     <% display_store = order.tailor %>
+   <% end %> 
+
+  <p><%= link_to "Order: #{order.id} - #{order.customer.name} #{"- " + display_store.name if display_store }", store_order_path(@store, order) %></p>
 <% end %>
+
+

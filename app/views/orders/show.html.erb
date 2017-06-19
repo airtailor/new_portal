@@ -1,2 +1,15 @@
 <%= @order.customer.name %>
-<%= render "orders/form", order: @order %>
+
+<%= render "arrived_fullfilled_info", order: @order %>
+
+<% if current_user.tailor? %>
+	<%= render "arrived_fulfilled_form", order: @order %>
+<% end %>
+
+<% if current_user.admin? %>
+	<%= render "assign_tailor_form", order: @order %>
+<% end %>
+
+<%= render "shared/items", items: @order.items %>
+
+
