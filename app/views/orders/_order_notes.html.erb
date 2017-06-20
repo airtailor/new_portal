@@ -1,0 +1,17 @@
+<h5> Tailor Notes </h5>
+<div class="note">
+  <p><%= @order.provider_notes %></p>
+</div>
+
+<h5> Retailer Notes </h5>
+<div class="note">
+  <p><%= @order.requester_notes %></p>
+</div>
+
+<% note = current_user.store.type == "Tailor" ? :provider_notes : :requester_notes %>
+
+<br />
+<%= form_for @order do |f| %>
+  <%= f.text_area note%>
+  <%= f.submit "Update Notes" %>
+<% end %>

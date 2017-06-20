@@ -20,9 +20,9 @@ class OrdersController < ApplicationController
 
   def order_params
     if current_user.tailor?
-      params.require(params[:type].to_sym).permit(:arrived, :fulfilled)
+      params.require(params[:type].to_sym).permit(:provider_notes, :arrived, :fulfilled)
     elsif current_user.admin?
-      params.require(params[:type].to_sym).permit(:provider_id)
+      params.require(params[:type].to_sym).permit(:requester_notes, :provider_id)
     end
   end
 end

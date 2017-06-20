@@ -8,7 +8,12 @@
      <% display_store = order.tailor %>
    <% end %> 
 
-  <p><%= link_to "Order: #{order.id} - #{order.customer.name} #{"- " + display_store.name if display_store }", store_order_path(@store, order) %></p>
+   <p>
+     <%= link_to "Order: #{order.id} - #{order.customer.name} #{"- " + 
+       display_store.name if display_store }",
+       store_order_path(@store, order) 
+     %>
+   </p>
 <% end %>
 
 
