@@ -15,7 +15,9 @@ Then(/^I should be brought to the "([^"]*)" page$/) do |route|
 end
 
 
-
+Then(/^I should be redirected to the user's store page$/) do
+  page.current_path.should == "/stores/#{User.last.store.id}" 
+end
 
 
 

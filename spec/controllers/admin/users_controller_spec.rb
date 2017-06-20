@@ -68,6 +68,7 @@ RSpec.describe Admin::UsersController, type: :controller do
         @params[:user] = FactoryGirl.attributes_for(:user)
         @params[:admin] = "1"
         @params[:tailor] = "0"
+        @params[:user][:store_id] = FactoryGirl.create(:retailer).id
       end
 
       it "creates a new user" do 

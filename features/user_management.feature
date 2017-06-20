@@ -3,7 +3,7 @@ Feature: User Management
   Background:
     Given I am on the "/users/sign_in" page
     And I log in as a "admin" user
-    Then I should be redirected to the "/" page 
+    Then I should be redirected to the user's store page
     When I click the "Users" link
     Then I should see "All Users"
     And I should see "Create User"

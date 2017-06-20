@@ -8,11 +8,11 @@ RSpec.describe HomeController, type: :controller do
         get :index
       end
             
-      it "renders the :index view" do 
-        expect(response).to render_template(:index)
+      it "redirects to the current user's store" do     
+        expect(response).to redirect_to(store_path(User.last.store))
       end
 
-      it "does not render a different view" do 
+      it "does not render the index view" do 
         expect(subject).to_not render_template("admin/users/index")
       end
     end

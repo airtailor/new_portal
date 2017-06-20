@@ -19,7 +19,9 @@ Given(/^I log in as a "([^\"]*)" user$/) do |user_type|
     byebug
   end
 
-  User.create(email: email, password: password, password_confirmation: password)
+  store = FactoryGirl.create(:retailer)
+
+  User.create(email: email, password: password, password_confirmation: password, store: store)
   User.last.add_role role
 
   visit "/users/sign_in"
@@ -28,3 +30,4 @@ Given(/^I log in as a "([^\"]*)" user$/) do |user_type|
   click_button "Log in"
 end
 
+  

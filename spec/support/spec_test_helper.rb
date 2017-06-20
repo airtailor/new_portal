@@ -4,6 +4,7 @@ module SpecTestHelper
   end
 
   def current_user
+    byebug
     User.find(request.session[:user])
   end
 
@@ -11,9 +12,5 @@ module SpecTestHelper
     user.add_role(:admin)
     sign_in(user)
     user
-  end
-
-  def invalid_user_email
-
   end
 end
