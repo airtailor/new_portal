@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620201123) do
+ActiveRecord::Schema.define(version: 20170620203532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,19 +65,19 @@ ActiveRecord::Schema.define(version: 20170620201123) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.string   "source",                          null: false
+    t.string   "source",                               null: false
     t.bigint   "source_order_id"
-    t.integer  "customer_id",                     null: false
+    t.integer  "customer_id",                          null: false
     t.string   "type"
-    t.boolean  "fulfilled",       default: false
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
-    t.boolean  "arrived",         default: false
-    t.boolean  "late",            default: false
+    t.boolean  "fulfilled",            default: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "arrived",              default: false
+    t.boolean  "late",                 default: false
     t.text     "requester_notes"
     t.text     "provider_notes"
-    t.float    "subtotal",                        null: false
-    t.float    "total",                           null: false
+    t.float    "subtotal",                             null: false
+    t.float    "total",                                null: false
     t.float    "discount"
     t.integer  "provider_id"
     t.integer  "requester_id"
@@ -85,6 +85,8 @@ ActiveRecord::Schema.define(version: 20170620201123) do
     t.datetime "arrival_date"
     t.datetime "fulfilled_date"
     t.float    "weight"
+    t.integer  "incoming_shipment_id"
+    t.integer  "outgoing_shipment_id"
     t.index ["provider_id"], name: "index_orders_on_provider_id", using: :btree
     t.index ["requester_id"], name: "index_orders_on_requester_id", using: :btree
   end
