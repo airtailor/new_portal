@@ -1,7 +1,10 @@
 <h3><%= @store.name %> Dashboard</h3>
 
+<%= render "shared/orders", orders: @late_orders, title: "Late Orders" %>
+
 <% if current_user.admin? %>
 	<%= render "shared/orders", orders: @unassigned_orders, title: "Unassigned Orders" %>
+  <%= render "shared/orders", orders: @welcome_kits, title: "Welcome Kits" %>
 <% end %>
 
 <%= render "shared/orders", orders: @new_orders, title: "New Orders" %>

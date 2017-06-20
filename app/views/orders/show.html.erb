@@ -1,15 +1,20 @@
-<%= @order.customer.name %>
+Customer: <%= @order.customer.name %>
+<br />
+Order ID: <%= @order.id %>
+<br />
 
 <%= render "arrived_fullfilled_info", order: @order %>
 
-<% if current_user.tailor? %>
+<% if current_user.tailor? || @order.type == "WelcomeKit" %>
 	<%= render "arrived_fulfilled_form", order: @order %>
 <% end %>
 
-<% if current_user.admin? %>
+<% if current_user.admin? && @order.type != "WelcomeKit" %>
 	<%= render "assign_tailor_form", order: @order %>
 <% end %>
 
-<%= render "order_notes", order: @order %>
-<%= render "shared/items", items: @order.items %>
+<% if @order.type != "WelcomeKit" %>
+  <%= render "order_notes", order: @order %>
+  <%= render "shared/items", items: @order.items %>
+<% end %>
 

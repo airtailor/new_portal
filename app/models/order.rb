@@ -15,6 +15,14 @@ class Order < ApplicationRecord
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
   end
 
+  def self.on_time
+    self.where(late: false)
+  end
+
+  def self.late
+    self.where(late: true)
+  end
+
   def self.find_or_create(order_info, customer, source = "Shopify")
     self.find_or_create_by(source_order_id: order_info["id"], source: source, customer: customer) do |order|
       order.total = order_info["total_price"]
@@ -53,6 +61,8 @@ class Order < ApplicationRecord
   def self.needs_assigned
     self.where("orders.provider_id IS NULL")
   end
+
+  scope :active, -> { where(arrived: true).where(fulfilled: false) }
 
   private
 

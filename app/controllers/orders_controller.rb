@@ -6,9 +6,9 @@ class OrdersController < ApplicationController
 
   def update
     if @order.update(order_params)
-      redirect_to store_path(current_user.store), notice: "Order successfully updated"
+      redirect_to store_order_path(current_user.store, @order), notice: "Order successfully updated"
     else
-      redirect_to store_path(current_user.store), alert: "Oops something went wrong"
+      redirect_to store_order_path(current_user.store, @order), alert: "Oops something went wrong"
     end
   end
 
@@ -22,7 +22,7 @@ class OrdersController < ApplicationController
     if current_user.tailor?
       params.require(params[:type].to_sym).permit(:provider_notes, :arrived, :fulfilled)
     elsif current_user.admin?
-      params.require(params[:type].to_sym).permit(:requester_notes, :provider_id)
+      params.require(params[:type].to_sym).permit(:requester_notes, :provider_id, :arrived, :fulfilled)
     end
   end
 end
