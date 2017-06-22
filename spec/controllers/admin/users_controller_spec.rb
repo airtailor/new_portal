@@ -146,3 +146,4 @@ RSpec.describe Admin::UsersController, type: :controller do
     end
   end
 end
+

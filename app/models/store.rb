@@ -10,4 +10,19 @@ class Store < ApplicationRecord
   def welcome_kits
     self.orders.where(type: "WelcomeKit")
   end
+
+  def shippo_address
+    Shippo::Address.create( 
+      object_purpose: "PURCHASE",
+      name: self.name,
+      street1: self.street1,
+      street2: self.street2,
+      city: self.city,
+      country: self.country,
+      zip: self.zip,
+      phone: self.phone,
+      validate: true
+    )
+  end
 end
+

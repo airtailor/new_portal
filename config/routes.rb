@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   patch "/tailor_orders/:id", to: "orders#update", type: "tailor_order", as: :tailor_order
   patch "/welcome_kits/:id", to: "orders#update", type: "welcome_kit", as: :welcome_kit
 
+  resources :shipments
+
   namespace :admin  do
     get "/users", to: "users#index", as: :users
     get "/users/new", to: "users#new", as: :new_user

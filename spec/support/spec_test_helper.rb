@@ -13,4 +13,12 @@ module SpecTestHelper
     sign_in(user)
     user
   end
+
+  def sign_in_retailer user
+    user.add_role(:retailer)
+    sign_in(user)
+    user
+  end
+
 end
+

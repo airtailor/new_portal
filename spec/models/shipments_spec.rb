@@ -11,6 +11,21 @@ RSpec.describe Shipment, type: :model do
     expect(shipment).to be_invalid
   end
 
+  it "is invalid without a shipping label" do 
+    shipment = FactoryGirl.build(:shipment, shipping_label: nil)
+    expect(shipment).to be_invalid
+  end
+
+  it "is invalid without a weight" do 
+    shipment = FactoryGirl.build(:shipment, weight: nil)
+    expect(shipment).to be_invalid
+  end
+
+  it "is invalid without a tracking number" do 
+    shipment = FactoryGirl.build(:shipment, tracking_number: nil)
+    expect(shipment).to be_invalid
+  end
+
   it "is valid with valid attributes" do 
     shipment = FactoryGirl.build(:shipment)
     expect(shipment).to be_valid
