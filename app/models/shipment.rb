@@ -11,6 +11,8 @@ class Shipment < ApplicationRecord
   end
 
   def configure_shippo
+    Shippo.api_token = ENV["SHIPPO_KEY"]
+    Shippo.api_version = '2017-03-29'
     return unless self.order
     to_address = get_ship_to_address
     from_address = get_ship_from_address
@@ -69,8 +71,6 @@ class Shipment < ApplicationRecord
   end
 
   def create_shippo_shipment(to_address, from_address, parcel)
-    Shippo::api_token = ENV["SHIPPO_KEY"]
-    Shippo.api_version = '2017-03-29'
     shipment = Shippo::Shipment.create(
       object_purpose: "PURCHASE",
       address_from: from_address,
@@ -81,8 +81,6 @@ class Shipment < ApplicationRecord
   end
   
   def create_shippo_transaction(shippo_shipment)
-    Shippo.api_token = ENV["SHIPPO_KEY"]
-    Shippo.api_version = '2017-03-29'
     transaction = Shippo::Transaction.create(
       rate: shippo_shipment[:rates].first[:object_id],
       label_file_type: "PNG",
@@ -97,6 +95,5 @@ class Shipment < ApplicationRecord
   def add_tracking_number(shippo_transaction)
     self.tracking_number = shippo_transaction[:tracking_number]
   end
-
 end
 
