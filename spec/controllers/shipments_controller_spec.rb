@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe ShipmentsController, type: :controller do 
-
   context "when the shipment is for a welcome kit" do 
     before :each do 
       user = FactoryGirl.create(:user, store: FactoryGirl.create(:retailer))
