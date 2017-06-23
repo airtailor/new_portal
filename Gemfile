@@ -31,6 +31,7 @@ gem 'delighted'
 gem 'chartkick'
 gem 'groupdate'
 gem 'httparty'
+gem 'hashie'
 
 group :development, :test do
   gem 'byebug', platform: :mri
