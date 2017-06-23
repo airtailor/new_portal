@@ -15,8 +15,16 @@ RSpec.describe ShipmentsController, type: :controller do
     end
 
     describe "POST #create" do 
-      it "creates redirects to the order page" do 
+      it "redirects to the order page" do 
         expect(response).to redirect_to store_order_path(@user.store, @order)
+      end
+
+      it "creates a new shipment outgoing" do 
+        expect(Shipment.count).to eq(1) 
+      end
+
+      it "is the outgoing shipment for its order" do 
+        expect(@order.outgoing_shipment).to eq(OutgoingShipment.last) 
       end
     end
   end
