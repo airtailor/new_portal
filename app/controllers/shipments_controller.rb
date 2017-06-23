@@ -1,11 +1,4 @@
 class ShipmentsController < ApplicationController
-  def make_outgoing_shipment
-    byebug
-  end
-
-  def make_incoming_shipment
-  end
-
   def create 
     shipment = Shipment.create(shipment_params)
     if shipment.save 
