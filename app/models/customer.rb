@@ -28,21 +28,18 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    Shippo.api_token = ENV["SHIPPO_KEY"]
-    byebug
-    Shippo::Address.create( 
-      :object_purpose => "PURCHASE",
+    {
+      #:object_purpose => "PURCHASE",
       :name => self.name,
       :street1 => self.street1,
       :street2 => self.street2,
       :city => self.city,
       :country => self.country,
+      :state => self.state,
       :zip => self.zip,
       :phone => self.phone,
       :email => self.email,
-      :validate => true
-    )
-    byebug
+    } 
   end
 
 end

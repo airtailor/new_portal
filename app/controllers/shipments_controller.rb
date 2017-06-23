@@ -9,10 +9,8 @@ class ShipmentsController < ApplicationController
   def create 
     shipment = Shipment.create(shipment_params)
     if shipment.save 
-      byebug
       redirect_to store_order_path(current_user.store, shipment.order), notice: "Shipment successfully updated"
     else 
-      byebug
       redirect_to store_order_path(current_user.store, shipment.order), alert: "Oops something went wrong"
     end 
   end

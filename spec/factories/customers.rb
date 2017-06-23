@@ -11,7 +11,7 @@ FactoryGirl.define do
     #zip { Faker::Address.zip }
     #country { Faker::Address.country }
     street1 "624 W 139th St"
-    street2 "Apt 1A"
+    street2 "Apt 1C"
     city "New York"
     state "New York"
     zip "10031"

@@ -21,7 +21,8 @@ gem 'cancancan'
 gem 'rolify'
 
 gem 'send_sonar'
-gem 'shippo', '~> 2.0.4'
+#gem 'shippo', '~> 2.0.4'
+gem 'shippo'
 gem 'airbrake'
 gem 'pdfkit'
 gem 'render_anywhere', :require => false
@@ -29,6 +30,7 @@ gem 'wkhtmltopdf-binary'
 gem 'delighted'
 gem 'chartkick'
 gem 'groupdate'
+gem 'httparty'
 
 group :development, :test do
   gem 'byebug', platform: :mri

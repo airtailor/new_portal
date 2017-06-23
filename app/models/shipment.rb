@@ -7,11 +7,11 @@ class Shipment < ApplicationRecord
   private 
 
   def add_order_weight
-    self.weight = self.order.weight
+    self.weight = self.order.weight if self.order
   end
 
-
   def create_shippo_shipment
+    return unless self.order
     Shippo.api_token = ENV["SHIPPO_KEY"]
     to_address = get_ship_to_address
     from_address = get_ship_from_address
@@ -19,7 +19,8 @@ class Shipment < ApplicationRecord
     shippo_hash = create_shippo_hash(to_address, from_address, parcel)
     service_level_token = get_service_level_token
     shippo_transaction = create_shippo_transaction(shippo_hash, service_level_token)
-    byebug
+    add_shipping_label(shippo_transaction)
+    add_tracking_number(shippo_transaction)
   end
 
   def get_ship_to_address
@@ -79,24 +80,33 @@ class Shipment < ApplicationRecord
   end
 
   def create_shippo_hash(to_address, from_address, parcel)
-    Shippo.api_token = ENV["SHIPPO_KEY"]
-    shipment = Shippo::Shipment.create({
-      #object_purpose: "PURCHASE",
+    Shippo::api_token = ENV["SHIPPO_KEY"]
+    Shippo.api_version = '2017-03-29'
+    shipment = Shippo::Shipment.create(
+      object_purpose: "PURCHASE",
       address_from: from_address,
       address_to: to_address, 
-      parcel: parcel
-    })
-    byebug
+      parcels: parcel,
+      async: false
+    )
   end
   
   def create_shippo_transaction(shippo_hash, service_level_token)
-    byebug
-    Shippo::Transaction.create(
-      shipment: shippo_hash,
-      carrier_account: ENV["SHIPPING_CARRIER_ACCOUNT"],
-      servicelevel_token: service_level_token,
-      label_file_type: "PNG"
+    Shippo.api_token = ENV["SHIPPO_KEY"]
+    Shippo.api_version = '2017-03-29'
+    transaction = Shippo::Transaction.create(
+      rate: shippo_hash[:rates].first[:object_id],
+      label_file_type: "PNG",
+      async: false
     )
+  end
+
+  def add_shipping_label(shippo_transaction)
+    self.shipping_label = shippo_transaction[:label_url]
+  end
+
+  def add_tracking_number(shippo_transaction)
+    self.tracking_number = shippo_transaction[:tracking_number]
   end
 
 end

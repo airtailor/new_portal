@@ -12,17 +12,17 @@ class Store < ApplicationRecord
   end
 
   def shippo_address
-    Shippo::Address.create( 
-      object_purpose: "PURCHASE",
+    {
       name: self.name,
       street1: self.street1,
       street2: self.street2,
       city: self.city,
+      state: self.state,
       country: self.country,
       zip: self.zip,
       phone: self.phone,
-      validate: true
-    )
+      email: "air@airtailor.com"
+    }
   end
 end
 
