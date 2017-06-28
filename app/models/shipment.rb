@@ -2,9 +2,9 @@ class Shipment < ApplicationRecord
   validates :type, :shipping_label, :tracking_number, :weight, presence: true
   belongs_to :order
 
-  after_initialize :add_order_weight, :configure_shippo 
+  after_initialize :add_order_weight, :configure_shippo
 
-  private 
+  private
 
   def add_order_weight
     self.weight = self.order.weight if self.order
@@ -43,7 +43,7 @@ class Shipment < ApplicationRecord
   end
 
   def get_customer_address
-    self.order.customer.shippo_address 
+    self.order.customer.shippo_address
   end
 
   def get_tailor_address
@@ -67,6 +67,14 @@ class Shipment < ApplicationRecord
     elsif self.order.type == "TailorOrder"
       # NEEED MORE INFO
       byebug
+       {
+        length: 7,
+        width: 5,
+        height: 3,
+        distance_unit: :in,
+        weight: self.order.weight,
+        mass_unit: :g
+      }
     end
   end
 
@@ -74,12 +82,12 @@ class Shipment < ApplicationRecord
     shipment = Shippo::Shipment.create(
       object_purpose: "PURCHASE",
       address_from: from_address,
-      address_to: to_address, 
+      address_to: to_address,
       parcels: parcel,
       async: false
     )
   end
-  
+
   def create_shippo_transaction(shippo_shipment)
     transaction = Shippo::Transaction.create(
       rate: shippo_shipment[:rates].first[:object_id],

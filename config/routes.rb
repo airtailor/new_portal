@@ -24,5 +24,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     post "/shopify_order", to: "shopify#receive"
+    resources :sessions, only: [:create, :destroy]
   end
 end
