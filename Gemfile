@@ -16,7 +16,8 @@ gem 'jbuilder', '~> 2.5'
 
 #gem 'bcrypt', '~> 3.1.7'
 #
-gem 'devise'
+gem 'devise_token_auth'
+gem 'omniauth'
 gem 'cancancan'
 gem 'rolify'
 
