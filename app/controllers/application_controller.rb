@@ -1,7 +1,9 @@
 class ApplicationController < ActionController::Base
-  include DeviseTokenAuth::Concerns::SetUserByToken
   protect_from_forgery with: :null_session
+  include DeviseTokenAuth::Concerns::SetUserByToken
   before_action :configure_permitted_parameters, if: :devise_controller?
+  respond_to :json
+  
   def authorize_admin
     redirect_to root_path, alert: "Access Denied" unless current_user.admin?
   end
