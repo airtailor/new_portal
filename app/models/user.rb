@@ -10,7 +10,18 @@ class User < ApplicationRecord
   rolify
   #resourcify
 
-  belongs_to :store
+  # before_validation :set_provider
+  # before_validation :set_uid
+
+  # def set_provider
+  #   self.provider = "email" if self.provider.blank?
+  # end
+
+  # def set_uid
+  #   self.uid = self.email if self.uid.blank? && self.email.present?
+  # end
+
+  belongs_to :store, optional: true
 
   def admin?
     self.has_role? :admin
@@ -37,5 +48,10 @@ class User < ApplicationRecord
     else user_params[:tailor] == "0"
       self.delete_role(:tailor)
     end
+  end
+  
+  # includes user roles when sending out user after succesful sign in : )
+  def token_validation_response                                                                                                                                         
+    self.as_json(include: :roles)
   end
 end
