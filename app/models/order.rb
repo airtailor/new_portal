@@ -64,7 +64,18 @@ class Order < ApplicationRecord
     self.where("orders.provider_id IS NULL")
   end
 
+  scope :unfulfilled, -> { where(fulfilled: false)}
+
   scope :active, -> { where(arrived: true).where(fulfilled: false) }
+
+  scope :by_due_date, -> { order(:due_date) }
+
+  def alterations_count
+    self.items.reduce(0) do |prev, curr|
+      prev += AlterationItem.where(item: curr).count
+    end
+  end
+
 
   private
 

@@ -24,6 +24,7 @@ class Item < ApplicationRecord
 
   end
 
+
   private
 
   def self.remove_number_from_item_name(item_name_with_number)

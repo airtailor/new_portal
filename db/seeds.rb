@@ -4,6 +4,16 @@ Store.destroy_all
 Order.destroy_all
 Alteration.destroy_all
 Item.destroy_all
+ItemType.destroy_all
+
+ItemType.create([
+  {name: "Pants"},
+  {name: "Shirt"},
+  {name: "Tie"},
+  {name: "Jacket"},
+  {name: "Dress"}
+])
+
 
 air_tailor_co = Company.create(name: "Air Tailor")
 burberry = Company.create(name: "Burberry")
@@ -24,9 +34,13 @@ jane.add_role :tailor
 brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
 brian.add_role :admin
 
-5.times do
+5.times do |n|
   order = FactoryGirl.create(:shopify_tailor_order, tailor: joes, retailer: airtailor)
-  5.times do 
+  order.set_arrived
+  order.set_fulfilled if n == 4
+  order.set_late if n == 5
+
+  15.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
     FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
@@ -35,7 +49,7 @@ end
 
 5.times do
   order = FactoryGirl.create(:shopify_tailor_order, tailor: janes, retailer: airtailor)
-  5.times do 
+  15.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
     FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
@@ -44,7 +58,7 @@ end
 
 5.times do
   order = FactoryGirl.create(:shopify_tailor_order, retailer: airtailor, tailor: nil)
-  5.times do 
+  5.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
     FactoryGirl.create(:alteration_item, item: item, alteration: alteration)

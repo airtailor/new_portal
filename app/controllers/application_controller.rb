@@ -2,8 +2,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
   include DeviseTokenAuth::Concerns::SetUserByToken
   before_action :configure_permitted_parameters, if: :devise_controller?
+  skip_before_action :verify_authenticity_token
   respond_to :json
-  
+
   def authorize_admin
     redirect_to root_path, alert: "Access Denied" unless current_user.admin?
   end
@@ -15,7 +16,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  
+
 
   protected
 
@@ -23,7 +24,7 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:store_id])
   end
 
-  private 
+  private
 
   def set_roles
     @roles = [:admin, :tailor]

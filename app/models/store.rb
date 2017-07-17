@@ -24,5 +24,17 @@ class Store < ApplicationRecord
       email: "air@airtailor.com"
     }
   end
+
+  def open_orders
+    self.orders.order(:due_date).unfulfilled
+  end
+
+  def late_orders_count
+    self.orders.late.count
+  end
+
+  def active_orders_count
+    self.orders.active.count
+  end
 end
 
