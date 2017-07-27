@@ -4,8 +4,10 @@ class Order < ApplicationRecord
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id", optional: true
-  has_one :outgoing_shipment, class_name: "OutgoingShipment", foreign_key: :order_id
-  has_one :incoming_shipment, class_name: "OutgoingShipment", foreign_key: :order_id
+  #belongs_to :outgoing_shipment, class_name: "OutgoingShipment", foreign_key: :order_id, optional: true
+  #belongs_to :incoming_shipment, class_name: "IncomingShipment", foreign_key: :order_id, optional: true
+  belongs_to :outgoing_shipment, class_name: "Shipment", foreign_key: :outgoing_shipment_id, optional: true
+  belongs_to :incoming_shipment, class_name: "Shipment", foreign_key: :incoming_shipment_id, optional: true
 
 
   validates :retailer, presence: true

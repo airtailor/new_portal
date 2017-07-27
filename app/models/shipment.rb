@@ -1,19 +1,15 @@
 class Shipment < ApplicationRecord
-  validates :type, :shipping_label, :tracking_number, :weight, presence: true
-  belongs_to :order
+  #validates :type, :shipping_label, :tracking_number, :weight, presence: true
+  has_one :order
 
-  after_initialize :add_order_weight, :configure_shippo
-
-  private
-
-  def add_order_weight
-    self.weight = self.order.weight if self.order
+  #after_initialize :add_order_weight, :configure_shippo
+  def add_order_weight(order)
+    self.weight = order.weight 
   end
 
   def configure_shippo
     Shippo.api_token = ENV["SHIPPO_KEY"]
     Shippo.api_version = '2017-03-29'
-    return unless self.order
     to_address = get_ship_to_address
     from_address = get_ship_from_address
     parcel = get_parcel
@@ -22,6 +18,9 @@ class Shipment < ApplicationRecord
     add_shipping_label(shippo_transaction)
     add_tracking_number(shippo_transaction)
   end
+
+  private
+
 
   def get_ship_to_address
     if self.type == "OutgoingShipment"

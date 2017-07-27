@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ShipmentsController, type: :controller do 
+RSpec.describe Api::ShipmentsController, type: :controller do 
   context "when the shipment is for a welcome kit" do 
     before :each do 
       user = FactoryGirl.create(:user, store: FactoryGirl.create(:retailer))
@@ -8,6 +8,8 @@ RSpec.describe ShipmentsController, type: :controller do
       @order = FactoryGirl.create(:welcome_kit, retailer: @user.store)
       params = {}
       params[:shipment] = {}
+      params[:order] = {}
+      params[:order][:id] = @order.id
       params[:shipment][:order_id] = @order.id
       params[:shipment][:type] = "OutgoingShipment"
       post :create, params
