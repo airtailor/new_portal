@@ -1,7 +1,7 @@
 class Api::ShipmentsController < ApplicationController
   def create
-    shipment = Shipment.create
-    order = Order.find(params[:order][:id]) byebug
+    shipment = Shipment.create(shipment_params)
+    byebug
     if shipment.save
       redirect_to store_order_path(current_user.store, shipment.order), notice: "Shipment successfully updated"
     else
@@ -11,8 +11,8 @@ class Api::ShipmentsController < ApplicationController
 
   private
 
-  #def shipment_params
-  #  params.require(:shipment).permit()
-  #end
+  def shipment_params
+    params.require(:shipment).permit(:order_id, :type)
+  end
 end
 

@@ -8,8 +8,6 @@ RSpec.describe Api::ShipmentsController, type: :controller do
       @order = FactoryGirl.create(:welcome_kit, retailer: @user.store)
       params = {}
       params[:shipment] = {}
-      params[:order] = {}
-      params[:order][:id] = @order.id
       params[:shipment][:order_id] = @order.id
       params[:shipment][:type] = "OutgoingShipment"
       post :create, params

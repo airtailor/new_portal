@@ -1,6 +1,6 @@
 class Shipment < ApplicationRecord
   #validates :type, :shipping_label, :tracking_number, :weight, presence: true
-  has_one :order
+  belongs_to :order
 
   #after_initialize :add_order_weight, :configure_shippo
   def add_order_weight(order)
