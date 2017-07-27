@@ -36,9 +36,9 @@ brian.add_role :admin
 
 5.times do |n|
   order = FactoryGirl.create(:shopify_tailor_order, tailor: joes, retailer: airtailor)
-  order.set_arrived
-  order.set_fulfilled if n == 4
-  order.set_late if n == 5
+  #order.set_arrived unless n == 3 
+  #order.set_fulfilled if n == 4
+  order.set_late && order.set_arrived if n == 5
 
   15.times do
     item = FactoryGirl.create(:item, order: order)

@@ -23,12 +23,15 @@ Rails.application.routes.draw do
     delete "/users/:id", to: "users#destroy"
   end
 
-  namespace :api do
+  namespace :api, defaults: {format: 'json'} do
     resources :stores do
     resources :orders
   end
+    resources :companies
+    resources :customers
     resources :item_types
     post "/shopify_order", to: "shopify#receive"
     resources :sessions, only: [:create, :destroy]
+    resources :tailors
   end
 end

@@ -1,5 +1,5 @@
 class Api::OrdersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update]
   before_action :set_order, only: [:show, :update]
 
   def index
@@ -26,9 +26,11 @@ class Api::OrdersController < ApplicationController
   end
 
   def order_params
-    if current_user.tailor?
-      params.require(order).permit(:requester_notes, :arrived, :fulfilled)
-    end
+    #if current_user.tailor?
+      params.require(:order)
+        .permit(
+          :provider_notes, :arrived, :fulfilled, :provider_id, :weight)
+    #end
   end
 
 end

@@ -17,6 +17,12 @@ class Order < ApplicationRecord
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
   end
 
+  def arrived=(boolean)
+    super(boolean)
+    set_arrival_date
+    set_due_date
+  end
+
   def self.on_time
     self.where(late: false)
   end
@@ -76,7 +82,6 @@ class Order < ApplicationRecord
     end
   end
 
-
   private
 
   def set_arrival_date
@@ -84,7 +89,7 @@ class Order < ApplicationRecord
   end
 
   def set_due_date
-    self.update_attributes(due_date: 5.days.from_now.in_time_zone.midnight)
+    self.update_attributes(due_date: 6.days.from_now.in_time_zone.midnight)
   end
 
   def set_fulfilled_date

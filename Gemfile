@@ -20,6 +20,7 @@ gem 'devise_token_auth'
 gem 'omniauth'
 gem 'cancancan'
 gem 'rolify'
+gem 'rack-cors'
 
 gem 'send_sonar'
 #gem 'shippo', '~> 2.0.4'
