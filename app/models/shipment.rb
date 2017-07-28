@@ -21,7 +21,6 @@ class Shipment < ApplicationRecord
     shippo_transaction = create_shippo_transaction(shippo_shipment)
     add_shipping_label(shippo_transaction)
     add_tracking_number(shippo_transaction)
-    byebug
   end
 
   def get_ship_to_address
@@ -87,16 +86,20 @@ class Shipment < ApplicationRecord
       parcels: parcel,
       async: false
     )
-    byebug
+  end
+
+  def get_shipping_rate(rates)
+    rates.find {|r| r.attributes.include? "BESTVALUE"}
   end
 
   def create_shippo_transaction(shippo_shipment)
     transaction = Shippo::Transaction.create(
-      rate: shippo_shipment[:rates].first[:object_id],
+      #rate: shippo_shipment[:rates].first[:object_id],
+      #rate: shippo_shipment[:rates].find {|r| r.attributes.include? "BESTVALUE"},
+      rate: get_shipping_rate(shippo_shipment[:rates]),
       label_file_type: "PNG",
       async: false
     )
-    byebug
   end
 
   def add_shipping_label(shippo_transaction)

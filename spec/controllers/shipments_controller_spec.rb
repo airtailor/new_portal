@@ -14,12 +14,12 @@ RSpec.describe Api::ShipmentsController, type: :controller do
     end
 
     describe "POST #create" do 
-      it "redirects to the order page" do 
-        expect(response).to redirect_to store_order_path(@user.store, @order)
+      it "responds with a 200 ok" do 
+        expect(response).to be_success 
       end
 
       it "creates a new shipment outgoing" do 
-        expect(Shipment.count).to eq(1) 
+        expect(OutgoingShipment.count).to eq(1) 
       end
 
       it "is the outgoing shipment for its order" do 

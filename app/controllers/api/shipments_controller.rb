@@ -1,11 +1,10 @@
 class Api::ShipmentsController < ApplicationController
   def create
     shipment = Shipment.create(shipment_params)
-    byebug
     if shipment.save
-      redirect_to store_order_path(current_user.store, shipment.order), notice: "Shipment successfully updated"
+      render :json => shipment.to_json
     else
-      redirect_to store_order_path(current_user.store, shipment.order), alert: "Oops something went wrong"
+      render :json => { :errors => shipment.errors.full_messages }
     end
   end
 
