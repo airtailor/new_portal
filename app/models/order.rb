@@ -7,14 +7,21 @@ class Order < ApplicationRecord
   has_one :outgoing_shipment, class_name: "OutgoingShipment", foreign_key: "order_id"
   has_one :incoming_shipment, class_name: "IncomingShipment", foreign_key: "order_id"
 
-  #belongs_to :outgoing_shipment, class_name: "OutgoingShipment", foreign_key: :order_id, optional: true
-  #belongs_to :incoming_shipment, class_name: "IncomingShipment", foreign_key: :order_id, optional: true
-  #belongs_to :outgoing_shipment, class_name: "Shipment", foreign_key: :outgoing_shipment_id, optional: true
-  #belongs_to :incoming_shipment, class_name: "Shipment", foreign_key: :incoming_shipment_id, optional: true
-
-
   validates :retailer, presence: true
   after_initialize :init
+
+  # This method is overwritten so that the 'type' attribute will
+  # be rendered in the json response
+  def serializable_hash options=nil
+    super.merge "type" => type
+  end
+
+  def shipments
+    [
+      self.outgoing_shipment,
+      self.incoming_shipment
+    ]
+  end
 
   def init
     self.source ||= "Shopify"

@@ -7,13 +7,12 @@ class Shipment < ApplicationRecord
   private
 
   def add_order_weight
-    self.weight = self.order.weight if self.order
+    self.weight = self.order.weight
   end
 
   def configure_shippo
     Shippo.api_token = ENV["SHIPPO_KEY"]
     Shippo.api_version = '2017-03-29'
-    return unless self.order
     to_address = get_ship_to_address
     from_address = get_ship_from_address
     parcel = get_parcel
@@ -35,10 +34,11 @@ class Shipment < ApplicationRecord
 
   def get_ship_from_address
     if self.type == "OutgoingShipment"
-      get_tailor_address if self.order.type == "TailorOrder"
-      get_retailer_address if self.order.type == "WelcomeKit"
+      puts "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
+      return get_tailor_address if self.order.type == "TailorOrder"
+      return get_retailer_address if self.order.type == "WelcomeKit"
     elsif self.type == "IncomingShipment"
-      get_customer_address
+      return get_customer_address
     end
   end
 
@@ -65,8 +65,6 @@ class Shipment < ApplicationRecord
         mass_unit: :g
       }
     elsif self.order.type == "TailorOrder"
-      # NEEED MORE INFO
-      byebug
        {
         length: 7,
         width: 5,

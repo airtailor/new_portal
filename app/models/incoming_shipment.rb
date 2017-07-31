@@ -1,0 +1,2 @@
+class IncomingShipment < Shipment
+end
