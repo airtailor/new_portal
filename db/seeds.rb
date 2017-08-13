@@ -1,6 +1,9 @@
 Company.destroy_all
 User.destroy_all
 Store.destroy_all
+Shipment.destroy_all
+Measurement.destroy_all
+Customer.destroy_all
 Order.destroy_all
 Alteration.destroy_all
 Item.destroy_all
@@ -36,7 +39,7 @@ brian.add_role :admin
 
 5.times do |n|
   order = FactoryGirl.create(:shopify_tailor_order, tailor: joes, retailer: airtailor)
-  #order.set_arrived unless n == 3 
+  #order.set_arrived unless n == 3
   #order.set_fulfilled if n == 4
   order.set_late && order.set_arrived if n == 5
 
@@ -63,4 +66,8 @@ end
     alteration = FactoryGirl.create(:alteration)
     FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
   end
+end
+
+Customer.all.each do |customer|
+  Measurement.create(customer: customer)
 end

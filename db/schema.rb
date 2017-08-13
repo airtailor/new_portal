@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727234807) do
+ActiveRecord::Schema.define(version: 20170813034328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,6 +62,28 @@ ActiveRecord::Schema.define(version: 20170727234807) do
     t.datetime "updated_at", null: false
     t.integer  "type_id"
     t.index ["order_id"], name: "index_items_on_order_id", using: :btree
+  end
+
+  create_table "measurements", force: :cascade do |t|
+    t.float    "sleeve_length"
+    t.float    "shoulder_to_waste"
+    t.float    "chest_bust"
+    t.float    "upper_torso"
+    t.float    "waist"
+    t.float    "pant_length"
+    t.float    "hips"
+    t.float    "thigh"
+    t.float    "knee"
+    t.float    "calf"
+    t.float    "ankle"
+    t.float    "back_width"
+    t.float    "bicep"
+    t.float    "forearm"
+    t.float    "inseam"
+    t.integer  "customer_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.index ["customer_id"], name: "index_measurements_on_customer_id", using: :btree
   end
 
   create_table "orders", force: :cascade do |t|
@@ -164,6 +186,7 @@ ActiveRecord::Schema.define(version: 20170727234807) do
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
   end
 
+  add_foreign_key "measurements", "customers"
   add_foreign_key "shipments", "orders"
   add_foreign_key "users", "stores"
 end

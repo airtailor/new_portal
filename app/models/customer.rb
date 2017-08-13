@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   validates :first_name, :last_name, :street1, :street2, :city, :zip,
    :country, presence: true
 
+  has_many :measurements
 
   def self.find_or_create(shopify_customer)
     Customer.find_or_create_by(shopify_id: shopify_customer["id"]) do |customer|
