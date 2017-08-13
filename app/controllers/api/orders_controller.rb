@@ -7,13 +7,15 @@ class Api::OrdersController < ApplicationController
   end
 
   def show
-    render :json => @order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer, :items => {include: :item_type}])
+    data = @order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer, :items => {include: [:item_type, :alterations]}])
+
+    render :json => data   
   end
 
   def update
     if @order.update(order_params)
       render :json => @order
-      .as_json(include: [:customer, :items => {include: :item_type}])
+      .as_json(include: [:customer, :items => {include: [:item_type, :alterations]}])
     else
       byebug
     end
