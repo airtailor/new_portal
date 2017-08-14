@@ -24,11 +24,15 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     resources :stores do
+      resources :orders
+    end
     resources :orders
-  end
     resources :shipments
     resources :companies
-    resources :customers
+
+
+   get "/customers/:customer_id/measurements/last", to: "measurements#show"
+
     resources :item_types
     post "/shopify_order", to: "shopify#receive"
     resources :sessions, only: [:create, :destroy]

@@ -35,7 +35,6 @@ class Shipment < ApplicationRecord
   def get_ship_from_address
     if self.type == "OutgoingShipment"
       puts "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
-      byebug
       return get_tailor_address if self.order.type == "TailorOrder"
       return get_retailer_address if self.order.type == "WelcomeKit"
     elsif self.type == "IncomingShipment"

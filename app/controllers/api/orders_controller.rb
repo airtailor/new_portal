@@ -7,9 +7,8 @@ class Api::OrdersController < ApplicationController
   end
 
   def show
-    data = @order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer, :items => {include: [:item_type, :alterations]}])
-
-    render :json => data   
+    data = @order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
+    render :json => data
   end
 
   def update

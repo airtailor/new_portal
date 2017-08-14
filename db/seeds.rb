@@ -1,10 +1,13 @@
-Company.destroy_all
-User.destroy_all
-Store.destroy_all
+
 Shipment.destroy_all
+User.destroy_all
+Order.destroy_all
+Store.destroy_all
+Company.destroy_all
+
 Measurement.destroy_all
 Customer.destroy_all
-Order.destroy_all
+
 Alteration.destroy_all
 Item.destroy_all
 ItemType.destroy_all

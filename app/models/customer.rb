@@ -6,6 +6,10 @@ class Customer < ApplicationRecord
 
   has_many :measurements
 
+  def last_measurement
+    self.measurements.last
+  end
+
   def self.find_or_create(shopify_customer)
     Customer.find_or_create_by(shopify_id: shopify_customer["id"]) do |customer|
       customer.email = shopify_customer["email"]
@@ -40,7 +44,7 @@ class Customer < ApplicationRecord
       :zip => self.zip,
       :phone => self.phone,
       :email => self.email,
-    } 
+    }
   end
 
 end

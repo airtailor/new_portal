@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813034328) do
+ActiveRecord::Schema.define(version: 20170814040043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(version: 20170813034328) do
 
   create_table "measurements", force: :cascade do |t|
     t.float    "sleeve_length"
-    t.float    "shoulder_to_waste"
     t.float    "chest_bust"
     t.float    "upper_torso"
     t.float    "waist"
@@ -83,6 +82,8 @@ ActiveRecord::Schema.define(version: 20170813034328) do
     t.integer  "customer_id"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
+    t.float    "elbow"
+    t.float    "shoulder_to_waist"
     t.index ["customer_id"], name: "index_measurements_on_customer_id", using: :btree
   end
 

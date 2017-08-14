@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :measurement do
     sleeve_length 1.5
-    shoulder_to_waste 1.5
+    shoulder_to_waist 1.5
     chest_bust 1.5
     upper_torso 1.5
     waist 1.5
