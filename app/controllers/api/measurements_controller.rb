@@ -40,6 +40,6 @@ class Api::MeasurementsController < ApplicationController
       :forearm,
       :inseam,
       :elbow,
-      :customer)
+      :customer_id)
   end
 end
