@@ -11,6 +11,13 @@ class Api::OrdersController < ApplicationController
     render :json => data
   end
 
+  def new_orders
+    unassigned = TailorOrder.all.where(tailor: nil).as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
+    welcome_kits = WelcomeKit.all.where(fulfilled: false).as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
+    data = {unassigned: unassigned, welcome_kits: welcome_kits}
+    render :json => data
+  end
+
   def update
     if @order.update(order_params)
       render :json => @order

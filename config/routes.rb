@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       resources :orders
     end
     resources :orders
+    get "/new_orders", to: "orders#new_orders"
     resources :shipments
     resources :companies
 
