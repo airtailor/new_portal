@@ -9,7 +9,7 @@ class Api::ShipmentsController < ApplicationController
   def create
     shipment = Shipment.create(shipment_params)
     if shipment.save
-      render :json => shipment
+      render :json => shipment.order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
     else
       render :json => { :errors => shipment.errors.full_messages }
     end

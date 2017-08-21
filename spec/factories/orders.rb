@@ -14,5 +14,8 @@ FactoryGirl.define do
   factory :shopify_tailor_order, class: TailorOrder, parent: :order do
     tailor { FactoryGirl.create(:tailor) }
   end
+
+  factory :retailer_tailor_order, class: TailorOrder, parent: :order do
+  end
 end
 

@@ -36,5 +36,9 @@ class Store < ApplicationRecord
   def active_orders_count
     self.orders.active.count
   end
+
+  def transit_to_tailor_count
+    self.orders.where(arrived: false).count
+  end
 end
 

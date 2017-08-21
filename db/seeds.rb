@@ -22,12 +22,12 @@ ItemType.create([
 
 
 air_tailor_co = Company.create(name: "Air Tailor")
-burberry = Company.create(name: "Burberry")
+banana_co = Company.create(name: "Banana Republic")
 joes = Company.create(name: "Joe's Tailor")
 janes = Company.create(name: "Jane's Tailor")
 
 airtailor = FactoryGirl.create(:retailer, name: "Air Tailor", company: air_tailor_co )
-FactoryGirl.create(:retailer, name: "Burberry 57th St", company: burberry )
+banana = FactoryGirl.create(:retailer, name: "Tribeca", company: banana_co )
 joes = FactoryGirl.create(:tailor, name: "Joe's on Main Street", company: joes)
 janes = FactoryGirl.create(:tailor, name: "Jane's on Ave A", company: janes)
 
@@ -39,6 +39,9 @@ jane.add_role :tailor
 
 brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
 brian.add_role :admin
+
+allen = User.create(email: "allen@bananarepublic.com", password: "allenallen", store: banana)
+allen.add_role :retailer
 
 5.times do |n|
   order = FactoryGirl.create(:shopify_tailor_order, tailor: joes, retailer: airtailor)
@@ -54,7 +57,7 @@ brian.add_role :admin
 end
 
 5.times do
-  order = FactoryGirl.create(:shopify_tailor_order, tailor: janes, retailer: airtailor)
+  order = FactoryGirl.create(:retailer_tailor_order, tailor: janes, retailer: banana, source: banana.name, arrived: true)
   15.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
@@ -62,8 +65,9 @@ end
   end
 end
 
+
 5.times do
-  order = FactoryGirl.create(:shopify_tailor_order, retailer: airtailor, tailor: nil)
+  order = FactoryGirl.create(:retailer_tailor_order, retailer: banana, tailor: nil, source: banana.name)
   5.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
@@ -73,4 +77,10 @@ end
 
 Customer.all.each do |customer|
   Measurement.create(customer: customer)
+end
+
+20.times do
+  # customer_id = rand(1..Customer.count)
+  # FactoryGirl.create(:welcome_kit, customer_id: customer_id)
+  FactoryGirl.create(:welcome_kit)
 end

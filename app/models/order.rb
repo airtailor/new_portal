@@ -35,6 +35,11 @@ class Order < ApplicationRecord
     set_due_date
   end
 
+  def fulfilled=(boolean)
+    super(boolean)
+    set_fulfilled_date
+  end
+
   def self.on_time
     self.where(late: false)
   end

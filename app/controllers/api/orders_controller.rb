@@ -20,8 +20,7 @@ class Api::OrdersController < ApplicationController
 
   def update
     if @order.update(order_params)
-      render :json => @order
-      .as_json(include: [:customer, :items => {include: [:item_type, :alterations]}])
+      render :json => @order.as_json(include: [:customer, :incoming_shipment, :outgoing_shipment, :items => {include: [:item_type, :alterations]}])
     else
       byebug
     end
@@ -37,7 +36,7 @@ class Api::OrdersController < ApplicationController
     #if current_user.tailor?
       params.require(:order)
         .permit(
-          :provider_notes, :arrived, :fulfilled, :provider_id, :weight)
+          :provider_notes, :requester_notes, :arrived, :fulfilled, :provider_id, :weight)
     #end
   end
 

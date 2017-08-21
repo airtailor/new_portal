@@ -10,7 +10,8 @@ class Api::StoresController < ApplicationController
     #else
     #  render :json => {status: :unprocessable_entity }
     #end
-    render :json => @store.as_json(methods: [:late_orders_count, :active_orders_count])
+    data = @store.as_json(methods: [:late_orders_count, :active_orders_count, :transit_to_tailor_count])
+    render :json => data
   end
 
   def update
@@ -25,7 +26,7 @@ class Api::StoresController < ApplicationController
     store = Store.create(store_params)
     if store.save
       render :json => store.as_json
-    else 
+    else
       byebug
     end
   end
