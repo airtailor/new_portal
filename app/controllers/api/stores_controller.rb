@@ -3,14 +3,14 @@ class Api::StoresController < ApplicationController
   before_action :set_store, only: [:show, :update]
 
   def show
-    #render json: current_user.store
-    #if current_user.store.id.to_s == params[:id] && current_user.tailor?
-    #    render :json => current_user.store.as_json(methods: [:late_orders_count, :active_orders_count]
-    #    )
-    #else
-    #  render :json => {status: :unprocessable_entity }
-    #end
-    data = @store.as_json(methods: [:late_orders_count, :active_orders_count, :transit_to_tailor_count])
+    data =  @store.as_json(
+      methods: [
+        :active_orders_count,
+        :unread_messages_count,
+        :late_orders_count,
+        :transit_to_tailor_count
+      ]
+    )
     render :json => data
   end
 
@@ -29,6 +29,16 @@ class Api::StoresController < ApplicationController
     else
       byebug
     end
+  end
+
+  def orders_and_messages_count
+    store = current_user.store
+    data = {
+      unread_messages_count: store.unread_messages_count,
+      active_orders_count: store.active_orders_count,
+      late_orders_count: store.late_orders_count
+    }
+    render :json => data
   end
 
   private

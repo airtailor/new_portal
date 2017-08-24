@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170814040043) do
+ActiveRecord::Schema.define(version: 20170821220638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 20170814040043) do
     t.datetime "updated_at",  null: false
     t.integer  "hq_store_id"
     t.index ["hq_store_id"], name: "index_companies_on_hq_store_id", using: :btree
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.integer  "recipient_id"
+    t.integer  "sender_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["recipient_id"], name: "index_conversations_on_recipient_id", using: :btree
+    t.index ["sender_id"], name: "index_conversations_on_sender_id", using: :btree
   end
 
   create_table "customers", force: :cascade do |t|
@@ -85,6 +94,20 @@ ActiveRecord::Schema.define(version: 20170814040043) do
     t.float    "elbow"
     t.float    "shoulder_to_waist"
     t.index ["customer_id"], name: "index_measurements_on_customer_id", using: :btree
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text     "body"
+    t.integer  "store_id"
+    t.integer  "conversation_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.boolean  "sender_read"
+    t.boolean  "recipient_read"
+    t.integer  "order_id"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id", using: :btree
+    t.index ["order_id"], name: "index_messages_on_order_id", using: :btree
+    t.index ["store_id"], name: "index_messages_on_store_id", using: :btree
   end
 
   create_table "orders", force: :cascade do |t|
@@ -188,6 +211,9 @@ ActiveRecord::Schema.define(version: 20170814040043) do
   end
 
   add_foreign_key "measurements", "customers"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "orders"
+  add_foreign_key "messages", "stores"
   add_foreign_key "shipments", "orders"
   add_foreign_key "users", "stores"
 end
