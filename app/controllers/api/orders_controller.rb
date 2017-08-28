@@ -26,6 +26,17 @@ class Api::OrdersController < ApplicationController
     end
   end
 
+  def create
+    order = Order.create(order_params)
+    if order.save
+      garments = params[:order][:garments]
+      Item.create_items_portal(order, garments)
+      render :json => order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
+    else
+      byebug
+    end
+  end
+
   private
 
   def set_order
@@ -33,11 +44,21 @@ class Api::OrdersController < ApplicationController
   end
 
   def order_params
-    #if current_user.tailor?
-      params.require(:order)
-        .permit(
-          :provider_notes, :requester_notes, :arrived, :fulfilled, :provider_id, :weight)
-    #end
+    params.require(:order)
+      .permit(
+        :provider_notes,
+        :requester_notes,
+        :arrived,
+        :fulfilled,
+        :provider_id,
+        :weight,
+        :requester_id,
+        :total,
+        :type,
+        :customer_id,
+        :source,
+        :ship_to_store
+        )
   end
 
 end

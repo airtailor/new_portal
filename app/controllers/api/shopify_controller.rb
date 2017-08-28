@@ -15,11 +15,11 @@ class Api::ShopifyController < ApplicationController
   def receive
     data = JSON.parse(request.body.read)
 
-    customer = Customer.find_or_create(data["customer"])
+    customer = Customer.find_or_create_shopify(data["customer"])
     order_type = tailor_order_or_welcome_kit(data)
     order = order_type.find_or_create(data, customer)
 
-    Item.create_items_for(order, data["line_items"]) if order_type == TailorOrder
+    Item.create_items_shopify(order, data["line_items"]) if order_type == TailorOrder
   end
 
   private

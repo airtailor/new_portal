@@ -1,8 +1,7 @@
 class Customer < ApplicationRecord
   validates :email, :phone, presence: true, uniqueness: true
-  validates :shopify_id, uniqueness: true
-  validates :first_name, :last_name, :street1, :street2, :city, :zip,
-   :country, presence: true
+  validates :shopify_id, uniqueness: true, allow_blank: true
+  validates :first_name, :last_name, presence: true
 
   has_many :measurements
 
@@ -10,7 +9,13 @@ class Customer < ApplicationRecord
     self.measurements.last
   end
 
-  def self.find_or_create(shopify_customer)
+  before_validation :add_country
+
+  def add_country
+    self.country = "United States"
+  end
+
+  def self.find_or_create_shopify(shopify_customer)
     Customer.find_or_create_by(shopify_id: shopify_customer["id"]) do |customer|
       customer.email = shopify_customer["email"]
 

@@ -6,7 +6,7 @@ class Item < ApplicationRecord
 
   validates :name, :order, :item_type, presence: true
 
-  def self.create_items_for(order, line_items)
+  def self.create_items_shopify(order, line_items)
     line_items.each do |item|
       item_name_num = item["title"]
 
@@ -21,9 +21,20 @@ class Item < ApplicationRecord
       alteration = find_or_create_alteration(alteration_name)
       find_or_create_alteration_item(alteration, new_item)
     end
-
   end
 
+  def self.create_items_portal(order, items)
+    items.each do |item|
+      item_name = item["title"]
+      item_type = grab_item_type_from_title(item_name)
+      new_item = self.create(name: item_name, item_type: item_type, order: order)
+
+      item[:alterations].each do |alt|
+        alteration = find_or_create_alteration(alt[:title])
+        find_or_create_alteration_item(alteration, new_item)
+      end
+    end
+  end
 
   private
 

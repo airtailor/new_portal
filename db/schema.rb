@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170821220638) do
+ActiveRecord::Schema.define(version: 20170828204523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,12 +49,12 @@ ActiveRecord::Schema.define(version: 20170821220638) do
     t.string   "last_name",  null: false
     t.string   "email",      null: false
     t.string   "phone",      null: false
-    t.string   "street1",    null: false
-    t.string   "street2",    null: false
-    t.string   "city",       null: false
-    t.string   "state",      null: false
+    t.string   "street1"
+    t.string   "street2"
+    t.string   "city"
+    t.string   "state"
     t.string   "country",    null: false
-    t.string   "zip",        null: false
+    t.string   "zip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "company"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(version: 20170821220638) do
     t.boolean  "late",            default: false
     t.text     "requester_notes"
     t.text     "provider_notes"
-    t.float    "subtotal",                        null: false
+    t.float    "subtotal"
     t.float    "total",                           null: false
     t.float    "discount"
     t.integer  "provider_id"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20170821220638) do
     t.datetime "arrival_date"
     t.datetime "fulfilled_date"
     t.float    "weight"
+    t.boolean  "ship_to_store"
     t.index ["provider_id"], name: "index_orders_on_provider_id", using: :btree
     t.index ["requester_id"], name: "index_orders_on_requester_id", using: :btree
   end

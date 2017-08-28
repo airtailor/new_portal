@@ -3,9 +3,12 @@ class Order < ApplicationRecord
   has_many :alterations, through: :items
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
-  belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id", optional: true
-  has_one :outgoing_shipment, class_name: "OutgoingShipment", foreign_key: "order_id"
-  has_one :incoming_shipment, class_name: "IncomingShipment", foreign_key: "order_id"
+  belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
+    optional: true
+  has_one :outgoing_shipment, class_name: "OutgoingShipment",
+    foreign_key: "order_id"
+  has_one :incoming_shipment, class_name: "IncomingShipment",
+    foreign_key: "order_id"
 
   validates :retailer, presence: true
   after_initialize :init
@@ -26,7 +29,8 @@ class Order < ApplicationRecord
   def init
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
-    self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
+    self.retailer ||= Retailer
+      .find_by(company: air_tailor_co, name: "Air Tailor")
   end
 
   def arrived=(boolean)

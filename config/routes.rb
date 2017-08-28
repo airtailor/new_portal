@@ -35,6 +35,7 @@ Rails.application.routes.draw do
     resources :shipments
     resources :companies
 
+   post "/customers/find_or_create", to: "customers#find_or_create"
 
    get "/customers/:customer_id/measurements/last", to: "measurements#show"
    post "/customers/:customer_id/measurements", to: "measurements#create"
