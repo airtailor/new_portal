@@ -12,15 +12,15 @@ Rails.application.routes.draw do
   patch "/welcome_kits/:id", to: "orders#update", type: "welcome_kit", as: :welcome_kit
 
 
-  namespace :admin  do
-    get "/users", to: "users#index", as: :users
-    get "/users/new", to: "users#new", as: :new_user
-    get "/users/:id", to: "users#show", as: :user
-    get "/users/:id/edit", to: "users#edit", as: :edit_user
-    post "/users", to: "users#create"
-    patch "/users/:id", to: "users#update"
-    delete "/users/:id", to: "users#destroy"
-  end
+  # namespace :admin  do
+  #   get "/users", to: "users#index", as: :users
+  #   get "/users/new", to: "users#new", as: :new_user
+  #   get "/users/:id", to: "users#show", as: :user
+  #   get "/users/:id/edit", to: "users#edit", as: :edit_user
+  #   post "/users", to: "users#create"
+  #   patch "/users/:id", to: "users#update"
+  #   delete "/users/:id", to: "users#destroy"
+  # end
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
