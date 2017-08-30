@@ -22,6 +22,26 @@ class Conversation < ApplicationRecord
     )
   end
 
+  def sender_read
+    sender_read = true
+    self.messages.each do |message|
+      if !message.sender_read 
+        sender_read = false
+      end
+    end
+    sender_read
+  end
+
+  def recipient_read
+    recipient_read = true
+    self.messages.each do |message|
+      if !message.recipient_read 
+        recipient_read = false
+      end
+    end
+    recipient_read
+  end
+
   # def unread_messages_count
   #   if current_user.store.name == "Air Tailor"
   #     self.messages.where(sender_read: false).count
