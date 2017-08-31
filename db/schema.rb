@@ -147,14 +147,13 @@ ActiveRecord::Schema.define(version: 20170828204523) do
   end
 
   create_table "shipments", force: :cascade do |t|
+    t.integer  "order_id"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.string   "weight"
     t.string   "shipping_label"
     t.string   "tracking_number"
-    t.integer  "order_id"
     t.string   "type"
-    t.index ["order_id"], name: "index_shipments_on_order_id", using: :btree
   end
 
   create_table "stores", force: :cascade do |t|
@@ -215,6 +214,5 @@ ActiveRecord::Schema.define(version: 20170828204523) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "orders"
   add_foreign_key "messages", "stores"
-  add_foreign_key "shipments", "orders"
   add_foreign_key "users", "stores"
 end
