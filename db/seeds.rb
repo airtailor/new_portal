@@ -23,6 +23,7 @@ ItemType.create([
 
 air_tailor_co = Company.create(name: "Air Tailor")
 banana_co = Company.create(name: "Banana Republic")
+frame = Company.create(name: "Frame Denim")
 joes = Company.create(name: "Joe's Tailor")
 janes = Company.create(name: "Jane's Tailor")
 
