@@ -1,4 +1,3 @@
-require 'factory_girl_rails'
 
 Shipment.destroy_all
 User.destroy_all
