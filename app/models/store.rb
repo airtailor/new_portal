@@ -18,6 +18,7 @@ class Store < ApplicationRecord
   end
 
   def shippo_address
+    # removing email may break shippo
     {
       name: self.name,
       street1: self.street1,
@@ -26,8 +27,9 @@ class Store < ApplicationRecord
       state: self.state,
       country: self.country,
       zip: self.zip,
-      phone: self.phone,
-      email: "air@airtailor.com"
+      phone: self.phone
+      # ,
+      # email: "air@airtailor.com"
     }
   end
 

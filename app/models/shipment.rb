@@ -25,7 +25,11 @@ class Shipment < ApplicationRecord
   def get_ship_to_address
     if self.type == "OutgoingShipment"
       # outgoing shipments always go to customer! :* )
-      get_customer_address
+      if self.order.ship_to_store
+        get_retailer_address
+      else
+        get_customer_address
+      end
     elsif self.type == "IncomingShipment"
       get_tailor_address if self.order.type == "TailorOrder"
       get_retailer_address if self.order.type == "WelcomeKit"
