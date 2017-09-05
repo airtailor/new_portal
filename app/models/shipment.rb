@@ -16,6 +16,9 @@ class Shipment < ApplicationRecord
     to_address = get_ship_to_address
     from_address = get_ship_from_address
     parcel = get_parcel
+    puts "\n\n\n to_address #{to_address}"
+    puts "\n\n\n from_address #{from_address}"
+    puts "\n\n\n parcel #{parcel}"
     shippo_shipment = create_shippo_shipment(to_address, from_address, parcel)
     shippo_transaction = create_shippo_transaction(shippo_shipment)
     add_shipping_label(shippo_transaction)
