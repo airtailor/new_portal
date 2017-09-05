@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170828204523) do
+ActiveRecord::Schema.define(version: 20170905141514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,19 +45,20 @@ ActiveRecord::Schema.define(version: 20170828204523) do
 
   create_table "customers", force: :cascade do |t|
     t.integer  "shopify_id"
-    t.string   "first_name", null: false
-    t.string   "last_name",  null: false
-    t.string   "email",      null: false
-    t.string   "phone",      null: false
+    t.string   "first_name",      null: false
+    t.string   "last_name",       null: false
+    t.string   "email",           null: false
+    t.string   "phone",           null: false
     t.string   "street1"
     t.string   "street2"
     t.string   "city"
     t.string   "state"
-    t.string   "country",    null: false
+    t.string   "country",         null: false
     t.string   "zip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.string   "company"
+    t.boolean  "agrees_to_terms"
   end
 
   create_table "item_types", force: :cascade do |t|
