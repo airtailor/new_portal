@@ -10,9 +10,31 @@ class Customer < ApplicationRecord
   end
 
   before_validation :add_country
+  after_create :create_blank_measurements
 
   def add_country
     self.country = "United States"
+  end
+
+  def create_blank_measurements
+    customer = self
+    Measurement.create(
+      sleeve_length: 0,
+      chest_bust: 0,
+      upper_torso: 0,
+      waist: 0,
+      pant_length: 0,
+      hips: 0,
+      thigh: 0,
+      knee: 0,
+      calf: 0,
+      ankle: 0,
+      back_width: 0,
+      bicep: 0,
+      inseam: 0,
+      forearm: 0,
+      customer: customer
+    )
   end
 
   def self.find_or_create_shopify(shopify_customer)

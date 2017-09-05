@@ -76,9 +76,9 @@ end
   end
 end
 
-Customer.all.each do |customer|
-  Measurement.create(customer: customer)
-end
+# Customer.all.each do |customer|
+#   Measurement.create(customer: customer)
+# end
 
 20.times do
   # customer_id = rand(1..Customer.count)
