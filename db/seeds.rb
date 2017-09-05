@@ -24,28 +24,28 @@ ItemType.create([
 air_tailor_co = Company.create(name: "Air Tailor")
 banana_co = Company.create(name: "Banana Republic")
 frame = Company.create(name: "Frame Denim")
-joes = Company.create(name: "Joe's Tailor")
-janes = Company.create(name: "Jane's Tailor")
+steven = Company.create(name: "Steven Alan")
+t_nyc = Company.create(name: "Tailoring NYC")
 
 airtailor = FactoryGirl.create(:retailer, name: "Air Tailor", company: air_tailor_co )
-banana = FactoryGirl.create(:retailer, name: "Tribeca", company: banana_co )
-joes = FactoryGirl.create(:tailor, name: "Joe's on Main Street", company: joes)
-janes = FactoryGirl.create(:tailor, name: "Jane's on Ave A", company: janes)
+tribeca = FactoryGirl.create(:retailer, name: "Steven Alan - Tribeca", company: steven)
+soho = FactoryGirl.create(:retailer, name: "Frame Denim - SoHo", company: steven)
+tailoring = FactoryGirl.create(:tailor, name: "Tailoring NYC", company: t_nyc)
 
-joe = User.create(email: "joe@joestailor.com", password: "joejoejoe", store: joes)
-joe.add_role :tailor
+stevenalan_user = User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca)
+stevenalan_user.add_role :retailer
 
-jane = User.create(email: "jane@janestailor.com", password: "janejanejane", store: janes)
-jane.add_role :tailor
+frame_user = User.create(email: "test@framedenim.com", password: "framedenim", store: soho)
+frame_user.add_role :retailer
 
 brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
 brian.add_role :admin
 
-allen = User.create(email: "allen@bananarepublic.com", password: "allenallen", store: banana)
-allen.add_role :retailer
+tailor = User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring)
+tailor.add_role :tailor
 
 5.times do |n|
-  order = FactoryGirl.create(:shopify_tailor_order, tailor: joes, retailer: airtailor)
+  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)
   #order.set_arrived unless n == 3
   #order.set_fulfilled if n == 4
   order.set_late && order.set_arrived if n == 5
@@ -58,7 +58,7 @@ allen.add_role :retailer
 end
 
 5.times do
-  order = FactoryGirl.create(:retailer_tailor_order, tailor: janes, retailer: banana, source: banana.name, arrived: true)
+  order = FactoryGirl.create(:retailer_tailor_order, tailor: nil, retailer: soho, source: soho.name, arrived: true)
   15.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)
@@ -68,7 +68,7 @@ end
 
 
 5.times do
-  order = FactoryGirl.create(:retailer_tailor_order, retailer: banana, tailor: nil, source: banana.name)
+  order = FactoryGirl.create(:retailer_tailor_order, retailer: tribeca, tailor: nil, source: tribeca.name)
   5.times do
     item = FactoryGirl.create(:item, order: order)
     alteration = FactoryGirl.create(:alteration)

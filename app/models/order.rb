@@ -31,6 +31,11 @@ class Order < ApplicationRecord
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer
       .find_by(company: air_tailor_co, name: "Air Tailor")
+
+    if (self.retailer.name == "Steven Alan - Tribeca" || self.retailer.name == "Frame Denim - SoHo")
+      self.tailor = Tailor.find_by(name: "Tailoring NYC")
+    end
+
   end
 
   def arrived=(boolean)
