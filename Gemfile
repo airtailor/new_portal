@@ -34,6 +34,7 @@ gem 'chartkick'
 gem 'groupdate'
 gem 'httparty'
 gem 'hashie'
+gem 'send_sonar'
 
 group :development, :test do
   gem 'byebug', platform: :mri
