@@ -24,6 +24,13 @@ class Item < ApplicationRecord
   end
 
   def self.create_items_portal(order, items)
+    airtailor_message = "Congrats :) An order with #{items.count} items" + 
+      " was just placed at #{order.retailer.name} for $#{order.total}!"
+
+    ["9045668701", "6167804457", "6302352544"].each do |phone| 
+      SendSonar.message_customer(text: airtailor_message, to: phone)
+    end
+
     items.each do |item|
       item_name = item["title"]
       item_type = grab_item_type_from_title(item_name)

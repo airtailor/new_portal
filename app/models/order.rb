@@ -12,7 +12,7 @@ class Order < ApplicationRecord
 
   validates :retailer, presence: true
   after_initialize :init
-  after_create :send_text_to_customer
+  after_create :send_order_confirmation_text
 
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
@@ -39,12 +39,15 @@ class Order < ApplicationRecord
 
   end
 
-  def send_text_to_customer
-    message = "Hey there, Air Tailor here : ) Thanks for letting us " +
-      "make your clothes look great! We'll keep you updated on their " + 
-      "status. Text any time if you have questions."
+  def send_order_confirmation_text
+    if self.retailer.name != "Air Tailor"
+      customer_message = "Hey there, Air Tailor here : ) Thanks for letting us " +
+        "make your clothes look great! We'll keep you updated on their " + 
+        "status. Text any time if you have questions."
+      SendSonar.message_customer(text: customer_message, to: self.customer.phone)
 
-    SendSonar.message_customer(text: message, to: self.customer.phone)
+    else 
+    end
   end
 
   def arrived=(boolean)
@@ -110,6 +113,10 @@ class Order < ApplicationRecord
   scope :active, -> { where(arrived: true).where(fulfilled: false) }
 
   scope :by_due_date, -> { order(:due_date) }
+
+  def items_count
+    self.items.count
+  end
 
   def alterations_count
     self.items.reduce(0) do |prev, curr|
