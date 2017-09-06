@@ -45,7 +45,6 @@ class Order < ApplicationRecord
         "make your clothes look great! We'll keep you updated on their " + 
         "status. Text any time if you have questions."
       SendSonar.message_customer(text: customer_message, to: self.customer.phone)
-
     else 
     end
   end

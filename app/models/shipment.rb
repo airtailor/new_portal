@@ -3,8 +3,19 @@ class Shipment < ApplicationRecord
   belongs_to :order
 
   after_initialize :add_order_weight, :configure_shippo
+  after_create :send_text_to_customer
 
   private
+
+  def send_text_to_customer
+    if ((self.order.retailer.name != "Air Tailor") && (self.type == "OutgoingShipment"))
+      customer = self.order.customer
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " + 
+        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " + 
+        "Here's your USPS tracking number: #{self.tracking_number}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+    end
+  end
 
   def add_order_weight
     self.weight = self.order.weight
