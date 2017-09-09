@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Order, type: :model do
+  before :each do
+    co = FactoryGirl.create(:company, name: "Air Tailor")
+    FactoryGirl.create(:retailer, name: "Air Tailor", company: co)
+  end
+
   it "is invalid without a retailer" do
     invalid_order = FactoryGirl.build(:order, retailer: nil)
     expect(invalid_order).to be_invalid

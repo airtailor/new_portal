@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe TailorOrder, type: :model do
+  before :each do
+    co = FactoryGirl.create(:company, name: "Air Tailor")
+    FactoryGirl.create(:retailer, name: "Air Tailor", company: co)
+  end
+
   it "is valid without a tailor" do
     valid_retailer= FactoryGirl.create(:retailer)
     invalid_shopify_tailor_order = FactoryGirl.build(:shopify_tailor_order, tailor: nil, retailer: valid_retailer)
