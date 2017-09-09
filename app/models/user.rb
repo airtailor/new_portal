@@ -49,6 +49,13 @@ class User < ApplicationRecord
       self.delete_role(:tailor)
     end
   end
+
+  def update_password(params)
+    password, password_confirmation = params.values_at(:password, :password_confirmation)
+    if password === password_confirmation
+      self.update_attributes(password: password)
+    end
+  end
   
   # includes user roles when sending out user after succesful sign in : )
   def token_validation_response                                                                                                                                         

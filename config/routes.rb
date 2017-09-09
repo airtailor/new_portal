@@ -24,26 +24,30 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
+
     resources :stores do
       resources :orders
       resources :conversations do
         resources :messages
       end
     end
+
     resources :orders
     get "/new_orders", to: "orders#new_orders"
     resources :shipments
     resources :companies
 
-   post "/customers/find_or_create", to: "customers#find_or_create"
+    post "/customers/find_or_create", to: "customers#find_or_create"
 
-   get "/customers/:customer_id/measurements/last", to: "measurements#show"
-   post "/customers/:customer_id/measurements", to: "measurements#create"
-   resources :customers
+    get "/customers/:customer_id/measurements/last", to: "measurements#show"
+    post "/customers/:customer_id/measurements", to: "measurements#create"
+    resources :customers
 
     resources :item_types
     post "/shopify_order", to: "shopify#receive"
     resources :sessions, only: [:create, :destroy]
     resources :tailors
+
+    put "/users/:id/update_password", to: "users#update_password"
   end
 end
