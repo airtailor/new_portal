@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
 
     resources :stores do
+      resources :orders
       resources :conversations do
         resources :messages
       end
