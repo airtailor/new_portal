@@ -18,6 +18,7 @@ RSpec.describe Api::OrdersController, type: :controller do
 
       get :search, {query: "#{order.customer.first_name}"}.merge(@auth_headers)
       expect(response).to be_success
+      byebug
       #{}"/api/orders/search#{order.id}",
     end
   end

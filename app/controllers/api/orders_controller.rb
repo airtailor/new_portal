@@ -38,9 +38,16 @@ class Api::OrdersController < ApplicationController
   end
 
   def search
-    @results = Order.search(params[:query])
-    byebug
-
+    query = params[:query]
+    results = Order.joins(:customer).advanced_search(
+      {
+        id: query,
+        customers: {
+          first_name: query,
+          last_name: query
+        }
+      }, false)
+    render :json => results
   end
 
   private
