@@ -26,7 +26,6 @@ Rails.application.routes.draw do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
 
     resources :stores do
-      resources :orders
       resources :conversations do
         resources :messages
       end
@@ -37,6 +36,7 @@ Rails.application.routes.draw do
     resources :shipments
     resources :companies
 
+    get "/orders/search/:query", to: "orders#search"
     post "/customers/find_or_create", to: "customers#find_or_create"
 
     get "/customers/:customer_id/measurements/last", to: "measurements#show"

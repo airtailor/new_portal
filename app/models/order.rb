@@ -133,6 +133,14 @@ class Order < ApplicationRecord
     end
   end
 
+  def self.search(search)
+    id = Order.first.id
+    where("id ILIKE ?", "%#{id}%")
+    #where("id ILIKE ? OR customer.first_name ILIKE ? OR customer.last_name ILIKE ?", "%#{search}%", "%#{search}%", "%#{search}%")
+    #
+     #Order.joins(:customers).where("customer.name like '%?%'", search)
+  end
+
   private
 
   def set_arrival_date

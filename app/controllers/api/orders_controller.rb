@@ -37,6 +37,12 @@ class Api::OrdersController < ApplicationController
     end
   end
 
+  def search
+    @results = Order.search(params[:query])
+    byebug
+
+  end
+
   private
 
   def set_order

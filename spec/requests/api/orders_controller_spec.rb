@@ -16,7 +16,7 @@ RSpec.describe Api::OrdersController, type: :controller do
         retailer: @store 
       )
 
-      get :search, {query: "#{order.id}"}.merge(@auth_headers)
+      get :search, {query: "#{order.customer.first_name}"}.merge(@auth_headers)
       expect(response).to be_success
       #{}"/api/orders/search#{order.id}",
     end
