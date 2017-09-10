@@ -33,12 +33,13 @@ class Api::OrdersController < ApplicationController
       Item.create_items_portal(order, garments)
       render :json => order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
     else
-      byebug
+      render :json => {errors: order.errors.full_messages}
     end
   end
 
   def search
     query = params[:query]
+    store = current_user.store
     results = Order.joins(:customer).advanced_search(
       {
         id: query,
@@ -46,8 +47,8 @@ class Api::OrdersController < ApplicationController
           first_name: query,
           last_name: query
         }
-      }, false)
-    render :json => results
+      }, false).select {|order| order.retailer == store || order.tailor == store } 
+    render :json => results.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   private
