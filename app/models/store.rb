@@ -42,7 +42,11 @@ class Store < ApplicationRecord
   end
 
   def active_orders_count
-    self.orders.active.count
+    if self.type == "Retailer"
+      self.orders.where(fulfilled: false).count
+    elsif self.type == "Tailor"
+      self.orders.active.count
+    end
   end
 
   def transit_to_tailor_count
