@@ -18,7 +18,7 @@ class Api::StoresController < ApplicationController
     if @store.update(store_params)
       render :json => @store.as_json
     else
-      byebug
+      render :json => {errors: @store.errors.full_messages}
     end
   end
 

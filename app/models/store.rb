@@ -7,6 +7,8 @@ class Store < ApplicationRecord
   has_many :conversations, foreign_key: :sender_id
   has_many :conversations, foreign_key: :recipient_id
 
+  validates :name, :street1, :city, :state, :zip, :phone, presence: true
+
   after_create :initiate_conversation
 
   def tailor_orders

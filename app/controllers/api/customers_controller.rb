@@ -15,8 +15,10 @@ class Api::CustomersController < ApplicationController
     customer = Customer.find_or_create_by(phone: params[:customer][:phone])
     customer.update_attributes(customer_params)
     unless customer.errors.blank?
-      puts "def find or create"
-      render :json => {errors: customer.errors.full_messages}
+      errors = [
+        "Oops. That email belongs to a different phone number."
+      ]
+      render :json => {errors: {customer: errors}}
     else
       render :json => customer.as_json
     end
