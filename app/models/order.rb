@@ -46,15 +46,15 @@ class Order < ApplicationRecord
         "Tailor order (##{self.id}) has been placed and we are SO excited to " + 
         "get to work. We'll text you updates along the way. Thank you!" 
 
-      #tags = [self.retailer.name]
-      m_url = "https://cdn.shopify.com/s/files/1/0184/1540/files/dancing_kid.gif?9975520961070565248"
-        
-      SendSonar.message_customer(
-        text: customer_message, 
-        to: self.customer.phone,
-        #tag_names: tags,
-        media_url: m_url
-      )
+        #tags = [self.retailer.name]
+        m_url = "https://cdn.shopify.com/s/files/1/0184/1540/files/dancing_kid.gif?9975520961070565248"
+
+        SendSonar.message_customer(
+          text: customer_message, 
+          to: self.customer.phone,
+          #tag_names: tags,
+          media_url: m_url
+        )
     else 
     end
   end
