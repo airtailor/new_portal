@@ -7,7 +7,7 @@ class Api::CustomersController < ApplicationController
     if @customer.update(customer_params)
       render :json => @customer.as_json
     else
-      byebug
+      render :json => {errors: @customer.errors.full_messages}
     end
   end
 
