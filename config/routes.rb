@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     resources :companies
 
     get "/orders/search/:query", to: "orders#search"
+    get "/orders/archived", to: "orders#archived"
     post "/customers/find_or_create", to: "customers#find_or_create"
 
     get "/customers/:customer_id/measurements/last", to: "measurements#show"

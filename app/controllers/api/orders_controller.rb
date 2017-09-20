@@ -58,6 +58,10 @@ class Api::OrdersController < ApplicationController
     render :json => results.as_json(include: [:customer], methods: [:alterations_count])
   end
 
+  def archived
+    render :json => current_user.store.orders.archived.as_json(include: [:customer], methods: [:alterations_count])
+  end
+
   private
 
   def set_order

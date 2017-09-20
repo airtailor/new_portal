@@ -121,6 +121,8 @@ class Order < ApplicationRecord
 
   scope :active, -> { where(arrived: true).where(fulfilled: false) }
 
+  scope :archived, -> { where(fulfilled: true) }
+
   scope :by_due_date, -> { order(:due_date) }
 
   def items_count
