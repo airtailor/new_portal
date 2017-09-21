@@ -55,7 +55,7 @@ class Api::OrdersController < ApplicationController
           last_name: query
         }
       }, false).select {|order| (order.retailer == store || order.tailor == store || current_user.admin?) } 
-    render :json => results.as_json(include: [:customer], methods: [:alterations_count])
+    render :json => results.order(:created_at).reverse.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   def archived
