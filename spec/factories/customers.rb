@@ -3,7 +3,6 @@ FactoryGirl.define do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     email { Faker::Internet.email }
-    #phone { Faker::Number.number(10) }
     phone { 9045668701 }
     #street1 { Faker::Address.street_address }
     #street2 { Faker::Address.secondary_address }

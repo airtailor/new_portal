@@ -49,5 +49,20 @@ RSpec.describe Api::OrdersController, type: :controller do
       fulfilled = JSON.parse(response.body).first["fulfilled"]
       expect(fulfilled).to be(true)
     end
+
+    it "is ordered by recent fulfilled date" do
+      customer = FactoryGirl.create(:customer, phone: 6167804457)
+      order_two = FactoryGirl.create(
+        :retailer_tailor_order,
+        retailer: @store,
+        customer: customer
+      )
+      order_two.set_fulfilled
+
+      get :archived, {}.merge(@auth_headers)
+      first_date = JSON.parse(response.body).first["fulfilled_date"]
+      second_date = JSON.parse(response.body).second["fulfilled_date"]
+      expect(first_date > second_date).to be(true)
+    end
   end
 end
