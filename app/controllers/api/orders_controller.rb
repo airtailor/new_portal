@@ -59,8 +59,12 @@ class Api::OrdersController < ApplicationController
   end
 
   def archived
-    data = current_user.store.orders.archived.order(:fulfilled_date).reverse
-    render :json => data.as_json(include: [:customer], methods: [:alterations_count])
+    if current_user.admin?
+      data = Order.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer])
+    else 
+      data = current_user.store.orders.archived.order(:fulfilled_date).reverse.as_json(include: [:customer], methods: [:alterations_count])
+    end
+    render :json => data  
   end
 
   private
