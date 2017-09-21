@@ -54,7 +54,7 @@ class Api::OrdersController < ApplicationController
           first_name: query,
           last_name: query
         }
-      }, false).select {|order| order.retailer == store || order.tailor == store } 
+      }, false).select {|order| (order.retailer == store || order.tailor == store || current_user.admin?) } 
     render :json => results.as_json(include: [:customer], methods: [:alterations_count])
   end
 
