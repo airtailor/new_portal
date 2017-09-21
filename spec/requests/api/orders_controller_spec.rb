@@ -15,7 +15,6 @@ RSpec.describe Api::OrdersController, type: :controller do
       @retailer_user.add_role "retailer"
 
       @auth_headers = @admin_user.create_new_auth_token
-     
 
       # need to specify customer in this order so that we 
       # use a unique and valid phone number, and 

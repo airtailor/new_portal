@@ -41,7 +41,7 @@ class Order < ApplicationRecord
   end
 
   def send_order_confirmation_text
-    if self.retailer.name != "Air Tailor" && !(Rails.env.development? || Rails.env.test?)
+    if self.retailer.name != "Air Tailor" #&& !(Rails.env.development? || Rails.env.test?)
       customer_message = "Hey #{self.customer.first_name.capitalize}, your Air " +
         "Tailor order (##{self.id}) has been placed and we are SO excited to " + 
         "get to work. We'll text you updates along the way. Thank you!" 
