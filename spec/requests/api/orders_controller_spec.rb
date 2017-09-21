@@ -11,7 +11,7 @@ RSpec.describe Api::OrdersController, type: :controller do
       @admin_user = FactoryGirl.create(:user, store: @airtailor_store)
       @admin_user.add_role "admin"
 
-      @retailer_user = FactoryGirl.create(:user, store: @airtailor_store)
+      @retailer_user = FactoryGirl.create(:user, store: @retailer_store)
       @retailer_user.add_role "retailer"
 
       @auth_headers = @admin_user.create_new_auth_token
@@ -22,6 +22,7 @@ RSpec.describe Api::OrdersController, type: :controller do
       # use the same first name so they both come up in the search
       @customer_one = FactoryGirl.create(:customer, phone: 9045668701, first_name: "Jones")
       @customer_two = FactoryGirl.create(:customer, phone: 6167804457, first_name: "Jones")
+
       @order_one = FactoryGirl.create(
         :retailer_tailor_order,
         retailer: @retailer_store,
@@ -52,6 +53,15 @@ RSpec.describe Api::OrdersController, type: :controller do
         get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
         data = JSON.parse(response.body)
         expect(data.count).to eq(Order.count)
+      end
+    end
+
+    context "when the user is not an admin" do 
+      it "allows them to search for only their store's orders" do 
+        @auth_headers = @retailer_user.create_new_auth_token
+        get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
+        data = JSON.parse(response.body)
+        expect(data.count).to eq(1)
       end
     end
   end
