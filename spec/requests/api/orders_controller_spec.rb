@@ -40,12 +40,12 @@ RSpec.describe Api::OrdersController, type: :controller do
     end
 
     it "returns a 200 ok" do
-      get :archived, {user_id: @user.id}.merge(@auth_headers)
+      get :archived, {}.merge(@auth_headers)
       expect(response).to be_success
     end
 
     it "returns archived orders" do
-      get :archived, {user_id: @user.id}.merge(@auth_headers)
+      get :archived, {}.merge(@auth_headers)
       fulfilled = JSON.parse(response.body).first["fulfilled"]
       expect(fulfilled).to be(true)
     end
