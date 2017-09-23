@@ -5,7 +5,7 @@ class Api::MessagesController < ApplicationController
   def create
     message = Message.create(message_params)
     if message.save
-      data = message.conversation.as_json({include: [:messages => {include: [:store]}], methods: [:sender, :recipient]})
+      data = message.conversation.as_json({include: [:messages => {include: [:store]}], methods: [:sender, :recipient, :sender_read, :recipient_read]})
       render :json => data
     else
       render :json => {errors: message.errors.full_message}
