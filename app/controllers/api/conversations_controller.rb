@@ -12,6 +12,7 @@ class Api::ConversationsController < ApplicationController
 
   def show
     data = @conversation.as_json({include: [:messages => {include: [:store]}], methods: [:sender, :recipient, :sender_read, :recipient_read]})
+    data["messages"].sort_by!{|m| m["id"]}
     render :json => data
   end
 

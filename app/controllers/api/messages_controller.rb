@@ -16,6 +16,7 @@ class Api::MessagesController < ApplicationController
     @message.update(message_params)
     if @message.save
       data = @message.conversation.as_json({include: [:messages => {include: [:store]}], methods: [:sender, :recipient]})
+      data["messages"].sort_by!{|m| m["id"]}
       render :json => data
     else
       render :json => {errors: message.errors.full_message}
