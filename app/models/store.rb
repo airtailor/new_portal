@@ -7,9 +7,14 @@ class Store < ApplicationRecord
   has_many :conversations, foreign_key: :sender_id
   has_many :conversations, foreign_key: :recipient_id
 
-  validates :name, :street1, :city, :state, :zip, :phone, presence: true
+  validates :name, :street1, :city, :state, :zip, :phone, :country, presence: true
 
+  before_validation :default_values
   after_create :initiate_conversation
+
+  def default_values
+    self.country = "United States" if self.country.nil?
+  end
 
   def tailor_orders
     self.orders.where(type: "TailorOrder")
