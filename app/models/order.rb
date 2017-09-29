@@ -37,7 +37,6 @@ class Order < ApplicationRecord
 
       self.tailor = Tailor.find_by(name: "Tailoring NYC")
     end
-
   end
 
   def send_order_confirmation_text
