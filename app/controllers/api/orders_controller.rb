@@ -40,6 +40,7 @@ class Api::OrdersController < ApplicationController
       if e.message.include?("Invalid Phone Number")
         render :json => {errors: ["Invalid Phone Number"]}
       else 
+        render :json => {errors: e}
       end
     end
   end

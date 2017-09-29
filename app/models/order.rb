@@ -41,8 +41,21 @@ class Order < ApplicationRecord
   end
 
   def send_order_confirmation_text
+    customer = self.customer
+    phone = customer.phone
+    email = customer.email
+    first_name = customer.first_name
+    last_name = customer.last_name
+
+    SendSonar.add_customer(
+      phone_number: phone,
+      email: email,
+      first_name: first_name,
+      last_name: last_name,
+    )
+
     if self.retailer.name != "Air Tailor" #&& !(Rails.env.development? || Rails.env.test?)
-      customer_message = "Hey #{self.customer.first_name.capitalize}, your Air " +
+      customer_message = "Hey #{first_name.capitalize}, your Air " +
         "Tailor order (##{self.id}) has been placed and we are SO excited to " + 
         "get to work. We'll text you updates along the way. Thank you!" 
 
@@ -51,7 +64,7 @@ class Order < ApplicationRecord
 
         SendSonar.message_customer(
           text: customer_message, 
-          to: self.customer.phone,
+          to: phone,
           #tag_names: tags,
           media_url: m_url
         )
