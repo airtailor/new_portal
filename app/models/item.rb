@@ -24,17 +24,17 @@ class Item < ApplicationRecord
   end
 
   def self.create_items_portal(order, items)
-    airtailor_message = "Congrats :) An order with #{items.count} items" + 
+    airtailor_message = "Congrats :) An order with #{items.count} items" +
       " was just placed at #{order.retailer.name} for $#{order.total}!"
 
     phone_list = ["9045668701", "6167804457", "6302352544"]
     #phone_list = ["9045668701"]
-    phone_list.each do |phone| 
+    phone_list.each do |phone|
       SendSonar.message_customer(text: airtailor_message, to: phone)
     end
 
     items.each do |item|
-      item_name = item["title"]
+      item_name = item["title"] || item[:title]
       item_type = grab_item_type_from_title(item_name)
       new_item = self.create(name: item_name, item_type: item_type, order: order)
 
