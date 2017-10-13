@@ -32,8 +32,9 @@ class Order < ApplicationRecord
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
 
-    if (self.retailer.name == "Steven Alan - Tribeca" || 
-        self.retailer.name == "Frame Denim - SoHo")
+    if (self.retailer.name == "Steven Alan - Tribeca" ||
+        self.retailer.name == "Frame Denim - SoHo" ||
+        self.retailer.name == "Rag & Bone - SoHo")
 
       self.tailor = Tailor.find_by(name: "Tailoring NYC")
     end
@@ -55,19 +56,19 @@ class Order < ApplicationRecord
 
     if self.retailer.name != "Air Tailor" #&& !(Rails.env.development? || Rails.env.test?)
       customer_message = "Hey #{first_name.capitalize}, your Air " +
-        "Tailor order (##{self.id}) has been placed and we are SO excited to " + 
-        "get to work. We'll text you updates along the way. Thank you!" 
+        "Tailor order (##{self.id}) has been placed and we are SO excited to " +
+        "get to work. We'll text you updates along the way. Thank you!"
 
         #tags = [self.retailer.name]
         m_url = "https://cdn.shopify.com/s/files/1/0184/1540/files/dancing_kid.gif?9975520961070565248"
 
         SendSonar.message_customer(
-          text: customer_message, 
+          text: customer_message,
           to: phone,
           #tag_names: tags,
           media_url: m_url
         )
-    else 
+    else
     end
   end
 
