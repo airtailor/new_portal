@@ -37,15 +37,15 @@ steven_alan_user = User.create(
   password: "stevenalan",
   store: steven_alan_tribeca_retailer
 )
-stevenalan_user.add_role :retailer
+steven_alan_user.add_role :retailer
 
-frame_user = User.create(email: "test@framedenim.com", password: "framedenim", store: soho)
+frame_user = User.create(email: "test@framedenim.com", password: "framedenim", store: steven_alan_soho_retailer)
 frame_user.add_role :retailer
 
 brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
 brian.add_role :admin
 
-tailor = User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring)
+tailor = User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: t_nyc_tailor)
 tailor.add_role :tailor
 
 #5.times do |n|
