@@ -2,13 +2,13 @@ namespace :db do
   desc "
     Drop the sample DB, then insert production data.
     ex:
-      rails db:overwrite PATH=~/new_portal/lib/data/1718184516_db_dump
+      rails db:overwrite DUMP_PATH=~/new_portal/lib/data/1718184516_airtailor_development.dump
 
   "
   task :overwrite => [:environment, 'db:drop', 'db:create', 'db:migrate'] do |task, args|
-      file_path = ENV['PATH']
+      file_path = ENV['DUMP_PATH']
       if File.exist?(file_path)
-        sh %{psql #{environment_db} << #{file_path}}
+        sh %{psql #{environment_db} < #{file_path}}
         sh %{rails db:seed}
       else
         puts "File not found or not given. Double-check the path."
