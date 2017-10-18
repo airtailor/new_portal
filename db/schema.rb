@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171018160225) do
+ActiveRecord::Schema.define(version: 20171018160425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,8 @@ ActiveRecord::Schema.define(version: 20171018160225) do
     t.datetime "updated_at",         null: false
     t.string   "type"
     t.string   "name",               null: false
+    t.integer  "address_id"
+    t.index ["address_id"], name: "index_stores_on_address_id", using: :btree
     t.index ["company_id"], name: "index_stores_on_company_id", using: :btree
   end
 
@@ -248,5 +250,6 @@ ActiveRecord::Schema.define(version: 20171018160225) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "orders"
   add_foreign_key "messages", "stores"
+  add_foreign_key "stores", "addresses"
   add_foreign_key "users", "stores"
 end

@@ -1,4 +1,7 @@
 class BackfillAddressData < ActiveRecord::Migration[5.0]
-  def change
+  def up
+  end
+
+  def down
   end
 end
