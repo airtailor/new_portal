@@ -1,17 +1,3 @@
-
-Shipment.destroy_all
-User.destroy_all
-Order.destroy_all
-Store.destroy_all
-Company.destroy_all
-
-Measurement.destroy_all
-Customer.destroy_all
-
-Alteration.destroy_all
-Item.destroy_all
-ItemType.destroy_all
-
 ItemType.create([
   {name: "Pants"},
   {name: "Shirt"},
@@ -19,7 +5,6 @@ ItemType.create([
   {name: "Jacket"},
   {name: "Dress"}
 ])
-
 
 air_tailor_co = Company.create(name: "Air Tailor")
 banana_co = Company.create(name: "Banana Republic")
@@ -32,17 +17,12 @@ tribeca = FactoryGirl.create(:retailer, name: "Steven Alan - Tribeca", company: 
 soho = FactoryGirl.create(:retailer, name: "Frame Denim - SoHo", company: steven)
 tailoring = FactoryGirl.create(:tailor, name: "Tailoring NYC", company: t_nyc)
 
-stevenalan_user = User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca)
-stevenalan_user.add_role :retailer
+User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca).add_role :retailer
+User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor).add_role(:admin)
+User.create(email: "test@framedenim.com", password: "framedenim", store: soho).add_role(:retailer)
+User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring).add_role(:tailor)
 
-frame_user = User.create(email: "test@framedenim.com", password: "framedenim", store: soho)
-frame_user.add_role :retailer
 
-brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
-brian.add_role :admin
-
-tailor = User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring)
-tailor.add_role :tailor
 
 #5.times do |n|
 #  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)
