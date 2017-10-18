@@ -3,6 +3,7 @@ class Customer < ApplicationRecord
   validates :shopify_id, uniqueness: true, allow_blank: true
   validates :first_name, :last_name, presence: true
 
+  has_many :addresses, inverse_of: :customer, through: :customer_addresses
   has_many :measurements
 
   def last_measurement
@@ -60,19 +61,7 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    {
-      #:object_purpose => "PURCHASE",
-      :name => self.name,
-      :street1 => self.street1,
-      :street2 => self.street2,
-      :city => self.city,
-      :country => self.country,
-      :state => self.state,
-      :zip => self.zip,
-      :phone => self.phone,
-      :email => self.email,
-    }
+    address.for_shippo(self)
   end
 
 end
-
