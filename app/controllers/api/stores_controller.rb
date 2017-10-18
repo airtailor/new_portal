@@ -3,7 +3,7 @@ class Api::StoresController < ApplicationController
   before_action :set_store, only: [:show, :update]
 
   def show
-    data =  @store.as_json(
+    render :json => @store.as_json(
       methods: [
         :active_orders_count,
         :unread_messages_count,
@@ -11,7 +11,6 @@ class Api::StoresController < ApplicationController
         :transit_to_tailor_count
       ]
     )
-    render :json => data
   end
 
   def update
@@ -23,9 +22,9 @@ class Api::StoresController < ApplicationController
   end
 
   def create
-    store = Store.create(store_params)
-    if store.save
-      render :json => store.as_json
+    @store = Store.create(store_params)
+    if @store.save
+      render :json => @store.as_json
     else
       byebug
     end
@@ -33,12 +32,11 @@ class Api::StoresController < ApplicationController
 
   def orders_and_messages_count
     store = current_user.store
-    data = {
+    render :json =>  {
       unread_messages_count: store.unread_messages_count,
       active_orders_count: store.active_orders_count,
       late_orders_count: store.late_orders_count
     }
-    render :json => data
   end
 
   private
@@ -49,9 +47,7 @@ class Api::StoresController < ApplicationController
 
   def store_params
     #if current_user.tailor?
-      params.require(:store)
-        .permit(
-          :name, :phone, :street1, :street2, :city, :state, :zip, :company_id)
+    params.require(:store).permit( :name, :phone, :address_data, :company_id )
     #end
   end
 end
