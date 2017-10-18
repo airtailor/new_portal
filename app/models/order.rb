@@ -14,6 +14,15 @@ class Order < ApplicationRecord
   after_initialize :init
   after_create :send_order_confirmation_text
 
+  scope :by_type, -> type { where(type: type) }
+  scope :fulfilled, -> bool { where(fulfilled: bool)}
+  scope :arrived, -> bool { where(arrived: bool)}
+  scope :late, -> bool { where(late: bool) }
+
+  scope :open_orders, -> { order(:due_date).fulfilled(false)}
+  scope :active, -> { arrived(true).fulfilled(false) }
+  scope :archived, -> { fulfilled(true) }
+
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
   def serializable_hash options=nil
@@ -83,14 +92,6 @@ class Order < ApplicationRecord
     set_fulfilled_date
   end
 
-  def self.on_time
-    self.where(late: false)
-  end
-
-  def self.late
-    self.where(late: true)
-  end
-
   def self.find_or_create(order_info, customer, source = "Shopify")
     self.find_or_create_by(source_order_id: order_info["id"], source: source, customer: customer) do |order|
       order.total = order_info["total_price"]
@@ -129,14 +130,6 @@ class Order < ApplicationRecord
   def self.needs_assigned
     self.where("orders.provider_id IS NULL")
   end
-
-  scope :unfulfilled, -> { where(fulfilled: false)}
-
-  scope :active, -> { where(arrived: true).where(fulfilled: false) }
-
-  scope :archived, -> { where(fulfilled: true) }
-
-  scope :by_due_date, -> { order(:due_date) }
 
   def items_count
     self.items.count

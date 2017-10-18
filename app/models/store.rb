@@ -14,11 +14,11 @@ class Store < ApplicationRecord
   after_create :initiate_conversation
 
   def tailor_orders
-    self.orders.where(type: "TailorOrder")
+    self.orders.by_type("TailorOrder")
   end
 
   def welcome_kits
-    self.orders.where(type: "WelcomeKit")
+    self.orders.by_type("WelcomeKit")
   end
 
   def shippo_address
@@ -26,16 +26,16 @@ class Store < ApplicationRecord
   end
 
   def open_orders
-    self.orders.order(:due_date).unfulfilled
+    self.orders.open_orders
   end
 
   def late_orders_count
-    self.orders.late.count
+    self.orders.late(true).count
   end
 
   def active_orders_count
     if self.type == "Retailer"
-      self.orders.where(fulfilled: false).count
+      self.orders.fulfilled(false).count
     elsif self.type == "Tailor"
       self.orders.active.count
     end
