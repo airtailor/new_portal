@@ -2,7 +2,7 @@ class BackfillOldAddresses
   require 'street_address'
 
   def self.run
-    # build_address_table(Store)
+    build_address_table(Store)
     build_address_table(Customer)
   end
 
