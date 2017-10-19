@@ -3,7 +3,8 @@ class Customer < ApplicationRecord
   validates :shopify_id, uniqueness: true, allow_blank: true
   validates :first_name, :last_name, presence: true
 
-  has_many :addresses, inverse_of: :customer, through: :customer_addresses
+  has_many :customer_addresses
+  has_many :addresses, through: :customer_addresses
   has_many :measurements
 
   def last_measurement

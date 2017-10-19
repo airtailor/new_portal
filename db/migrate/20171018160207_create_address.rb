@@ -2,20 +2,21 @@ class CreateAddress < ActiveRecord::Migration[5.0]
   def up
     create_table :addresses do |t|
       t.string "street",            null: false
-      t.string "cross_street"
+      t.string "street_two"
       t.string "number",            null: false
       t.string "city",              null: false
       t.string "zip_code",          null: false
       t.string "state_province",    null: false
       t.string "country",           null: false, default: "United States"
       t.string "country_code",      null: false, default: "US"
-      t.string "floor",             default: nil
-      t.string "unit",              default: nil
+      t.string "floor"
+      t.string "unit"
 
       t.timestamps
     end
 
     add_index :addresses, :street, using: 'btree'
+    add_index :addresses, :street_two, using: 'btree'
     add_index :addresses, :number, using: 'btree'
     add_index :addresses, :city, using: 'btree'
     add_index :addresses, :state_province, using: 'btree'
@@ -45,12 +46,14 @@ class CreateAddress < ActiveRecord::Migration[5.0]
 
   def down
     remove_index(:addresses, {:name=>"by_compound_location"})
+
     remove_index(:addresses, {:column=>:unit})
     remove_index(:addresses, {:column=>:floor})
     remove_index(:addresses, {:column=>:zip_code})
     remove_index(:addresses, {:column=>:state_province})
     remove_index(:addresses, {:column=>:city})
     remove_index(:addresses, {:column=>:number})
+    remove_index(:addresses, {:column=>:street_two})
     remove_index(:addresses, {:column=>:street})
 
     drop_table :addresses

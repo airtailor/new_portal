@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171018195239) do
+ActiveRecord::Schema.define(version: 20171018160425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "addresses", force: :cascade do |t|
     t.string   "street",                                   null: false
-    t.string   "cross_street"
+    t.string   "street_two"
     t.string   "number",                                   null: false
     t.string   "city",                                     null: false
     t.string   "zip_code",                                 null: false
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20171018195239) do
     t.index ["number"], name: "index_addresses_on_number", using: :btree
     t.index ["state_province"], name: "index_addresses_on_state_province", using: :btree
     t.index ["street"], name: "index_addresses_on_street", using: :btree
+    t.index ["street_two"], name: "index_addresses_on_street_two", using: :btree
     t.index ["unit"], name: "index_addresses_on_unit", using: :btree
     t.index ["zip_code"], name: "index_addresses_on_zip_code", using: :btree
   end

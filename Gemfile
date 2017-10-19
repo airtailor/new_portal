@@ -39,6 +39,8 @@ gem 'textacular', '~> 5.0'
 # Background job processing + asymc
 gem 'sidekiq'
 
+gem 'StreetAddress'
+
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'better_errors'

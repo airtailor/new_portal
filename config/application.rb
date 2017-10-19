@@ -8,8 +8,6 @@ Bundler.require(*Rails.groups)
 
 module NewAirtailorPortal
   class Application < Rails::Application
-    config.eager_load_paths << '../app/workers'
-    
     config.middleware.use Rack::Cors do
       allow do
         origins '*'

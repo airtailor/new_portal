@@ -1,14 +1,11 @@
 class Address < ApplicationRecord
+  include AddressConstants
+
   validates_presence_of :number, :street, :city, :state_province, :zip_code
-  validates_presence_of :floor, :unit, if: :is_apartment?
 
   has_many :customer_addresses
   has_many :customers, through: :customer_address
   has_many :stores
-
-  def is_apartment?
-    floor.present? || unit.present?
-  end
 
   def shippo_street_1
     "#{number} #{street}"
