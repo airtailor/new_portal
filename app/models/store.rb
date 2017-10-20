@@ -13,6 +13,11 @@ class Store < ApplicationRecord
 
   after_create :initiate_conversation
 
+  def set_address(params)
+    self.build_address
+    self.address.parse(params)    
+  end
+
   def tailor_orders
     self.orders.by_type("TailorOrder")
   end

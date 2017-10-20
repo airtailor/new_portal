@@ -14,16 +14,20 @@ t_nyc = Company.create(name: "Tailoring NYC")
 
 airtailor = FactoryGirl.create(:retailer,
   name: "Air Tailor", phone: "630 235 2554",
-  company: air_tailor_co )
+  company: air_tailor_co
+)
 steven_alan_tribeca_retailer = FactoryGirl.create(:retailer,
   name: "Steven Alan - Tribeca", phone: "630 235 2554",
-  company: steven_alan_co)
+  company: steven_alan_co
+)
 steven_alan_soho_retailer = FactoryGirl.create(:retailer,
   name: "Frame Denim - SoHo", phone: "630 235 2554",
-  company: steven_alan_co)
+  company: steven_alan_co
+)
 t_nyc_tailor = FactoryGirl.create(:tailor,
   name: "Tailoring NYC", phone: "630 235 2554",
-  company: t_nyc)
+  company: t_nyc
+)
 
 User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca).add_role :retailer
 User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor).add_role(:admin)

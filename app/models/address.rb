@@ -1,4 +1,5 @@
 class Address < ApplicationRecord
+  include StreetAddress
   include AddressConstants
 
   validates_presence_of :number, :street, :city, :state_province, :zip_code
@@ -15,6 +16,80 @@ class Address < ApplicationRecord
     "#{unit} #{floor}"
   end
 
+  def parse_street_name(street, country_code)
+    return nil unless country_code.to_sym == :US
+    StreetAddress::US.parse(street)
+  end
+
+  def extract_street_and_number(params)
+    addy_string = "#{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
+
+    if parsed_street = parse_street_name(addy_string, self.country_code)
+      self.number = parsed_street.number
+      self.street = "#{parsed_street.street} #{parsed_street.street_type}"
+      self.city, self.zip_code = parsed_street.city, parsed_street.postal_code
+    else
+      self.number = street.scan(/^\d+/)[0] || nil
+      if self.number
+        self.street = street.split(/^\d+\W+/).reject{|elem| elem == ""}.join("")
+      end
+    end
+
+    self
+  end
+
+  def parse(params)
+    self.assign_attributes({
+      street: params[:street1],
+      street_two: params[:street2],
+      number: "",
+      city: params[:city],
+      zip_code: params[:zip],
+      state_province: params[:state],
+      country: params[:country] || "United States",
+      floor: "",
+      unit: ""
+    })
+
+    self.extract_street_and_number(params)
+    self.set_state_abbreviation
+    self.set_country_and_country_code
+
+    return self
+  end
+
+  def set_state_abbreviation
+    state = self.state_province
+    return if state.in?(STATE_CODES.values)
+
+    current_state = state
+    state = STATE_CODES.get(current_state)
+    state ||= current_state
+
+    self.state_province = state
+  end
+
+  def set_country_and_country_code
+    country_code, country = self.country_code, self.country
+    return if country_code.in?(COUNTRY_CODES.values) && country.in?(COUNTRIES.values)
+
+    current_country = country.upcase
+    if country.in?(COUNTRIES.values)
+      country = country
+      country_code = country_codes.get(country)
+    elsif country.in?(COUNTRY_CODES.values)
+      country = COUNTRY_CODES.get(country)
+      country_code = country
+    else
+      # leave country alone if not found.
+      country_code = COUNTRY_CODES.get(current_country)
+      country_code ||= current_country
+    end
+
+    self.country_code = country_code
+    self.country = country
+  end
+
   def for_shippo(contact)
     return {
       name: contact.name,
@@ -27,11 +102,6 @@ class Address < ApplicationRecord
       state: self.state,
       zip: self.zip_code
     }
-  end
-
-  def convert_street_strings_to_geo_data(location)
-    unit =
-    {unit: unit, floor: floor, street: street_name}
   end
 
 end

@@ -14,7 +14,10 @@ class Api::StoresController < ApplicationController
   end
 
   def update
-    if @store.update(store_params)
+    @store.assign_attributes(store_params)
+    @store.set_address(store_params)
+
+    if @store.save
       render :json => @store.as_json
     else
       render :json => {errors: @store.errors.full_messages}
@@ -22,7 +25,9 @@ class Api::StoresController < ApplicationController
   end
 
   def create
-    @store = Store.create(store_params)
+    @store = Store.new(store_params)
+    @store.set_address(store_params)
+
     if @store.save
       render :json => @store.as_json
     else

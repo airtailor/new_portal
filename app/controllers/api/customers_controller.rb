@@ -5,6 +5,7 @@ class Api::CustomersController < ApplicationController
 
   def update
     if @customer.update(customer_params)
+      @customer.set_address(customer_params)
       render :json => @customer.as_json
     else
       render :json => {errors: @customer.errors.full_messages}
@@ -12,15 +13,16 @@ class Api::CustomersController < ApplicationController
   end
 
   def find_or_create
-    customer = Customer.find_or_create_by(phone: params[:customer][:phone])
-    customer.update_attributes(customer_params)
-    unless customer.errors.blank?
+    @customer = Customer.find_or_create_by(phone: params[:customer][:phone])
+    @customer.update_attributes(customer_params)
+    unless @customer.errors.blank?
       errors = [
         "Oops. That email belongs to a different phone number."
       ]
       render :json => {errors: {customer: errors}}
     else
-      render :json => customer.as_json
+      @customer.set_address(customer_params)
+      render :json => @customer.as_json
     end
   end
 
@@ -32,11 +34,15 @@ class Api::CustomersController < ApplicationController
 
   def customer_params
     params.require(:customer).permit(
-      :email,
       :first_name,
       :last_name,
-      :address_data
       :phone,
+      :email,
+      :street1,
+      :street2,
+      :city,
+      :state,
+      :zip,
       :agrees_to_terms
     )
   end

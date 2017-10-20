@@ -18,6 +18,11 @@ class Customer < ApplicationRecord
     self.country = "United States"
   end
 
+  def set_address(params)
+    new_address = self.addresses.build
+    new_address.parse(params)
+  end
+
   def create_blank_measurements
     customer = self
     Measurement.create(
