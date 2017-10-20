@@ -14,8 +14,23 @@ class Store < ApplicationRecord
   after_create :initiate_conversation
 
   def set_address(params)
-    self.build_address
-    self.address.parse(params)    
+    address = Address.where(params).first
+    if address
+      self.address = address.parse_and_save(params)
+    else
+      self.build_address.parse_and_save(params)
+    end
+  end
+
+  def update_address(params)
+    address = self.address
+    address ||= Address.where(params).first
+
+    if address
+      self.address = address.parse_and_save(params)
+    else
+      self.build_address.parse_and_save(params)
+    end
   end
 
   def tailor_orders

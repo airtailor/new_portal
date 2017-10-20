@@ -15,7 +15,7 @@ class Api::StoresController < ApplicationController
 
   def update
     @store.assign_attributes(store_params)
-    @store.set_address(store_params)
+    @store.update_address(address_params)
 
     if @store.save
       render :json => @store.as_json
@@ -26,7 +26,7 @@ class Api::StoresController < ApplicationController
 
   def create
     @store = Store.new(store_params)
-    @store.set_address(store_params)
+    @store.set_address(address_params)
 
     if @store.save
       render :json => @store.as_json
@@ -52,7 +52,34 @@ class Api::StoresController < ApplicationController
 
   def store_params
     #if current_user.tailor?
-    params.require(:store).permit( :name, :phone, :address_data, :company_id )
+      params.require(:store)
+        .except(*permitted_address_fields)
+        .permit(*permitted_store_fields)
+    end
     #end
+  end
+
+  def permitted_store_fields
+    [ :name, :phone, :company_id ]
+  end
+
+  def address_params
+    required_address_fields.each do |field|
+      params.require(:customer).require(field)
+    end
+
+    params.require(:customer)
+      .except(*permitted_customer_fields)
+      .permit(*permitted_address_fields)
+  end
+
+  def required_address_fields
+    [ :street, :city, :state_province, :zip_code ]
+  end
+
+  def permitted_address_fields
+    fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
+
+    return fields + required_address_fields
   end
 end

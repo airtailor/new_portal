@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20171018160425) do
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
     t.index ["city"], name: "index_addresses_on_city", using: :btree
-    t.index ["country", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location", unique: true, using: :btree
+    t.index ["country", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location", using: :btree
     t.index ["floor"], name: "index_addresses_on_floor", using: :btree
     t.index ["number"], name: "index_addresses_on_number", using: :btree
     t.index ["state_province"], name: "index_addresses_on_state_province", using: :btree

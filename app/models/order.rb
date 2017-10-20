@@ -12,7 +12,7 @@ class Order < ApplicationRecord
 
   validates :retailer, presence: true
   after_initialize :init
-  after_create :send_order_confirmation_text
+  # after_create :send_order_confirmation_text
 
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}

@@ -10,6 +10,7 @@ namespace :db do
       file_path = ENV['DUMP_PATH']
       if File.exist?(file_path)
         sh %{ pg_restore --verbose --clean --no-acl --no-owner -h localhost -d #{environment_db} #{file_path} }
+        sh %{ bin/rails db:environment:set RAILS_ENV=#{Rails.env} }
       else
         puts "File not found or not given. Double-check the path."
       end

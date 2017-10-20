@@ -23,39 +23,30 @@ class Address < ApplicationRecord
 
   def extract_street_and_number(params)
     addy_string = "#{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
-
     if parsed_street = parse_street_name(addy_string, self.country_code)
-      self.number = parsed_street.number
-      self.street = "#{parsed_street.street} #{parsed_street.street_type}"
-      self.city, self.zip_code = parsed_street.city, parsed_street.postal_code
+      if parsed_street.street && parsed_street.street_type
+        self.street = "#{parsed_street.street} #{parsed_street.street_type}"
+      end
+
+      self.number   = parsed_street.number if parsed_street.number
+      self.city     = parsed_street.city if parsed_street.city
+      self.zip_code = parsed_street.postal_code if parsed_street.postal_code
     else
       self.number = street.scan(/^\d+/)[0] || nil
       if self.number
         self.street = street.split(/^\d+\W+/).reject{|elem| elem == ""}.join("")
       end
     end
-
-    self
   end
 
-  def parse(params)
-    self.assign_attributes({
-      street: params[:street1],
-      street_two: params[:street2],
-      number: "",
-      city: params[:city],
-      zip_code: params[:zip],
-      state_province: params[:state],
-      country: params[:country] || "United States",
-      floor: "",
-      unit: ""
-    })
+  def parse_and_save(params)
+    self.assign_attributes(params)
 
     self.extract_street_and_number(params)
     self.set_state_abbreviation
     self.set_country_and_country_code
 
-    return self
+    self.save
   end
 
   def set_state_abbreviation
