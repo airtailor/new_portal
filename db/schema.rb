@@ -24,7 +24,6 @@ ActiveRecord::Schema.define(version: 20171018231226) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "name"
-    t.float    "price"
   end
 
   create_table "companies", force: :cascade do |t|
