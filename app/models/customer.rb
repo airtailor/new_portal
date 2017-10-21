@@ -13,7 +13,7 @@ class Customer < ApplicationRecord
   after_create :create_blank_measurements
 
   def add_country
-    self.country = "United States"
+    self.country ||= "United States"
   end
 
   def create_blank_measurements
@@ -75,4 +75,3 @@ class Customer < ApplicationRecord
   end
 
 end
-

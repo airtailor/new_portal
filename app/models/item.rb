@@ -24,22 +24,27 @@ class Item < ApplicationRecord
   end
 
   def self.create_items_portal(order, items)
+    #puts items
+    #binding.pry
     airtailor_message = "Congrats :) An order with #{items.count} items" +
       " was just placed at #{order.retailer.name} for $#{order.total}!"
 
-    phone_list = ["9045668701", "6167804457", "6302352544"]
-    #phone_list = ["9045668701"]
-    phone_list.each do |phone|
-      SendSonar.message_customer(text: airtailor_message, to: phone)
-    end
+    # phone_list = ["9045668701", "6167804457", "6302352544"]
+    # #phone_list = ["9045668701"]
+    # phone_list.each do |phone|
+    #   SendSonar.message_customer(text: airtailor_message, to: phone)
+    # end
 
     items.each do |item|
+      #puts item
+      #binding.pry
       item_name = item["title"] || item[:title]
       item_type = grab_item_type_from_title(item_name)
       new_item = self.create(name: item_name, item_type: item_type, order: order)
 
       item[:alterations].each do |alt|
-        alteration = find_or_create_alteration(alt[:title])
+        title = alt[:title] || alt[:variant_title]
+        alteration = find_or_create_alteration(title)
         find_or_create_alteration_item(alteration, new_item)
       end
     end
