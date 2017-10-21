@@ -12,7 +12,7 @@ class Order < ApplicationRecord
 
   validates :retailer, presence: true
   after_initialize :init
-  #after_create :send_order_confirmation_text
+  after_create :send_order_confirmation_text
 
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
