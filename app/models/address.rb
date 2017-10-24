@@ -8,9 +8,6 @@ class Address < ApplicationRecord
   has_many :customers, through: :customer_address
   has_many :stores
 
-  has_many :shipments, as: :source
-  has_many :shipments, as: :destination
-
   def shippo_street_1
     "#{number} #{street}"
   end

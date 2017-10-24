@@ -36,16 +36,28 @@ class Order < ApplicationRecord
     ]
   end
 
+  def text_order_customers
+    if ((retailer.name != "Air Tailor") && (order_status == "completed"))
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Airtailor Order (id: #{id}) is finished and is on its way to you! " +
+        "Here's your USPS tracking number: #{tracking_number}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+    end
+  end
+
   def init
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
 
-    if (self.retailer.name == "Steven Alan - Tribeca" ||
-        self.retailer.name == "Frame Denim - SoHo" ||
-        self.retailer.name == "Rag & Bone - SoHo")
+    stores_with_tailors = [
+      "Steven Alan - Tribeca",
+      "Frame Denim - SoHo",
+      "Rag & Bone - SoHo"
+    ]
 
-      self.tailor = Tailor.find_by(name: "Tailoring NYC")
+    if self.retailer.name.in? stores_with_tailors
+      self.tailor = Tailor.where(name: "Tailoring NYC").first
     end
   end
 

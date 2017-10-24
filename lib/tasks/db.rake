@@ -6,8 +6,25 @@ namespace :db do
 
   "
 
-  task import: :environment do |task, args|
+  task :terminate => :environment do
+    ActiveRecord::Base.connection.execute <<-SQL
+      SELECT
+        pg_terminate_backend(pid)
+      FROM
+        pg_stat_activity
+      WHERE
+        -- don't kill my own connection!
+        pid <> pg_backend_pid()
+      AND
+      -- don't kill the connections to other databases
+        datname = '#{ActiveRecord::Base.connection.current_database}';
+    SQL
+  end
+
+  task :overwrite => [:environment, :terminate] do |task, args|
+      return "DO NOT WIPE PROD." if Rails.env == 'production'
       file_path = ENV['DUMP_PATH']
+
       if File.exist?(file_path)
         sh %{ pg_restore --verbose --clean --no-acl --no-owner -h localhost -d #{environment_db} #{file_path} }
         sh %{ bin/rails db:environment:set RAILS_ENV=#{Rails.env} }

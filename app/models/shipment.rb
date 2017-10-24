@@ -7,35 +7,34 @@ class Shipment < ApplicationRecord
   has_many :shipment_orders
   has_many :orders, through: :shipment_orders
 
-  # after_initialize :add_order_weight, :configure_shippo
-  # after_create :send_text_to_customer
+  has_many :addresses, as: :source
+  has_many :addresses, as: :destination
+
+
+  after_initialize :add_order_weight
+  after_initialize :configure_shippo
+  after_create :text_all_shipment_customers
 
   private
 
-  def send_text_to_customer
-    if ((self.order.retailer.name != "Air Tailor") && (self.type == "OutgoingShipment"))
-      customer = self.order.customer
-      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
-        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " +
-        "Here's your USPS tracking number: #{self.tracking_number}"
-      SendSonar.message_customer(text: customer_message, to: customer.phone)
-    end
+  def text_all_shipment_customers
+    orders.map(&:text_order_customers)
   end
 
   def add_order_weight
     # NOTE: we need to add weight to items.
     # Weight comes in from Shopify or React, Rails does nothing.
-
-    self.weight = self.order.weight
+    self.weight = self.orders.sum(:weight)
   end
 
   def configure_shippo
+
     Shippo.api_token = ENV["SHIPPO_KEY"]
     # Shippo.api_version = ENV["SHIPPO_API_VERSION"]
     Shippo.api_version = '2017-03-29'
 
-    to_address = get_ship_to_address
-    from_address = get_ship_from_address
+    to_address = source_address
+    from_address = destination_address
     parcel = get_parcel
 
     Rails.logger.info "to_address: #{to_address}"
@@ -48,40 +47,32 @@ class Shipment < ApplicationRecord
     add_tracking_number(shippo_transaction)
   end
 
-  def get_ship_to_address
-    if self.type == "OutgoingShipment"
-      # outgoing shipments always go to customer! :* )
-      if self.order.ship_to_store
-        get_retailer_address
-      else
-        get_customer_address
-      end
-    elsif self.type == "IncomingShipment"
-      get_tailor_address if self.order.type == "TailorOrder"
-      get_retailer_address if self.order.type == "WelcomeKit"
-    end
+  def source_address(inhabitant)
+    source.for_shippo(inhabitant.address)
+    #
+    # if self.type == "OutgoingShipment"
+    #   # outgoing shipments always go to customer! :* )
+    #   if self.order.ship_to_store
+    #     get_retailer_address
+    #   else
+    #     get_customer_address
+    #   end
+    # elsif self.type == "IncomingShipment"
+    #   get_tailor_address if self.order.type == "TailorOrder"
+    #   get_retailer_address if self.order.type == "WelcomeKit"
+    # end
   end
 
-  def get_ship_from_address
-    if self.type == "OutgoingShipment"
-      Rails.logger.info "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
-      return get_tailor_address if self.order.type == "TailorOrder"
-      return get_retailer_address if self.order.type == "WelcomeKit"
-    elsif self.type == "IncomingShipment"
-      return get_customer_address
-    end
-  end
+  def destination_address(inhabitant)
+    destination.for_shippo(inhabitant.address)
 
-  def get_customer_address
-    self.order.customer.shippo_address
-  end
-
-  def get_tailor_address
-    self.order.tailor.shippo_address
-  end
-
-  def get_retailer_address
-    self.order.retailer.shippo_address
+    # if self.type == "OutgoingShipment"
+    #   Rails.logger.info "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
+    #   return get_tailor_address if self.order.type == "TailorOrder"
+    #   return get_retailer_address if self.order.type == "WelcomeKit"
+    # elsif self.type == "IncomingShipment"
+    #   return get_customer_address
+    # end
   end
 
   def get_parcel
