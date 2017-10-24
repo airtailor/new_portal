@@ -1,6 +1,7 @@
 class Address < ApplicationRecord
   include StreetAddress
   include AddressConstants
+  include TypeConstants
 
   validates_presence_of :number, :street, :city, :state_province, :zip_code
 
@@ -81,7 +82,19 @@ class Address < ApplicationRecord
     self.country = country
   end
 
-  def for_shippo(contact)
+  def get_contact
+    case self.address_type
+    when CUSTOMER
+      # NOTE: without the UI, this will always work.
+      # When we implement the UI, this'll break immediately.
+      return customers.first
+    when RETAILER || TAILOR
+      return  store
+    end
+  end
+
+  def for_shippo
+    contact = get_contact
     return {
       name: contact.name,
       phone: contact.phone,
