@@ -1,35 +1,47 @@
 class Shipment < ApplicationRecord
   validates :type, :shipping_label, :tracking_number, :weight, presence: true
-  belongs_to :order
 
-  after_initialize :add_order_weight, :configure_shippo
-  after_create :send_text_to_customer
+  belongs_to :source, polymorphic: true
+  belongs_to :destination, polymorphic: true
+
+  has_many :shipment_orders
+  has_many :orders, through: :shipment_orders
+
+  # after_initialize :add_order_weight, :configure_shippo
+  # after_create :send_text_to_customer
 
   private
 
   def send_text_to_customer
     if ((self.order.retailer.name != "Air Tailor") && (self.type == "OutgoingShipment"))
       customer = self.order.customer
-      customer_message = "Good news, #{customer.first_name.capitalize} -- your " + 
-        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " + 
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{self.tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
   end
 
   def add_order_weight
+    # NOTE: we need to add weight to items.
+    # Weight comes in from Shopify or React, Rails does nothing.
+
     self.weight = self.order.weight
   end
 
   def configure_shippo
     Shippo.api_token = ENV["SHIPPO_KEY"]
+    # Shippo.api_version = ENV["SHIPPO_API_VERSION"]
     Shippo.api_version = '2017-03-29'
+
     to_address = get_ship_to_address
     from_address = get_ship_from_address
     parcel = get_parcel
-    puts "\n\n\n to_address #{to_address}"
-    puts "\n\n\n from_address #{from_address}"
-    puts "\n\n\n parcel #{parcel}"
+
+    Rails.logger.info "to_address: #{to_address}"
+    Rails.logger.info "from_address: #{from_address}"
+    Rails.logger.info "parcel: #{parcel}"
+
     shippo_shipment = create_shippo_shipment(to_address, from_address, parcel)
     shippo_transaction = create_shippo_transaction(shippo_shipment)
     add_shipping_label(shippo_transaction)
@@ -52,7 +64,7 @@ class Shipment < ApplicationRecord
 
   def get_ship_from_address
     if self.type == "OutgoingShipment"
-      puts "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
+      Rails.logger.info "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
       return get_tailor_address if self.order.type == "TailorOrder"
       return get_retailer_address if self.order.type == "WelcomeKit"
     elsif self.type == "IncomingShipment"
