@@ -12,7 +12,6 @@ class Shipment < ApplicationRecord
   has_many :addresses, as: :source
   has_many :addresses, as: :destination
 
-
   after_initialize :add_order_weight
   after_initialize :configure_shippo
   # after_create :text_all_shipment_customers
@@ -29,18 +28,25 @@ class Shipment < ApplicationRecord
     self.weight = self.orders.sum(:weight)
   end
 
-  def configure_shippo
+  def configure_postmates
+    # NOTE: dummy method for testing.
+  end
 
-    # These should be autoloaded!
+  def configure_shippo
+    # NOTE: this should work. A single source and single destination.
+    # But! it might not later!
+
     Shippo.api_token = ENV["SHIPPO_KEY"]
     # Shippo.api_version = ENV["SHIPPO_API_VERSION"]
     Shippo.api_version = '2017-03-29'
 
     to, from, parcel = source_address, destination_address, get_parcel
 
-    Rails.logger.info "to: #{to}"
-    Rails.logger.info "from: #{from}"
-    Rails.logger.info "parcel: #{parcel}"
+    Rails.logger.info "
+      to: #{to}\n\n
+      from: #{from}\n\n
+      parcel: #{parcel}\n\n
+    "
 
     shippo_shipment = Shippo::Shipment.create(
       object_purpose: "PURCHASE",
@@ -69,8 +75,11 @@ class Shipment < ApplicationRecord
   end
 
   def get_parcel
-    case order.type
-    when "WelcomeKit"
+    # NOTE: This will break rapidly! We're defaulting to the first one because we don't
+    # bundle them yet.
+
+    case orders.first.type
+    when "WelcomeKit" || # rename me
       return {
         length: 6,
         width: 4,
@@ -79,7 +88,7 @@ class Shipment < ApplicationRecord
         weight: 28,
         mass_unit: :g
       }
-    when "TailorOrder"
+    when "TailorOrder" || # rename me
        return {
         length: 7,
         width: 5,

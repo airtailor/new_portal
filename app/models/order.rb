@@ -30,10 +30,7 @@ class Order < ApplicationRecord
   end
 
   def shipments
-    [
-      self.outgoing_shipment,
-      self.incoming_shipment
-    ]
+    [ self.outgoing_shipment, self.incoming_shipment ]
   end
 
   def text_order_customers
