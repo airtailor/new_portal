@@ -27,7 +27,7 @@ class Api::OrdersController < ApplicationController
   end
 
   def create
-    begin 
+    begin
       order = Order.create(order_params)
       if order.save
         garments = params[:order][:garments]
@@ -36,10 +36,10 @@ class Api::OrdersController < ApplicationController
       else
         render :json => {errors: order.errors.full_messages}
       end
-    rescue => e 
+    rescue => e
       if e.message.include?("Invalid Phone Number")
         render :json => {errors: ["Invalid Phone Number"]}
-      else 
+      else
         render :json => {errors: e}
       end
     end
@@ -55,17 +55,17 @@ class Api::OrdersController < ApplicationController
           first_name: query,
           last_name: query
         }
-      }, false).select {|order| (order.retailer == store || order.tailor == store || current_user.admin?) } 
+      }, false).select {|order| (order.retailer == store || order.tailor == store || current_user.admin?) }
     render :json => results.sort_by {|h| h[:created_at]}.reverse.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   def archived
     if current_user.admin?
       data = Order.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer])
-    else 
+    else
       data = current_user.store.orders.archived.order(:fulfilled_date).reverse.as_json(include: [:customer], methods: [:alterations_count])
     end
-    render :json => data  
+    render :json => data
   end
 
   private

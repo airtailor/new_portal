@@ -12,7 +12,7 @@ class Order < ApplicationRecord
 
   validates :retailer, presence: true
   after_initialize :init
-  after_create :send_order_confirmation_text
+  #after_create :send_order_confirmation_text
 
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
@@ -31,6 +31,7 @@ class Order < ApplicationRecord
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
+    self.fulfilled ||= false
 
     if (self.retailer.name == "Steven Alan - Tribeca" ||
         self.retailer.name == "Frame Denim - SoHo" ||

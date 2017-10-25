@@ -15,7 +15,7 @@ class DataInserter
         # poop
         #puts cust.first_name
       else
-        byebug
+        #other hting
       end
     end
   end
@@ -97,6 +97,59 @@ class DataInserter
       Item.create_items_portal(order, alts)
     end
   end
+
+  def insert_measurements
+    @measurements = @measurements.map do |meas|
+      customers = Customer.where(first_name: meas["customer_name"].split.first).where(last_name: meas["customer_name"].split.last)
+      if !customers.empty?
+        meas["customer_id"] = customers.first.id
+        #Meabinding.pry if meas["customer_id"].nil?
+        meas.delete("customer_name")
+        new_meas = Measurement.create(meas)
+        if new_meas.save
+          puts "yes"
+        else
+          binding.pry
+        end
+    else
+    puts meas["customer_name"]
+    end
+    end
+  end
+
+  def get_meas_customer meas
+    first_name = meas["customer_name"].split.first
+    last_name = meas["customer_name"].split.last
+    customers = Customer.where(first_name: first_name, last_name: last_name)
+    if !customers.empty?
+      "#{first_name} #{last_name}"
+    end
+    customers.first
+  end
+
+  def reject_dummy_measurements
+    @measurements = @measurements.reject! do |meas|
+      val = (
+        meas["name"] == "Ariel Avila" ||
+        meas["name"] == "Joshua Brueckner" ||
+        meas["name"] == "Brian Flynn" ||
+        meas["name"] == "Sam Tilin" ||
+        meas["name"] == "Kyong Shik Choo" ||
+        meas["name"] == "John Lesley Morton" ||
+        meas["name"] == "Todd Harrison Calvert" ||
+        meas["name"] == "Eric Hall" ||
+        meas["name"] == "John Kelly Jr" ||
+        meas["name"] == "Ian Benjamin" ||
+        meas["name"] == "Fon N" ||
+        meas["name"] == "Joseph Reed"
+      ) ||
+      (
+        !get_meas_customer meas
+      )
+
+      val
+    end
+  end
 end
 
 require 'json'
@@ -116,5 +169,7 @@ insert.reject_dummy_orders
 insert.orders.reject!{|x| x["name"] == "Kyong Shik Choo"}
 
 insert.insert_orders
+insert.reject_dummy_measurements
+insert.insert_measurements
 #insert.insert_alterations
 binding.pry

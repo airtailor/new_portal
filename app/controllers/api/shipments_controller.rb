@@ -11,6 +11,7 @@ class Api::ShipmentsController < ApplicationController
     if shipment.save
       render :json => shipment.order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
     else
+      byebug
       render :json => { :errors => shipment.errors.full_messages }
     end
   end
