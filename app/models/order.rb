@@ -93,13 +93,16 @@ class Order < ApplicationRecord
   end
 
   def self.find_or_create(order_info, customer, source = "Shopify")
-    self.find_or_create_by(source_order_id: order_info["id"], source: source, customer: customer) do |order|
+    order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
+      puts "order did not already exist"
+      order.customer = customer
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
     end
+    order
   end
 
   def set_fulfilled

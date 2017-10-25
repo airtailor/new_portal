@@ -45,9 +45,25 @@ class Customer < ApplicationRecord
       .gsub(" ", "")
       .gsub("–", "")
 
-    customer = Customer.find_or_create_by(phone: phone)
+    customer = Customer.find_or_create_by(phone: phone) do |customer|
+      customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
+
+      cust_details = shopify_customer["default_address"]
+      customer.first_name = cust_details["first_name"]
+      customer.last_name = cust_details["last_name"]
+      customer.company = cust_details["company"]
+      customer.street1 = cust_details["address1"]
+      customer.street2 = cust_details["address2"]
+      customer.city = cust_details["city"]
+      customer.state = cust_details["state"]
+      customer.zip = cust_details["zip"]
+      customer.country = cust_details["country_name"]
+    end
+
+    # update with most recent shopify attributes if customer already existed
     customer.email = shopify_customer["email"]
-    customer.shopify_id = shopify_customer["id"] if !shopify_customer["id"].nil?
+    customer.shopify_id = shopify_customer["id"] 
 
     cust_details = shopify_customer["default_address"]
     customer.first_name = cust_details["first_name"]
