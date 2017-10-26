@@ -3,7 +3,7 @@ class Shipment < ApplicationRecord
   belongs_to :order
 
   after_initialize :add_order_weight, :configure_shippo
-  #after_create :send_text_to_customer
+  after_create :send_text_to_customer
 
   private
 
