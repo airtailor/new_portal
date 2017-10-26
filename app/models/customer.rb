@@ -7,6 +7,8 @@ class Customer < ApplicationRecord
   has_many :addresses, through: :customer_addresses
   has_many :measurements
 
+  has_many :orders
+
   def last_measurement
     self.measurements.last
   end

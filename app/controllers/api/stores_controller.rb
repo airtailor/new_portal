@@ -55,7 +55,6 @@ class Api::StoresController < ApplicationController
       params.require(:store)
         .except(*permitted_address_fields)
         .permit(*permitted_store_fields)
-    end
     #end
   end
 

@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     get "/customers/:customer_id/measurements/last", to: "measurements#show"
     post "/customers/:customer_id/measurements", to: "measurements#create"
     resources :customers
+    resources :addresses
 
     resources :item_types
     post "/shopify_order", to: "shopify#receive"
