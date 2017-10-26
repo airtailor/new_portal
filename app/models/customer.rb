@@ -21,11 +21,14 @@ class Customer < ApplicationRecord
   end
 
   def set_address(address_params)
-    self.addresses.build.parse_and_save(address_params)
+    if !address = self.addresses.first
+      address = self.addresses.build.parse_and_save(address_params)
+    end
+
+    return address
   end
 
   def create_blank_measurements
-    customer = self
     Measurement.create(
       sleeve_length: 0,
       chest_bust: 0,
@@ -41,7 +44,7 @@ class Customer < ApplicationRecord
       bicep: 0,
       inseam: 0,
       forearm: 0,
-      customer: customer
+      customer: self
     )
   end
 

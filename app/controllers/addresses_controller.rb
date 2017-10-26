@@ -1,9 +1,13 @@
 class AddressesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_customer
+  before_action :set_store
+
+  # NOTE: not used, currently. This needs to make addresses intelligently.
 
   def show
     @address = Address.where(customer: @customer).first
+    @address ||= Address.where(store: @store).first
 
     if @address
       render :json => @address.as_json
@@ -33,11 +37,11 @@ class AddressesController < ApplicationController
   private
 
   def set_customer
-    if current_user.is_a? Customer
-      @customer = current_user.customer
-    else
-      @customer = Customer.where(id: params[:customer_id]).first
-    end
+    @customer = Customer.where(id: params[:customer_id]).first
+  end
+
+  def set_store
+    @store = Store.where(id: params[:store_id]).first
   end
 
   def address_params

@@ -5,7 +5,7 @@ class Api::CustomersController < ApplicationController
     @customer = Customer.where(id: params[:id]).first
     if @customer
       @customer.assign_attributes(customer_params)
-      @customer.set_address(address_params)
+      @customer.set_address(params)
     else
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "is not found in DB")
@@ -24,7 +24,7 @@ class Api::CustomersController < ApplicationController
     @customer ||= Customer.new
 
     @customer.assign_attributes(customer_params)
-    # @customer.set_address(address_params)
+    @customer.set_address(address_params)
 
     if @customer.save
       render :json => @customer.as_json
@@ -36,11 +36,22 @@ class Api::CustomersController < ApplicationController
   private
 
   def customer_params
-    params.require(:customer).permit(*permitted_customer_fields)
+    params.require(:customer)
+      .except(*permitted_address_fields)
+      .permit(*permitted_customer_fields)
   end
 
   def permitted_customer_fields
     [ :first_name, :last_name, :phone, :email, :agrees_to_terms, :customer ]
   end
 
+  def required_address_fields
+    [ :street, :city, :state_province, :zip_code ]
+  end
+
+  def permitted_address_fields
+    fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
+
+    return fields + required_address_fields
+  end
 end

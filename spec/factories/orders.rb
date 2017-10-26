@@ -18,4 +18,3 @@ FactoryGirl.define do
   factory :retailer_tailor_order, class: TailorOrder, parent: :order do
   end
 end
-

@@ -2,6 +2,8 @@ class Api::StoresController < ApplicationController
   before_action :authenticate_user!, except: [:create, :update]
   before_action :set_store, only: [:show, :update]
 
+public
+
   def show
     render :json => @store.as_json(
       methods: [
@@ -31,7 +33,7 @@ class Api::StoresController < ApplicationController
     if @store.save
       render :json => @store.as_json
     else
-      byebug
+      render :json => {errors: @store.errors.full_messages}
     end
   end
 
@@ -44,7 +46,7 @@ class Api::StoresController < ApplicationController
     }
   end
 
-  private
+private
 
   def set_store
     @store = Store.find(params[:id])
@@ -60,16 +62,6 @@ class Api::StoresController < ApplicationController
 
   def permitted_store_fields
     [ :name, :phone, :company_id ]
-  end
-
-  def address_params
-    required_address_fields.each do |field|
-      params.require(:customer).require(field)
-    end
-
-    params.require(:customer)
-      .except(*permitted_customer_fields)
-      .permit(*permitted_address_fields)
   end
 
   def required_address_fields

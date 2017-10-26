@@ -4,14 +4,6 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
-  resources :stores do
-    resources :orders
-  end
-
-  patch "/tailor_orders/:id", to: "orders#update", type: "tailor_order", as: :tailor_order
-  patch "/welcome_kits/:id", to: "orders#update", type: "welcome_kit", as: :welcome_kit
-
-
   # namespace :admin  do
   #   get "/users", to: "users#index", as: :users
   #   get "/users/new", to: "users#new", as: :new_user
@@ -45,7 +37,7 @@ Rails.application.routes.draw do
     get "/customers/:customer_id/measurements/last", to: "measurements#show"
     post "/customers/:customer_id/measurements", to: "measurements#create"
     resources :customers
-    resources :addresses
+    # resources :addresses
 
     resources :item_types
     post "/shopify_order", to: "shopify#receive"

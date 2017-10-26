@@ -16,11 +16,11 @@ class Store < ApplicationRecord
 
   def set_address(params)
     address = Address.where(params).first
-    if address
-      self.address = address.parse_and_save(params)
-    else
+    if !address
       self.build_address.parse_and_save(params)
     end
+
+    return address
   end
 
   def update_address(params)
