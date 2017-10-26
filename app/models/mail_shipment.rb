@@ -1,16 +1,7 @@
 class MailShipment < Shipment
 
   def deliver_shipment
-    :
-  end
-
-  def configure_shipment_delivery
-    :configure_shippo_delivery
-  end
-
-
-  def mail_shipment
-    self.class == MailShipment && self.shipment_type === MAIL
+    :create_shippo_label
   end
 
   def source_address
@@ -21,8 +12,8 @@ class MailShipment < Shipment
     destination.for_shippo
   end
 
-  def configure_shippo_delivery
-    return false unless mail_shipment
+  def create_shippo_label
+    return false unless is_mail_shipment?
     # NOTE: this should work. A single source and single destination.
     # But! it might not later!
 
@@ -38,6 +29,7 @@ class MailShipment < Shipment
       parcel: #{parcel}\n\n
     "
 
+    # should all of this move to a shippo_worker? yes?
     shippo_shipment = Shippo::Shipment.create(
       object_purpose: "PURCHASE",
       address_from: from,
@@ -46,7 +38,7 @@ class MailShipment < Shipment
       async: false
     )
 
-    rate = get_shipping_rate(shippo_shipment)
+    rate = shippo_shipment.find {|r| r.attributes.include? "BESTVALUE"}
 
     shippo_transaction = Shippo::Transaction.create(
       rate: rate, label_file_type: "PNG", async: false
@@ -54,10 +46,6 @@ class MailShipment < Shipment
 
     self.shipping_label  = shippo_transaction[:label_url]
     self.tracking_number = shippo_transaction[:tracking_number]
-  end
-
-  def get_shipping_rate(rates)
-    rates.find {|r| r.attributes.include? "BESTVALUE"}
   end
 
 end

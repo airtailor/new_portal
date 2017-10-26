@@ -1,27 +1,10 @@
 class MessengerShipment < Shipment
-  include PostmatesHelper
 
-  def deliver_shipment
-
-  end
-
-  def configure_shipment_delivery
-    :configure_messenger_delivery
-  end
-
-  def is_messenger_shipment?
-    self.class == MessengerShipment && self.shipment_type === MESSENGER
-  end
-
-  def configure_messenger_delivery
+  def request_messenger(quote_id)
     return false unless is_messenger_shipment?
-    # NOTE: dummy method for testing.
+    params = self.as_postmates_object.merge({quote_id: quote_id})
 
-    # set up params
-
-    # parse source + destination
-
-    # spin up a worker
+    PostmatesWorker.create_messenger_delivery(params)
   end
 
   def source_address

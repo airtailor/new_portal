@@ -20,12 +20,7 @@ class Shipment < ApplicationRecord
   # after_create :text_all_shipment_customers
 
   def send_shipment
-    send(configure_shipment_delivery)
     send(deliver_shipment)
-  end
-
-  def configure_shipment_delivery
-    raise StandardError
   end
 
   def deliver_shipment
@@ -33,6 +28,14 @@ class Shipment < ApplicationRecord
   end
 
   private
+
+  def is_messenger_shipment?
+    self.class == MessengerShipment && self.shipment_type === MESSENGER
+  end
+
+  def is_mail_shipment?
+    self.class == MailShipment && self.shipment_type === MAIL
+  end
 
   def text_all_shipment_customers
     # this shouldn't be generic
