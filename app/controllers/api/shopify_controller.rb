@@ -22,7 +22,6 @@ class Api::ShopifyController < ApplicationController
     order = order_type.find_or_create(data, customer)
 
     Item.create_items_shopify(order, data["line_items"]) if order_type == TailorOrder
-    puts "NEW ORDER #{order.id}"
     render json: {}, status: 200
   end
 

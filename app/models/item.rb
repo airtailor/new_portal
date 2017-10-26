@@ -24,8 +24,6 @@ class Item < ApplicationRecord
   end
 
   def self.create_items_portal(order, items)
-    #puts items
-    #binding.pry
     airtailor_message = "Congrats :) An order with #{items.count} items" +
       " was just placed at #{order.retailer.name} for $#{order.total}!"
 
@@ -38,9 +36,10 @@ class Item < ApplicationRecord
     items.each do |item|
       #puts item
       #binding.pry
-      item_name = item["title"] || item[:title]
+      item_name = item["title"].tr('^A-Za-z', '') || item[:title].tr('^A-Za-z', '')
       item_type = grab_item_type_from_title(item_name)
       new_item = self.create(name: item_name, item_type: item_type, order: order)
+
 
       item[:alterations].each do |alt|
         title = alt[:title] || alt[:variant_title]

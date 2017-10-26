@@ -94,7 +94,6 @@ class Order < ApplicationRecord
 
   def self.find_or_create(order_info, customer, source = "Shopify")
     order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
-      puts "order did not already exist"
       order.customer = customer
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
