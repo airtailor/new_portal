@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   validates :first_name, :last_name, presence: true
 
   has_many :measurements
+  has_many :orders
 
   def last_measurement
     self.measurements.last
@@ -63,7 +64,7 @@ class Customer < ApplicationRecord
 
     # update with most recent shopify attributes if customer already existed
     customer.email = shopify_customer["email"]
-    customer.shopify_id = shopify_customer["id"] 
+    customer.shopify_id = shopify_customer["id"]
 
     cust_details = shopify_customer["default_address"]
     customer.first_name = cust_details["first_name"]

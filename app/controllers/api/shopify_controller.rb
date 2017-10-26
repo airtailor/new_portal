@@ -15,7 +15,6 @@ class Api::ShopifyController < ApplicationController
 
   def receive
     data = JSON.parse(request.body.read)
-
     customer = Customer.find_or_create_shopify(data["customer"])
 
     order_type = tailor_order_or_welcome_kit(data)

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+
+  </head>
+  <body style="text-align:center; font-family:Arial; max-width:800px">
+
+    <!-- intro section -->
+    <div style="color:white; background-color:#000033; padding-top:50px; padding-bottom:30px">
+      <div style="width: 60%; margin:0 auto">
+        <a href="http://www.airtailor.com"><%= image_tag attachments['logo-white.png'].url, :style=>"width: 90%" %></a>
+        <h2 style="font-size:20px">Your shipping label is here, <%= @customer.first_name %>!</h2>
+        <h5 style="text-transform:uppercase">Order <%= @order.id %></h5>
+      </div>
+    </div>
+
+    <!-- end -->
+
+    <!-- middle section -->
+    <div style="color:#000033; background-color:white; padding-top:50px; padding-bottom:50px">
+      <h2 style="width: 65%; max-width:400px; margin:0 auto">Here are instructions on getting your clothes to us:</h2>
+      <br>
+      <br>
+      <div style="text-align:left; width: 70%; max-width:400px; margin:0 auto">
+
+        <div style="color: white; background-color: #de0421; font-weight: bold; border-radius: 100%; width: 50px; height: 50px; margin-right: 20px; float:left; text-align: center; line-height: 50px; font-size: 24px">1</div>
+        <div style="float:left; width: 65%">Print the attached PDF. It contains a packing slip and pre-paid United States Postal Service shipping label</div>
+        <br style="clear:both;">
+        <br>
+        <br>
+
+        <div style="color: white; background-color: #de0421; font-weight:bold; border-radius:100%; width: 50px; height: 50px; margin-right: 20px; float:left; text-align: center; line-height: 50px; font-size: 24px">2</div>
+        <div style="float:left; width: 65%">Cut it in half and put the packing slip with your order</div>
+        <br style="clear:both;">
+        <br>
+        <br>
+
+        <div style="color: white; background-color: #de0421; font-weight:bold; border-radius:100%; width: 50px; height: 50px; margin-right: 20px; float:left; text-align: center; line-height: 50px; font-size: 24px">3</div>
+        <div style="float:left; width: 65%">Tape the label to the package and ship via USPS within 10 days</div>
+        <br style="clear:both;">
+        <br>
+        <br>
+        <br>
+
+      </div>
+
+      <a href="<%= @shipment.tracking_number %>" style="color: white; text-decoration: none" target="_blank">
+        <div style="background-color:#000033; border-radius: 30px; width: 200px; margin:0 auto; height: 40px; line-height: 40px; font-weight: bold; font-size: 16px">Track Shipment</div>
+      </a>
+      <br>
+      <small style="display:block; width: 200px; margin:0 auto">Please note that it may take up to 24 hours for tracking activity to initiate.</small>
+    </div>
+    <!-- end -->
+
+    <!-- footer section -->
+    <div style="color:white; background-color:#000033; padding-top:50px; padding-bottom:50px; line-height: 1; font-size: 11px">
+
+      <div style="width: 60%; max-width: 400px; margin:0 auto">
+        <small>Air Tailor is not responsible for lost, stolen or damaged shipments. The attached pre-paid USPS label does not include insurance. If you would prefer to pay for your own shipping, please include your order number (<%= @order.id %>) and ship here:</small>
+        <br>
+        <br>
+        <small>
+          Air Tailor<br>
+          <%= @provider.street1 %><br>
+          <% if @provider.street2 != "" %>
+            <%= @provider.street2 %><br>
+          <% end %>
+          <%= @provider.city %>, <%= @provider.state %> <%= @provider.zip %>
+          <br>
+          Phone: (888) 983-1683
+        </small>
+        <br>
+        <br>
+        <h2 style="font-size:20px; line-height: 1.1">Thanks for your Air Tailor order, <%= @customer.first_name %>!</h2>
+        <br>
+        <a href="http://www.airtailor.com"><%= image_tag attachments['balloon-white.png'].url, :style => 'width: 15%; min-width: 50px' %></a>
+      </div>
+    </div>
+    <!-- end -->
+  </body>
+</html>

@@ -5,6 +5,7 @@ class Order < ApplicationRecord
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
     optional: true
+
   has_one :outgoing_shipment, class_name: "OutgoingShipment",
     foreign_key: "order_id"
   has_one :incoming_shipment, class_name: "IncomingShipment",
@@ -14,18 +15,34 @@ class Order < ApplicationRecord
   after_initialize :init
   #after_create :send_order_confirmation_text
 
+  after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+
+
+  def customer_needs_shipping_label
+    (self.type != "WelcomeKit") && (self.retailer.name == "Air Tailor") && (!self.incoming_shipment)
+  end
+
+  def send_customer_shipping_label_email
+    if customer_needs_shipping_label
+      shipment = Shipment.create(order: self, type: "IncomingShipment")
+      AirtailorMailer.label_email(self.customer, self, self.tailor, shipment).deliver!
+    end
+  end
+
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
   def serializable_hash options=nil
     super.merge "type" => type
   end
 
-  def shipments
-    [
-      self.outgoing_shipment,
-      self.incoming_shipment
-    ]
-  end
+
+  # nuke this
+  # def shipments
+  #   [
+  #     self.outgoing_shipment,
+  #     self.incoming_shipment
+  #   ]
+  # end
 
   def init
     self.source ||= "Shopify"
