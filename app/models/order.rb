@@ -23,14 +23,31 @@ class Order < ApplicationRecord
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :archived, -> { fulfilled(true) }
 
+  after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+  after_update :que_customer_for_delighted, if: :fulfilled_changed?
+
+
+  def customer_needs_shipping_label
+    (self.type != "WelcomeKit") && (self.retailer.name == "Air Tailor") && (!self.incoming_shipment)
+  end
+
+  def send_customer_shipping_label_email
+    if customer_needs_shipping_label
+      shipment = Shipment.create(order: self, type: "IncomingShipment")
+      AirtailorMailer.label_email(self.customer, self, self.tailor, shipment).deliver!
+    end
+  end
+
+  def que_customer_for_delighted
+    if (self.fulfilled) && (self.type == "TailorOrder") && (Rails.env == "production")
+      Delighted::Person.create(:email => self.customer.email, :delay => 518400, :properties => { :tailor_name => self.tailor.name })
+    end
+  end
+
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
   def serializable_hash options=nil
     super.merge "type" => type
-  end
-
-  def shipments
-    [ self.outgoing_shipment, self.incoming_shipment ]
   end
 
   def text_order_customers
@@ -46,6 +63,7 @@ class Order < ApplicationRecord
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
+    self.fulfilled ||= false
 
     stores_with_tailors = [
       "Steven Alan - Tribeca",
@@ -102,13 +120,15 @@ class Order < ApplicationRecord
   end
 
   def self.find_or_create(order_info, customer, source = "Shopify")
-    self.find_or_create_by(source_order_id: order_info["id"], source: source, customer: customer) do |order|
+    order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
+      order.customer = customer
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
     end
+    order
   end
 
   def set_fulfilled

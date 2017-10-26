@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 20171024204857) do
   end
 
   create_table "customers", force: :cascade do |t|
-    t.integer  "shopify_id"
+    t.string   "shopify_id"
     t.string   "first_name",      null: false
     t.string   "last_name",       null: false
     t.string   "email",           null: false
@@ -168,6 +168,7 @@ ActiveRecord::Schema.define(version: 20171024204857) do
     t.datetime "fulfilled_date"
     t.float    "weight"
     t.boolean  "ship_to_store"
+    t.boolean  "dismissed",       default: false
     t.index ["provider_id"], name: "index_orders_on_provider_id", using: :btree
     t.index ["requester_id"], name: "index_orders_on_requester_id", using: :btree
   end

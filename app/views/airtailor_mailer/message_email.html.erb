@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>Hey <%= @recipient.business_name %>,<br> You just recieved the following message from <%= @sender.business_name %>. <b>Please respond in the app</b> by clicking <a href="http://airtailor-portal.herokuapp.com//conversations/<%= @message.conversation_id %>/messages">here</a>.</p>
+    <hr>
+    <br>
+    <i><%= @message.text %></i>
+    <br>
+    <hr>
+
+    <p>Thank you!</p>
+    <p>Air Tailor</p>
+  </body>
+</html>

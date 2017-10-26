@@ -6,6 +6,7 @@ class Customer < ApplicationRecord
   has_many :customer_addresses
   has_many :addresses, through: :customer_addresses
   has_many :measurements
+  has_many :orders
 
   has_many :orders
 
@@ -17,7 +18,7 @@ class Customer < ApplicationRecord
   after_create :create_blank_measurements
 
   def add_country
-    self.country = "United States"
+    self.country ||= "United States"
   end
 
   def set_address(address_params)
@@ -49,13 +50,20 @@ class Customer < ApplicationRecord
   end
 
   def self.find_or_create_shopify(shopify_customer)
-    Customer.find_or_create_by(shopify_id: shopify_customer["id"]) do |customer|
+    phone = shopify_customer["default_address"]["phone"]
+      .gsub("(", "")
+      .gsub(")", "")
+      .gsub("-", "")
+      .gsub(" ", "")
+      .gsub("–", "")
+
+    customer = Customer.find_or_create_by(phone: phone) do |customer|
       customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
 
       cust_details = shopify_customer["default_address"]
       customer.first_name = cust_details["first_name"]
       customer.last_name = cust_details["last_name"]
-      customer.phone = cust_details["phone"]
       customer.company = cust_details["company"]
       customer.street1 = cust_details["address1"]
       customer.street2 = cust_details["address2"]
@@ -64,6 +72,22 @@ class Customer < ApplicationRecord
       customer.zip = cust_details["zip"]
       customer.country = cust_details["country_name"]
     end
+
+    # update with most recent shopify attributes if customer already existed
+    customer.email = shopify_customer["email"]
+    customer.shopify_id = shopify_customer["id"]
+
+    cust_details = shopify_customer["default_address"]
+    customer.first_name = cust_details["first_name"]
+    customer.last_name = cust_details["last_name"]
+    customer.company = cust_details["company"]
+    customer.street1 = cust_details["address1"]
+    customer.street2 = cust_details["address2"]
+    customer.city = cust_details["city"]
+    customer.state = cust_details["state"]
+    customer.zip = cust_details["zip"]
+    customer.country = cust_details["country_name"]
+    customer
   end
 
   def name

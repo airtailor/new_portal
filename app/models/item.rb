@@ -34,12 +34,16 @@ class Item < ApplicationRecord
     # end
 
     items.each do |item|
-      item_name = item["title"] || item[:title]
+      #puts item
+      #binding.pry
+      item_name = item["title"].tr('^A-Za-z', '') || item[:title].tr('^A-Za-z', '')
       item_type = grab_item_type_from_title(item_name)
       new_item = self.create(name: item_name, item_type: item_type, order: order)
 
+
       item[:alterations].each do |alt|
-        alteration = find_or_create_alteration(alt[:title])
+        title = alt[:title] || alt[:variant_title]
+        alteration = find_or_create_alteration(title)
         find_or_create_alteration_item(alteration, new_item)
       end
     end
