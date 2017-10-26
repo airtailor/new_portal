@@ -12,25 +12,27 @@ class Api::ShipmentsController < ApplicationController
 
   def create
     @shipment = Shipment.new(shipment_params)
-    if @shipment.save && @shipment.deliver
-      render :json => @shipment.return
-                        .as_json(include: [
-                            :incoming_shipment, :outgoing_shipment, :customer,
-                            :items => {include: [:item_type, :alterations]}
-                          ])
+
+    case @shipment.shipment_type
+    when MAIL
+      @shipment.create_label
+    when MESSENGER
+      @shipment.request_messenger
+    else
+      raise StandardError
+    end
+
+    if @shipment.save
+      # return a message here saying "you made it!"
+      render :json => @shipment.as_json
     else
       render :json => { :errors => @shipment.errors.full_messages }
     end
   end
 
-  def cancel
-    # cancel a postmates delivery
-    # using the PostmatesHelper
-  end
-
   private
 
   def shipment_params
-    params.require(:shipment).permit(:order_id, :type)
+    params.require(:shipment, :shipment_type).permit(:order_id, :type)
   end
 end

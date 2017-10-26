@@ -19,22 +19,33 @@ class Shipment < ApplicationRecord
   after_initialize :configure_shippo
   # after_create :text_all_shipment_customers
 
-  def send_shipment
-    send(deliver_shipment)
+
+  def request_messenger
+    if is_messenger_shipment?
+      PostmatesWorker.perform_async(shipment)
+    else
+      raise StandardError
+    end
   end
 
-  def deliver_shipment
-    raise StandardError
+  def create_label
+    # NOTE: this should work. A single source and single destination.
+    # But! it might not later!
+    if is_mail_shipment?
+      ShippoWorker.perform_async(shipment)
+    else
+      raise StandardError
+    end
   end
 
   private
 
   def is_messenger_shipment?
-    self.class == MessengerShipment && self.shipment_type === MESSENGER
+    self.shipment_type === MESSENGER
   end
 
   def is_mail_shipment?
-    self.class == MailShipment && self.shipment_type === MAIL
+    self.shipment_type === MAIL
   end
 
   def text_all_shipment_customers
