@@ -16,6 +16,7 @@ class Order < ApplicationRecord
   #after_create :send_order_confirmation_text
 
   after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+  after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
 
   def customer_needs_shipping_label
@@ -26,6 +27,12 @@ class Order < ApplicationRecord
     if customer_needs_shipping_label
       shipment = Shipment.create(order: self, type: "IncomingShipment")
       AirtailorMailer.label_email(self.customer, self, self.tailor, shipment).deliver!
+    end
+  end
+
+  def que_customer_for_delighted
+    if (self.fulfilled) && (self.type == "TailorOrder") && (Rails.env == "production")
+      Delighted::Person.create(:email => self.customer.email, :delay => 518400, :properties => { :tailor_name => self.tailor.name })
     end
   end
 
