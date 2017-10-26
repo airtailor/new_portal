@@ -1,7 +1,10 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
 
-  validates :type, :shipping_label, :tracking_number, :weight, presence: true
+  validates :shipment_type, inclusion: [ MAIL, MESSENGER ], presence: true
+
+  validates :shipping_label, :tracking_number, :weight, presence: true,
+    if: :mail_shipment
 
   belongs_to :source, polymorphic: true
   belongs_to :destination, polymorphic: true
@@ -16,9 +19,23 @@ class Shipment < ApplicationRecord
   after_initialize :configure_shippo
   # after_create :text_all_shipment_customers
 
+  def send_shipment
+    send(configure_shipment_delivery)
+    send(deliver_shipment)
+  end
+
+  def configure_shipment_delivery
+    raise StandardError
+  end
+
+  def deliver_shipment
+    raise StandardError
+  end
+
   private
 
   def text_all_shipment_customers
+    # this shouldn't be generic
     orders.map(&:text_order_customers)
   end
 
@@ -28,58 +45,12 @@ class Shipment < ApplicationRecord
     self.weight = self.orders.sum(:weight)
   end
 
-  def configure_postmates
-    # NOTE: dummy method for testing.
-  end
-
-  def configure_shippo
-    # NOTE: this should work. A single source and single destination.
-    # But! it might not later!
-
-    Shippo.api_token = ENV["SHIPPO_KEY"]
-    # Shippo.api_version = ENV["SHIPPO_API_VERSION"]
-    Shippo.api_version = '2017-03-29'
-
-    to, from, parcel = source_address, destination_address, get_parcel
-
-    Rails.logger.info "
-      to: #{to}\n\n
-      from: #{from}\n\n
-      parcel: #{parcel}\n\n
-    "
-
-    shippo_shipment = Shippo::Shipment.create(
-      object_purpose: "PURCHASE",
-      address_from: from,
-      address_to: to,
-      parcels: parcel,
-      async: false
-    )
-
-    rate = get_shipping_rate(shippo_shipment)
-
-    shippo_transaction = Shippo::Transaction.create(
-      rate: rate, label_file_type: "PNG", async: false
-    )
-
-    self.shipping_label  = shippo_transaction[:label_url]
-    self.tracking_number = shippo_transaction[:tracking_number]
-  end
-
-  def source_address
-    source.for_shippo
-  end
-
-  def destination_address
-    destination.for_shippo
-  end
-
   def get_parcel
     # NOTE: This will break rapidly! We're defaulting to the first one because we don't
     # bundle them yet.
 
     case orders.first.type
-    when "WelcomeKit" || # rename me
+    when "WelcomeKit"
       return {
         length: 6,
         width: 4,
@@ -88,7 +59,7 @@ class Shipment < ApplicationRecord
         weight: 28,
         mass_unit: :g
       }
-    when "TailorOrder" || # rename me
+    when "TailorOrder"
        return {
         length: 7,
         width: 5,
@@ -98,10 +69,6 @@ class Shipment < ApplicationRecord
         mass_unit: :g
       }
     end
-  end
-
-  def get_shipping_rate(rates)
-    rates.find {|r| r.attributes.include? "BESTVALUE"}
   end
 
 end

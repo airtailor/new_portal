@@ -9,14 +9,6 @@ class Address < ApplicationRecord
   has_many :customers, through: :customer_address
   has_many :stores
 
-  def shippo_street_1
-    "#{number} #{street}"
-  end
-
-  def shippo_street_2
-    "#{unit} #{floor}"
-  end
-
   def parse_street_name(street, country_code)
     return nil unless country_code.to_sym == :US
     StreetAddress::US.parse(street)
@@ -108,4 +100,29 @@ class Address < ApplicationRecord
     }
   end
 
+  def shippo_street_1
+    "#{number} #{street}"
+  end
+
+  def shippo_street_2
+    "#{unit} #{floor}"
+  end
+
+  def for_postmates
+    return {
+      quote_id: "",
+      manifest: "",
+      manifest_reference: "",
+      pickup_name: "",
+      pickup_address: "",
+      pickup_phone_number: "",
+      pickup_business_name: "",
+      pickup_notes: "",
+      dropoff_name: "",
+      dropoff_address: "",
+      dropoff_phone_number: "",
+      dropoff_business_name: "",
+      dropoff_notes: ""
+    }
+  end
 end

@@ -1,28 +1,36 @@
 class Api::ShipmentsController < ApplicationController
   before_action :authenticate_user!, except: [:create]
-  before_action :set_order, only: [:show]
 
   def show
-    render :json => @shipment.to_json
-  end
-
-  def create
-    shipment = Shipment.create(shipment_params)
-    if shipment.save
-      render :json => shipment.order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
+    @shipment = Shipment.where(id: params[:id]).first
+    if @shipment
+      render :json => @shipment.to_json
     else
-      render :json => { :errors => shipment.errors.full_messages }
+      render :json => { :errors => "Shipment not found." }
     end
   end
 
-  private
-
-  def set_shipment
-    @shipment = shipment.find(params[:id])
+  def create
+    @shipment = Shipment.new(shipment_params)
+    if @shipment.save && @shipment.deliver
+      render :json => @shipment.return
+                        .as_json(include: [
+                            :incoming_shipment, :outgoing_shipment, :customer,
+                            :items => {include: [:item_type, :alterations]}
+                          ])
+    else
+      render :json => { :errors => @shipment.errors.full_messages }
+    end
   end
+
+  def cancel
+    # cancel a postmates delivery
+    # using the PostmatesHelper
+  end
+
+  private
 
   def shipment_params
     params.require(:shipment).permit(:order_id, :type)
   end
 end
-

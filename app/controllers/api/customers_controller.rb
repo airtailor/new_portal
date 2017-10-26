@@ -1,5 +1,4 @@
 class Api::CustomersController < ApplicationController
-  #before_action :authenticate_user!
   before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create]
 
   def update
@@ -10,7 +9,7 @@ class Api::CustomersController < ApplicationController
     else
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "is not found in DB")
-      render :json => {errors: @customer.errors.full_messages}
+      render :json => {errors: errors.full_messages}
     end
 
     if @customer.save
@@ -35,10 +34,6 @@ class Api::CustomersController < ApplicationController
   end
 
   private
-
-  def set_customer
-    @customer = Customer.find(params[:id])
-  end
 
   def customer_params
     params.require(:customer)
