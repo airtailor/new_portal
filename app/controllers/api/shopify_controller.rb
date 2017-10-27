@@ -1,5 +1,6 @@
 class Api::ShopifyController < ApplicationController
-  protect_from_forgery :except => :recieve
+  #protect_from_forgery :except => :recieve
+  protect_from_forgery with: :null_session
   before_action :authenticate_user!, :except => [:receive]
 
   # receive request yes
@@ -14,12 +15,13 @@ class Api::ShopifyController < ApplicationController
 
   def receive
     data = JSON.parse(request.body.read)
-
     customer = Customer.find_or_create_shopify(data["customer"])
+
     order_type = tailor_order_or_welcome_kit(data)
     order = order_type.find_or_create(data, customer)
 
     Item.create_items_shopify(order, data["line_items"]) if order_type == TailorOrder
+    render json: {}, status: 200
   end
 
   private

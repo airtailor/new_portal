@@ -10,8 +10,8 @@ class Shipment < ApplicationRecord
   def send_text_to_customer
     if ((self.order.retailer.name != "Air Tailor") && (self.type == "OutgoingShipment"))
       customer = self.order.customer
-      customer_message = "Good news, #{customer.first_name.capitalize} -- your " + 
-        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " + 
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{self.tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
@@ -45,8 +45,11 @@ class Shipment < ApplicationRecord
         get_customer_address
       end
     elsif self.type == "IncomingShipment"
-      get_tailor_address if self.order.type == "TailorOrder"
-      get_retailer_address if self.order.type == "WelcomeKit"
+      if self.order.type == "TailorOrder"
+        get_tailor_address
+      end
+      # Incoming Shipments should only be going to Tailor
+      #get_retailer_address if self.order.type == "WelcomeKit"
     end
   end
 
