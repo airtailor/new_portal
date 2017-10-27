@@ -36,13 +36,16 @@ gem 'httparty'
 gem 'hashie'
 gem 'textacular', '~> 5.0'
 
+# Background job processing + asymc
+gem 'sidekiq'
+
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'better_errors'
   gem 'pry'
   gem 'dotenv-rails'
   gem 'rspec-rails'
-  gem 'rails-controller-testing' 
+  gem 'rails-controller-testing'
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'factory_girl_rails'
