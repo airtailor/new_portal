@@ -1,4 +1,5 @@
 class ShippoWorker < ServiceWorker
+  # include PostmatesHelper
 
 
   def perform(shipment)
