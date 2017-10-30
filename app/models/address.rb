@@ -18,12 +18,17 @@ class Address < ApplicationRecord
     addy_string = "#{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
     if parsed_street = parse_street_name(addy_string, self.country_code)
       if parsed_street.street && parsed_street.street_type
-        self.street = "#{parsed_street.street} #{parsed_street.street_type}"
+        self.street = [
+          parsed_street.prefix,
+          parsed_street.street,
+          parsed_street.street_type
+        ].join(" ")
       end
 
-      self.number   = parsed_street.number if parsed_street.number
-      self.city     = parsed_street.city if parsed_street.city
-      self.zip_code = parsed_street.postal_code if parsed_street.postal_code
+      self.number   = parsed_street.number
+      self.city     = parsed_street.city
+      self.zip_code = parsed_street.postal_code
+      self.unit = parsed_street.unit
     else
       self.number = street.scan(/^\d+/)[0] || nil
       if self.number

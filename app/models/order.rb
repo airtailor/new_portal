@@ -143,12 +143,6 @@ class Order < ApplicationRecord
     set_fulfilled_date
   end
 
-  def grab_items_by_type(item_name)
-    self.items.select do |item|
-      item.item_type.name == item_name
-    end
-  end
-
   def set_arrived
     self.update_attributes(arrived: true)
     set_arrival_date
@@ -163,26 +157,10 @@ class Order < ApplicationRecord
     self.where("orders.provider_id IS NOT NULL")
   end
 
-  def self.needs_assigned
-    self.where("orders.provider_id IS NULL")
-  end
-
-  def items_count
-    self.items.count
-  end
-
   def alterations_count
     self.items.reduce(0) do |prev, curr|
       prev += AlterationItem.where(item: curr).count
     end
-  end
-
-  def self.search(search)
-    id = Order.first.id
-    where("id ILIKE ?", "%#{id}%")
-    #where("id ILIKE ? OR customer.first_name ILIKE ? OR customer.last_name ILIKE ?", "%#{search}%", "%#{search}%", "%#{search}%")
-    #
-     #Order.joins(:customers).where("customer.name like '%?%'", search)
   end
 
   private
