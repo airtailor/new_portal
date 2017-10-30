@@ -1,19 +1,28 @@
 class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
+
+  # NOTE: this is about to be implemented. Everything else is cleanup.
+  # has_many :shipment_orders
+  # has_many :shipments, through: :shipment_orders
+
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
     optional: true
 
-  has_one :outgoing_shipment, class_name: "OutgoingShipment",
-    foreign_key: "order_id"
-  has_one :incoming_shipment, class_name: "IncomingShipment",
-    foreign_key: "order_id"
-
   validates :retailer, presence: true
   after_initialize :init
-  after_create :send_order_confirmation_text
+  # after_create :send_order_confirmation_text
+
+  scope :by_type, -> type { where(type: type) }
+  scope :fulfilled, -> bool { where(fulfilled: bool)}
+  scope :arrived, -> bool { where(arrived: bool)}
+  scope :late, -> bool { where(late: bool) }
+
+  scope :open_orders, -> { order(:due_date).fulfilled(false)}
+  scope :active, -> { arrived(true).fulfilled(false) }
+  scope :archived, -> { fulfilled(true) }
 
   after_update :send_customer_shipping_label_email, if: :provider_id_changed?
   after_update :que_customer_for_delighted, if: :fulfilled_changed?
@@ -42,14 +51,14 @@ class Order < ApplicationRecord
     super.merge "type" => type
   end
 
-
-  # nuke this
-  # def shipments
-  #   [
-  #     self.outgoing_shipment,
-  #     self.incoming_shipment
-  #   ]
-  # end
+  def text_order_customers
+    if ((retailer.name != "Air Tailor") && (order_status == "completed"))
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Airtailor Order (id: #{id}) is finished and is on its way to you! " +
+        "Here's your USPS tracking number: #{tracking_number}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+    end
+  end
 
   def init
     self.source ||= "Shopify"
@@ -57,11 +66,14 @@ class Order < ApplicationRecord
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
     self.fulfilled ||= false
 
-    if (self.retailer.name == "Steven Alan - Tribeca" ||
-        self.retailer.name == "Frame Denim - SoHo" ||
-        self.retailer.name == "Rag & Bone - SoHo")
+    stores_with_tailors = [
+      "Steven Alan - Tribeca",
+      "Frame Denim - SoHo",
+      "Rag & Bone - SoHo"
+    ]
 
-      self.tailor = Tailor.find_by(name: "Tailoring NYC")
+    if self.retailer.name.in? stores_with_tailors
+      self.tailor = Tailor.where(name: "Tailoring NYC").first
     end
   end
 
@@ -108,14 +120,6 @@ class Order < ApplicationRecord
     set_fulfilled_date
   end
 
-  def self.on_time
-    self.where(late: false)
-  end
-
-  def self.late
-    self.where(late: true)
-  end
-
   def self.find_or_create(order_info, customer, source = "Shopify")
     order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
       order.customer = customer
@@ -156,14 +160,6 @@ class Order < ApplicationRecord
   def self.needs_assigned
     self.where("orders.provider_id IS NULL")
   end
-
-  scope :unfulfilled, -> { where(fulfilled: false)}
-
-  scope :active, -> { where(arrived: true).where(fulfilled: false) }
-
-  scope :archived, -> { where(fulfilled: true) }
-
-  scope :by_due_date, -> { order(:due_date) }
 
   def items_count
     self.items.count

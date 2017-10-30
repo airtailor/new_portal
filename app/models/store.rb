@@ -1,56 +1,62 @@
 class Store < ApplicationRecord
   belongs_to :company
   belongs_to :primary_contact, class_name: "User", foreign_key: "primary_contact_id", optional: true
-  has_many :users
+  belongs_to :address
 
+  has_many :orders
+  has_many :users
   has_many :messages
+
   has_many :conversations, foreign_key: :sender_id
   has_many :conversations, foreign_key: :recipient_id
 
-  validates :name, :street1, :city, :state, :zip, :phone, :country, presence: true
+  validates :name, :phone, presence: true
 
-  before_validation :default_values
   after_create :initiate_conversation
 
-  def default_values
-    self.country = "United States" if self.country.nil?
+  def set_address(params)
+    address = Address.where(params).first
+    if !address
+      self.build_address.parse_and_save(params)
+    end
+
+    return address
+  end
+
+  def update_address(params)
+    address = self.address
+    address ||= Address.where(params).first
+
+    if address
+      self.address = address.parse_and_save(params)
+    else
+      self.build_address.parse_and_save(params)
+    end
   end
 
   def tailor_orders
-    self.orders.where(type: "TailorOrder")
+    self.orders.by_type("TailorOrder")
   end
 
   def welcome_kits
-    self.orders.where(type: "WelcomeKit")
+    self.orders.by_type("WelcomeKit")
   end
 
   def shippo_address
-    # removing email may break shippo
-    {
-      name: self.name,
-      street1: self.street1,
-      street2: self.street2,
-      city: self.city,
-      state: self.state,
-      country: self.country,
-      zip: self.zip,
-      phone: self.phone
-      # ,
-      # email: "air@airtailor.com"
-    }
+    address.for_shippo(self)
   end
 
   def open_orders
-    self.orders.order(:due_date).unfulfilled
+    self.orders.open_orders
   end
 
   def late_orders_count
-    self.orders.late.count
+    self.orders.late(true).count
   end
 
   def active_orders_count
     if self.type == "Retailer"
-      self.orders.where(fulfilled: false).count
+      self.orders.fulfilled(false).count
     elsif self.type == "Tailor"
       self.orders.active.count
     end
@@ -91,4 +97,3 @@ class Store < ApplicationRecord
   end
 
 end
-

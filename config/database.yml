@@ -1,25 +1,25 @@
 development:
   adapter: postgresql
   encoding: utf8
-  database: new-airtailor-portal_development
+  database: airtailor_development
   pool: 5
-  username: 
+  username:
   password:
 
 test: &test
   adapter: postgresql
   encoding: utf8
-  database: new-airtailor-portal_test
+  database: airtailor_test
   pool: 5
-  username: 
+  username:
   password:
 
 production:
   adapter: postgresql
   encoding: utf8
-  database: new-airtailor-portal_production
+  database: airtailor_production
   pool: 5
-  username: 
+  username:
   password:
 
 cucumber:

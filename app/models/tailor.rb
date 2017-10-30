@@ -5,11 +5,11 @@ class Tailor < Store
 
 
   def late_orders
-    self.orders.where(late: true)
+    self.orders.late(true)
   end
 
   def current_orders
-    self.orders.where(arrived: true).where(fulfilled: false)
+    self.orders.active
   end
 
   def new_orders

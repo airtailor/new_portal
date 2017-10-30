@@ -8,8 +8,7 @@ Bundler.require(*Rails.groups)
 
 module NewAirtailorPortal
   class Application < Rails::Application
-    config.eager_load_paths << '../app/workers'
-    
+    config.autoload_paths << Rails.root.join("lib/backfills")
     config.middleware.use Rack::Cors do
       allow do
         origins '*'

@@ -3,7 +3,11 @@ class Customer < ApplicationRecord
   validates :shopify_id, uniqueness: true, allow_blank: true
   validates :first_name, :last_name, presence: true
 
+  has_many :customer_addresses
+  has_many :addresses, through: :customer_addresses
   has_many :measurements
+  has_many :orders
+
   has_many :orders
 
   def last_measurement
@@ -17,8 +21,15 @@ class Customer < ApplicationRecord
     self.country ||= "United States"
   end
 
+  def set_address(address_params)
+    if !address = self.addresses.first
+      address = self.addresses.build.parse_and_save(address_params)
+    end
+
+    return address
+  end
+
   def create_blank_measurements
-    customer = self
     Measurement.create(
       sleeve_length: 0,
       chest_bust: 0,
@@ -34,7 +45,7 @@ class Customer < ApplicationRecord
       bicep: 0,
       inseam: 0,
       forearm: 0,
-      customer: customer
+      customer: self
     )
   end
 
@@ -84,18 +95,7 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    {
-      #:object_purpose => "PURCHASE",
-      :name => self.name,
-      :street1 => self.street1,
-      :street2 => self.street2,
-      :city => self.city,
-      :country => self.country,
-      :state => self.state,
-      :zip => self.zip,
-      :phone => self.phone,
-      :email => self.email,
-    }
+    address.for_shippo(self)
   end
 
 end

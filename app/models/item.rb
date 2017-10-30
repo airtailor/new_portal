@@ -29,9 +29,9 @@ class Item < ApplicationRecord
 
     phone_list = ["9045668701", "6167804457", "6302352544"]
     #phone_list = ["9045668701"]
-    phone_list.each do |phone|
-      SendSonar.message_customer(text: airtailor_message, to: phone)
-    end
+    # phone_list.each do |phone|
+    #   SendSonar.message_customer(text: airtailor_message, to: phone)
+    # end
 
     items.each do |item|
       #puts item

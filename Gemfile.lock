@@ -1,3 +1,9 @@
+GIT
+  remote: git@github.com:nialbima/street-address.git
+  revision: 6ce449cd0bf6a1b7bf398933ed57e603888ee76c
+  specs:
+    street_address (2.0.0-x86_64-darwin-16)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -345,6 +351,7 @@ DEPENDENCIES
   sidekiq
   spring
   spring-watcher-listen (~> 2.0.0)
+  street_address (~> 2.0)!
   textacular (~> 5.0)
   turbolinks (~> 5)
   tzinfo-data
