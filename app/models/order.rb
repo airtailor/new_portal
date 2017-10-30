@@ -2,13 +2,18 @@ class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
 
-  has_many :shipment_orders
-  has_many :shipments, through: :shipment_orders
+  # has_many :shipment_orders
+  # has_many :shipments, through: :shipment_orders
 
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
     optional: true
+
+  has_one :outgoing_shipment, class_name: "OutgoingShipment",
+    foreign_key: "order_id"
+  has_one :incoming_shipment, class_name: "IncomingShipment",
+    foreign_key: "order_id"
 
   validates :retailer, presence: true
   after_initialize :init
@@ -28,7 +33,9 @@ class Order < ApplicationRecord
 
 
   def customer_needs_shipping_label
-    (self.type != "WelcomeKit") && (self.retailer.name == "Air Tailor") && (!self.incoming_shipment)
+    self.type != "WelcomeKit" &&
+    self.retailer.name == "Air Tailor" &&
+    !self.incoming_shipment
   end
 
   def send_customer_shipping_label_email
