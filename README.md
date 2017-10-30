@@ -28,7 +28,7 @@ Set up rbenv, and make sure you've got ruby 2.4.0 or greater:
 Now do the gemsets:
 1. ```brew install rbenv-gemset```
 2. ```rbenv gemset init```
-3. ```rbenv gemset create 2.40 airtailor-api```
+3. ```rbenv gemset create 2.4.0 airtailor-api```
 4. ```echo 'airtailor-api' > .rbenv-gemsets```
 
 Get your dependencies:

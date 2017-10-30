@@ -14,7 +14,7 @@ t_nyc = Company.create(name: "Tailoring NYC")
 
 airtailor = FactoryGirl.create(:retailer,
   name: "Air Tailor", phone: "630 235 2554",
-  company: air_tailor_co
+  company: air_taiit lor_co
 )
 steven_alan_tribeca_retailer = FactoryGirl.create(:retailer,
   name: "Steven Alan - Tribeca", phone: "630 235 2554",
