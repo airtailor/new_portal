@@ -90,6 +90,32 @@ class Shipment < ApplicationRecord
   # end
 
 private
+  def get_ship_to_address
+    if self.type == "OutgoingShipment"
+      # outgoing shipments always go to customer! :* )
+      if self.order.ship_to_store
+        get_retailer_address
+      else
+        get_customer_address
+      end
+    elsif self.type == "IncomingShipment"
+      if self.order.type == "TailorOrder"
+        get_tailor_address
+      end
+      # Incoming Shipments should only be going to Tailor
+      #get_retailer_address if self.order.type == "WelcomeKit"
+    end
+  end
+
+  def get_ship_from_address
+    if self.type == "OutgoingShipment"
+      puts "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
+      return get_tailor_address if self.order.type == "TailorOrder"
+      return get_retailer_address if self.order.type == "WelcomeKit"
+    elsif self.type == "IncomingShipment"
+      return get_customer_address
+    end
+  end
 
   def get_customer_address
     address = self.order.customer.try(:shippo_address)

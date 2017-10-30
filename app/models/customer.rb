@@ -95,10 +95,7 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    if address = addresses.first
-      return address.for_shippo(self)
-    end
-    
+    return address.for_shippo if address = addresses.first
     return nil
   end
 

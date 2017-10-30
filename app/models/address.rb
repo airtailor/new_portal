@@ -6,7 +6,7 @@ class Address < ApplicationRecord
   validates_presence_of :number, :street, :city, :state_province, :zip_code
 
   has_many :customer_addresses
-  has_many :customers, through: :customer_address
+  has_many :customers, through: :customer_addresses
   has_many :stores
 
   def parse_street_name(street, country_code)
