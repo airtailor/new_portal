@@ -2,9 +2,8 @@ class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
 
-  # NOTE: this is about to be implemented. Everything else is cleanup.
-  # has_many :shipment_orders
-  # has_many :shipments, through: :shipment_orders
+  has_many :shipment_orders
+  has_many :shipments, through: :shipment_orders
 
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
