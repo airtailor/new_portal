@@ -1,10 +1,22 @@
 class Api::CustomersController < ApplicationController
-  #before_action :authenticate_user!
   before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create]
-  before_action :set_customer, only: [:update]
 
   def update
-    if @customer.update(customer_params)
+    @customer = Customer.where(id: params[:id]).first
+    if @customer
+      @customer.assign_attributes(customer_params)
+
+      if required_address_fields.all?{|f| params[f]}
+        @customer.set_address(params)
+      end
+
+    else
+      errors = ActiveModel::Errors.new(Customer.new)
+      errors.add(:id, :not_found, message: "is not found in DB")
+      render :json => {errors: errors.full_messages}
+    end
+
+    if @customer.save
       render :json => @customer.as_json
     else
       render :json => {errors: @customer.errors.full_messages}
@@ -12,25 +24,41 @@ class Api::CustomersController < ApplicationController
   end
 
   def find_or_create
-    customer = Customer.find_or_create_by(phone: params[:customer][:phone])
-    customer.update_attributes(customer_params)
-    unless customer.errors.blank?
-      errors = [
-        "Oops. That email belongs to a different phone number."
-      ]
-      render :json => {errors: {customer: errors}}
+    @customer = Customer.where(phone: customer_params[:phone]).first
+    @customer ||= Customer.new
+
+    @customer.assign_attributes(customer_params)
+
+    if required_address_fields.all?{|f| params[f]}
+      @customer.set_address(address_params)
+    end
+
+    if @customer.save
+      render :json => @customer.as_json
     else
-      render :json => customer.as_json
+      render :json => {errors: @customer.errors.full_messages}
     end
   end
 
   private
 
-  def set_customer
-    @customer = Customer.find(params[:id])
+  def customer_params
+    params.require(:customer)
+      .except(*permitted_address_fields)
+      .permit(*permitted_customer_fields)
   end
 
-  def customer_params
-    params.require(:customer).permit(:email, :first_name, :last_name, :phone, :email, :street1, :street2, :city, :state, :zip, :agrees_to_terms)
+  def permitted_customer_fields
+    [ :first_name, :last_name, :phone, :email, :agrees_to_terms, :customer ]
+  end
+
+  def required_address_fields
+    [ :street, :city, :state_province, :zip_code ]
+  end
+
+  def permitted_address_fields
+    fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
+
+    return fields + required_address_fields
   end
 end
