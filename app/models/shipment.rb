@@ -16,6 +16,7 @@ class Shipment < ApplicationRecord
 
   # belongs_to :source, polymorphic: true
   # belongs_to :destination, polymorphic: true
+
   # has_many :shipment_orders
   # has_many :orders, through: :shipment_orders
 
@@ -91,7 +92,9 @@ class Shipment < ApplicationRecord
 private
 
   def get_customer_address
-    self.order.customer.shippo_address
+    address = self.order.customer.try(:shippo_address)
+    return self.order.retailer.shippo_address if !address
+    address
   end
 
   def get_tailor_address
