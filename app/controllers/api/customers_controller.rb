@@ -5,7 +5,11 @@ class Api::CustomersController < ApplicationController
     @customer = Customer.where(id: params[:id]).first
     if @customer
       @customer.assign_attributes(customer_params)
-      @customer.set_address(params)
+
+      if required_address_fields.all?{|f| params[f]}
+        @customer.set_address(params)
+      end
+
     else
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "is not found in DB")
@@ -24,7 +28,10 @@ class Api::CustomersController < ApplicationController
     @customer ||= Customer.new
 
     @customer.assign_attributes(customer_params)
-    @customer.set_address(address_params)
+
+    if required_address_fields.all?{|f| params[f]}
+      @customer.set_address(address_params)
+    end
 
     if @customer.save
       render :json => @customer.as_json

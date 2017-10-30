@@ -4,13 +4,20 @@ class Api::OrdersController < ApplicationController
 
   def index
     render :json => current_user.store.open_orders
-                      .as_json(include: [:customer], methods: [:alterations_count])
+                      .as_json(
+                        include: [:customer],
+                        methods: [:alterations_count]
+                      )
   end
 
   def show
     @order = Order.find(params[:id])
-    data = @order.as_json(include: [ :incoming_shipment, :outgoing_shipment,
-            :customer, :items => { include: [:item_type, :alterations] }] )
+    data = @order.as_json(include: [
+            :incoming_shipment,
+            :outgoing_shipment,
+            :customer,
+            :items => { include: [:item_type, :alterations] }
+          ])
     render :json => data
   end
 
@@ -34,7 +41,7 @@ class Api::OrdersController < ApplicationController
     if @order.update(order_params)
       render :json => @order.as_json(include: [
                         :customer, :incoming_shipment, :outgoing_shipment,
-                        :items => { include: [ :item_type, :alterations ] }
+                        items:  { include: [ :item_type, :alterations ] },
                       ])
     else
       byebug

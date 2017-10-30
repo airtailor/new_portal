@@ -14,7 +14,7 @@ t_nyc = Company.create(name: "Tailoring NYC")
 
 airtailor = FactoryGirl.create(:retailer,
   name: "Air Tailor", phone: "630 235 2554",
-  company: air_taiit lor_co
+  company: air_tailor_co
 )
 steven_alan_tribeca_retailer = FactoryGirl.create(:retailer,
   name: "Steven Alan - Tribeca", phone: "630 235 2554",
@@ -29,10 +29,10 @@ t_nyc_tailor = FactoryGirl.create(:tailor,
   company: t_nyc
 )
 
-User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca).add_role :retailer
+User.create(email: "test@stevenalan.com", password: "stevenalan", store: steven_alan_tribeca_retailer).add_role :retailer
 User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor).add_role(:admin)
-User.create(email: "test@framedenim.com", password: "framedenim", store: soho).add_role(:retailer)
-User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring).add_role(:tailor)
+User.create(email: "test@framedenim.com", password: "framedenim", store: steven_alan_soho_retailer).add_role(:retailer)
+User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: t_nyc_tailor).add_role(:tailor)
 
 #5.times do |n|
 #  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)

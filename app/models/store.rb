@@ -43,7 +43,8 @@ class Store < ApplicationRecord
   end
 
   def shippo_address
-    address.for_shippo(self)
+    return address.for_shippo if address
+    return nil
   end
 
   def open_orders
