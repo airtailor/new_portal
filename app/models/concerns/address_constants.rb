@@ -251,6 +251,7 @@ module AddressConstants
     "CA" => "CALIFORNIA",
     "CO" => "COLORADO",
     "CT" => "CONNECTICUT",
+    "DC" => "D.C.",
     "DE" => "DELAWARE",
     "FL" => "FLORIDA",
     "GA" => "GEORGIA",

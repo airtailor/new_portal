@@ -1,38 +1,29 @@
 class Api::ShipmentsController < ApplicationController
   before_action :authenticate_user!, except: [:create]
+  before_action :set_order, only: [:show]
 
   def show
-    @shipment = Shipment.where(id: params[:id]).first
-    if @shipment
-      render :json => @shipment.to_json
-    else
-      render :json => { :errors => "Shipment not found." }
-    end
+    render :json => @shipment.to_json
   end
 
   def create
-    @shipment = Shipment.new(shipment_params)
-
-    case @shipment.shipment_type
-    when MAIL
-      @shipment.create_label
-    when MESSENGER
-      @shipment.request_messenger
+    shipment = Shipment.create(shipment_params)
+    if shipment.save
+      render :json => shipment.order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
     else
-      raise StandardError
-    end
-
-    if @shipment.save
-      # return a message here saying "you made it!"
-      render :json => @shipment.as_json
-    else
-      render :json => { :errors => @shipment.errors.full_messages }
+      byebug
+      render :json => { :errors => shipment.errors.full_messages }
     end
   end
 
   private
 
+  def set_shipment
+    @shipment = shipment.find(params[:id])
+  end
+
   def shipment_params
-    params.require(:shipment, :shipment_type).permit(:order_id, :type)
+    params.require(:shipment).permit(:order_id, :type)
   end
 end
+
