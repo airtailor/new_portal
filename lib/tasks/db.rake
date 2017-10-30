@@ -24,8 +24,11 @@ namespace :db do
   task :overwrite => [:environment, :terminate] do |task, args|
       return "DO NOT WIPE PROD." if Rails.env == 'production'
       file_path = ENV['DUMP_PATH']
+      file_path ||= default_file
 
       if File.exist?(file_path)
+        # copy it to a new file
+        # pg_restore --verbose --clean --no-acl --no-owner -h localhost -U galactus -d airtailor_development ./lib/data/latest.dump
         sh %{ pg_restore --verbose --clean --no-acl --no-owner -h localhost -d #{environment_db} #{file_path} }
         sh %{ bin/rails db:environment:set RAILS_ENV=#{Rails.env} }
       else
@@ -52,7 +55,7 @@ namespace :db do
   end
 
   def default_file
-    "#{default_db_path}/#{timestamp}_db_dump"
+    "#{default_db_path}/#{timestamp}_db_dump.dump"
   end
 
   def environment_db

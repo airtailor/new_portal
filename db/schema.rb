@@ -10,10 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171018231226) do
+ActiveRecord::Schema.define(version: 20171019160375) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string   "street",                                   null: false
+    t.string   "street_two"
+    t.string   "number",                                   null: false
+    t.string   "city",                                     null: false
+    t.string   "zip_code",                                 null: false
+    t.string   "state_province",                           null: false
+    t.string   "country",        default: "United States", null: false
+    t.string   "country_code",   default: "US",            null: false
+    t.string   "floor"
+    t.string   "unit"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.index ["city"], name: "index_addresses_on_city", using: :btree
+    t.index ["country", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location", using: :btree
+    t.index ["floor"], name: "index_addresses_on_floor", using: :btree
+    t.index ["number"], name: "index_addresses_on_number", using: :btree
+    t.index ["state_province"], name: "index_addresses_on_state_province", using: :btree
+    t.index ["street"], name: "index_addresses_on_street", using: :btree
+    t.index ["street_two"], name: "index_addresses_on_street_two", using: :btree
+    t.index ["unit"], name: "index_addresses_on_unit", using: :btree
+    t.index ["zip_code"], name: "index_addresses_on_zip_code", using: :btree
+  end
 
   create_table "alteration_items", id: false, force: :cascade do |t|
     t.integer "alteration_id"
@@ -41,6 +65,16 @@ ActiveRecord::Schema.define(version: 20171018231226) do
     t.datetime "updated_at",   null: false
     t.index ["recipient_id"], name: "index_conversations_on_recipient_id", using: :btree
     t.index ["sender_id"], name: "index_conversations_on_sender_id", using: :btree
+  end
+
+  create_table "customer_addresses", force: :cascade do |t|
+    t.integer  "customer_id"
+    t.integer  "address_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["address_id", "customer_id"], name: "index_customer_addresses_on_address_id_and_customer_id", unique: true, using: :btree
+    t.index ["address_id"], name: "index_customer_addresses_on_address_id", using: :btree
+    t.index ["customer_id"], name: "index_customer_addresses_on_customer_id", using: :btree
   end
 
   create_table "customers", force: :cascade do |t|
@@ -172,6 +206,8 @@ ActiveRecord::Schema.define(version: 20171018231226) do
     t.datetime "updated_at",         null: false
     t.string   "type"
     t.string   "name",               null: false
+    t.integer  "address_id"
+    t.index ["address_id"], name: "index_stores_on_address_id", using: :btree
     t.index ["company_id"], name: "index_stores_on_company_id", using: :btree
   end
 
@@ -216,5 +252,6 @@ ActiveRecord::Schema.define(version: 20171018231226) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "orders"
   add_foreign_key "messages", "stores"
+  add_foreign_key "stores", "addresses"
   add_foreign_key "users", "stores"
 end
