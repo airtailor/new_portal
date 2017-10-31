@@ -1,6 +1,5 @@
 class Api::OrdersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update]
-  before_action :set_order, only: [:show, :update]
 
   def index
     render :json => current_user.store.open_orders
@@ -13,8 +12,7 @@ class Api::OrdersController < ApplicationController
   def show
     @order = Order.find(params[:id])
     data = @order.as_json(include: [
-            :incoming_shipment,
-            :outgoing_shipment,
+            :shipments,
             :customer,
             :items => { include: [:item_type, :alterations] }
           ])
@@ -22,17 +20,20 @@ class Api::OrdersController < ApplicationController
   end
 
   def new_orders
-    unassigned = TailorOrder.all.where(tailor: nil).as_json( include: [
-                  :incoming_shipment, :outgoing_shipment, :customer,
-                  :items => {
-                      include: [:item_type, :alterations]
-                  }]
-                )
-    welcome_kits = WelcomeKit.all.where(fulfilled: false).as_json( include: [
-                    :incoming_shipment, :outgoing_shipment, :customer,
-                    :items => { include: [ :item_type, :alterations ] }
-                  ])
-    data = {unassigned: unassigned, welcome_kits: welcome_kits}
+    unassigned = TailorOrder.all.where(tailor: nil)
+                  .as_json( include: [
+                    :shipments, :customer,
+                    :items => {
+                        include: [:item_type, :alterations]
+                    }]
+                  )
+    welcome_kits = WelcomeKit.all.where(fulfilled: false)
+                    .as_json( include: [
+                      :shipments, :customer,
+                      :items => { include: [ :item_type, :alterations ] }
+                    ])
+                    
+    data = { unassigned: unassigned, welcome_kits: welcome_kits }
     render :json => data
   end
 
@@ -51,6 +52,8 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
+      @order.set_default_fields
+
       if @order.save
         garments = params[:order][:garments]
         Item.create_items_portal(@order, garments)

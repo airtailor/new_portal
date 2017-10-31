@@ -27,12 +27,30 @@ class Order < ApplicationRecord
   # after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
 
-  def customer_needs_shipping_label
+  def set_default_fields
+    self.source ||= "Shopify"
+    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").select(:id)).first
+    self.fulfilled ||= false
+
+    stores_with_tailors = [
+      "Steven Alan - Tribeca",
+      "Frame Denim - SoHo",
+      "Rag & Bone - SoHo"
+    ]
+
+    if self.retailer.name.in? stores_with_tailors
+      self.tailor = Tailor.where(name: "Tailoring NYC").first
+    end
+  end
+
+
+  def needs_shipping_label
     self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
   end
 
+
   def send_shipping_label_email
-    if customer_needs_shipping_label
+    if needs_shipping_label
       shipment = self.shipments
       shipment ||= Shipment.new(order: self, type: Shipment::INCOMING)
       shipment.set_defaults
@@ -42,9 +60,9 @@ class Order < ApplicationRecord
     end
   end
 
+
   def que_customer_for_delighted
     return nil unless Rails.env == 'production'
-    needs_delighted = self.fulfilled && self.type == TAILOR_ORDER)
 
     if needs_delighted
       Delighted::Person.create(

@@ -14,6 +14,60 @@ class Shipment < ApplicationRecord
   has_many :addresses, as: :source
   has_many :addresses, as: :destination
 
+  def deliver
+    case self.shipment_type
+    when MAIL
+      create_label
+    when MESSENGER
+      request_messenger
+    else
+      raise StandardError
+    end
+  end
+
+  def set_source_and_destination(params)
+    src, dest = params[:shipment_path]
+
+    src_model = case src
+                when 'retailer'
+                  Retailer
+                when 'tailor'
+                  Tailor
+                when 'customer'
+                  if params[:dest_type] != 'retailer'
+                    Customer
+                  end
+                else
+                  nil
+                end
+
+    dest_model =  case dest
+                  when 'retailer'
+                    Retailer
+                  when 'tailor'
+                    Tailor
+                  when 'customer'
+                    if params[:source_type] != 'retailer'
+                      Customer
+                    end
+                  else
+                    nil
+                  end
+
+    return nil unless src_model && dest_model
+
+    self.source      = src_model.where(id: params[:source_id]).first
+    self.destination = dest_model.where(id: params[:dest_id]).first
+  end
+
+  def set_default_fields
+    self.weight = order_weight
+  end
+
+  def order_weight
+    self.orders.sum(:weight)
+  end
+
   def request_messenger
     if is_messenger_shipment?
       PostmatesWorker.perform_async(shipment)
@@ -45,23 +99,6 @@ class Shipment < ApplicationRecord
   def text_all_shipment_customers
     # this shouldn't be generic
     orders.map(&:text_order_customers)
-  end
-
-  def set_default_fields
-    self.source ||= "Shopify"
-    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").select(:id)).first
-    self.fulfilled ||= false
-    self.weight = self.orders.sum(:weight)
-
-    stores_with_tailors = [
-      "Steven Alan - Tribeca",
-      "Frame Denim - SoHo",
-      "Rag & Bone - SoHo"
-    ]
-
-    if self.retailer.name.in? stores_with_tailors
-      self.tailor = Tailor.where(name: "Tailoring NYC").first
-    end
   end
 
   def get_parcel

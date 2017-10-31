@@ -1,38 +1,45 @@
-ItemType.create([
-  {name: "Pants"},
-  {name: "Shirt"},
-  {name: "Tie"},
-  {name: "Jacket"},
-  {name: "Dress"}
-])
+["Pants", "Shirt", "Tie", "Jacket", "Dress"].each do |type|
+  ItemType.find_or_create_by(name: type)
+end
 
-air_tailor_co = Company.create(name: "Air Tailor")
-banana_co = Company.create(name: "Banana Republic")
-frame_denim_co = Company.create(name: "Frame Denim")
-steven_alan_co = Company.create(name: "Steven Alan")
-t_nyc = Company.create(name: "Tailoring NYC")
+[ {
+    role: :retailer, name: "Air Tailor", phone: "630 235 2554",
+    email: "brian@airtailor.com", password: 'airtailor'
+  }, {
+    role: :retailer, name: "Banana Republic", phone: "630 235 2554",
+    email: "test@bananarepublic.com", password: 'bananarepublic'
+  }, {
+    role: :retailer, name: "Frame Denim - Soho", phone: "630 235 2554",
+    email: "test@framedenim.com", password: 'framedenim'
+  }, {
+    role: :retailer, name: "Steven Alan -  Tribeca", phone: "630 235 2554",
+    email: "test@stevenalan.com", password: 'stevenalan'
+  }, {
+    role: :tailor, name: "Tailoring NYC", phone: "630 235 2554",
+    email: "test@tailoringnyc.com", password: 'tailoringnyc'
+  } ].each do |data_hash|
+      company = Company.find_or_create_by(name: data_hash[:name])
+      factory_girl_params = [
+        data_hash[:role],
+        data_hash[:name],
+        data_hash[:phone],
+        company
+      ]
+      store = FactoryGirl.create(
+        data_hash[:role],
+        name: data_hash[:name],
+        phone: data_hash[:phone]
+        company: data_hash[:company]
+      )
 
-airtailor = FactoryGirl.create(:retailer,
-  name: "Air Tailor", phone: "630 235 2554",
-  company: air_taiit lor_co
-)
-steven_alan_tribeca_retailer = FactoryGirl.create(:retailer,
-  name: "Steven Alan - Tribeca", phone: "630 235 2554",
-  company: steven_alan_co
-)
-steven_alan_soho_retailer = FactoryGirl.create(:retailer,
-  name: "Frame Denim - SoHo", phone: "630 235 2554",
-  company: steven_alan_co
-)
-t_nyc_tailor = FactoryGirl.create(:tailor,
-  name: "Tailoring NYC", phone: "630 235 2554",
-  company: t_nyc
-)
+      usr = User.find_or_create_by(
+        email: data_hash[:email],
+        password: data_hash[:password],
+        store: store
+      )
 
-User.create(email: "test@stevenalan.com", password: "stevenalan", store: tribeca).add_role :retailer
-User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor).add_role(:admin)
-User.create(email: "test@framedenim.com", password: "framedenim", store: soho).add_role(:retailer)
-User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring).add_role(:tailor)
+      usr.add_role(data_hash[:role])
+    end
 
 #5.times do |n|
 #  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)
