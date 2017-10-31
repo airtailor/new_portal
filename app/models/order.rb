@@ -1,4 +1,6 @@
 class Order < ApplicationRecord
+  include OrderConstants
+
   has_many :items
   has_many :alterations, through: :items
 
@@ -11,7 +13,7 @@ class Order < ApplicationRecord
     optional: true
 
   validates :retailer, presence: true
-  
+
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
   scope :arrived, -> bool { where(arrived: bool)}
@@ -21,24 +23,34 @@ class Order < ApplicationRecord
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :archived, -> { fulfilled(true) }
 
-  after_update :send_customer_shipping_label_email, if: :provider_id_changed?
-  after_update :que_customer_for_delighted, if: :fulfilled_changed?
+  # after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+  # after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
 
   def customer_needs_shipping_label
-    (self.type != "WelcomeKit") && (self.retailer.name == "Air Tailor") && (!self.incoming_shipment)
+    self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
   end
 
-  def send_customer_shipping_label_email
+  def send_shipping_label_email
     if customer_needs_shipping_label
-      shipment = Shipment.create(order: self, type: "IncomingShipment")
+      shipment = self.shipments
+      shipment ||= Shipment.new(order: self, type: Shipment::INCOMING)
+      shipment.set_defaults
+      shipment.save
+
       AirtailorMailer.label_email(self.customer, self, self.tailor, shipment).deliver!
     end
   end
 
   def que_customer_for_delighted
-    if (self.fulfilled) && (self.type == "TailorOrder") && (Rails.env == "production")
-      Delighted::Person.create(:email => self.customer.email, :delay => 518400, :properties => { :tailor_name => self.tailor.name })
+    return nil unless Rails.env == 'production'
+    needs_delighted = self.fulfilled && self.type == TAILOR_ORDER)
+
+    if needs_delighted
+      Delighted::Person.create(
+        :email => self.customer.email, :delay => 518400,
+        :properties => { :tailor_name => self.tailor.name }
+      )
     end
   end
 
@@ -76,19 +88,15 @@ class Order < ApplicationRecord
 
   def send_order_confirmation_text
     customer = self.customer
-    phone = customer.phone
-    email = customer.email
-    first_name = customer.first_name
-    last_name = customer.last_name
 
     SendSonar.add_customer(
-      phone_number: phone,
-      email: email,
-      first_name: first_name,
-      last_name: last_name,
+      phone_number: customer.phone,
+      email: customer.email,
+      first_name: customer.first_name,
+      last_name: customer.last_name,
     )
 
-    if self.retailer.name != "Air Tailor" #&& !(Rails.env.development? || Rails.env.test?)
+    if self.retailer.name != "Air Tailor"
       customer_message = "Hey #{first_name.capitalize}, your Air " +
         "Tailor order (##{self.id}) has been placed and we are SO excited to " +
         "get to work. We'll text you updates along the way. Thank you!"
@@ -134,12 +142,6 @@ class Order < ApplicationRecord
     set_fulfilled_date
   end
 
-  def grab_items_by_type(item_name)
-    self.items.select do |item|
-      item.item_type.name == item_name
-    end
-  end
-
   def set_arrived
     self.update_attributes(arrived: true)
     set_arrival_date
@@ -152,10 +154,6 @@ class Order < ApplicationRecord
 
   def self.assigned
     self.where("orders.provider_id IS NOT NULL")
-  end
-
-  def self.needs_assigned
-    self.where("orders.provider_id IS NULL")
   end
 
   def items_count

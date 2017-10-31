@@ -1,11 +1,6 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
 
-  after_initialize :configure_shippo
-  after_create :send_text_to_customer
-
-  # NOTE: Commented fields are in-flight. Below is the complete model.
-
   validates :shipment_type, inclusion: [ MAIL, MESSENGER ], presence: true
   validates :shipping_label, :tracking_number, :weight, presence: true,
     if: :is_mail_shipment?
@@ -19,12 +14,10 @@ class Shipment < ApplicationRecord
   has_many :addresses, as: :source
   has_many :addresses, as: :destination
 
-
-  after_create :text_all_shipment_customers
-
   def request_messenger
     if is_messenger_shipment?
       PostmatesWorker.perform_async(shipment)
+      text_all_shipment_customers
     else
       raise StandardError
     end
@@ -35,6 +28,7 @@ class Shipment < ApplicationRecord
     # But! it might not later!
     if is_mail_shipment?
       ShippoWorker.perform_async(shipment)
+      text_all_shipment_customers
     else
       raise StandardError
     end
@@ -52,13 +46,29 @@ class Shipment < ApplicationRecord
     # this shouldn't be generic
     orders.map(&:text_order_customers)
   end
-  #
+
+  def set_default_fields
+    self.source ||= "Shopify"
+    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").select(:id)).first
+    self.fulfilled ||= false
+    self.weight = self.orders.sum(:weight)
+
+    stores_with_tailors = [
+      "Steven Alan - Tribeca",
+      "Frame Denim - SoHo",
+      "Rag & Bone - SoHo"
+    ]
+
+    if self.retailer.name.in? stores_with_tailors
+      self.tailor = Tailor.where(name: "Tailoring NYC").first
+    end
+  end
+
   def get_parcel
     # NOTE: This will break rapidly! We're defaulting to the first one because we don't
     # bundle them yet.
-
-    case orders.first.type
-    when "WelcomeKit"
+    case order.first.type
+    when Order::WELCOME_KIT
       return {
         length: 6,
         width: 4,
@@ -67,7 +77,7 @@ class Shipment < ApplicationRecord
         weight: 28,
         mass_unit: :g
       }
-    when "TailorOrder"
+    when Order::TAILOR_ORDER
        return {
         length: 7,
         width: 5,

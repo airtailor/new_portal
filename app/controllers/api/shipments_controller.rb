@@ -13,24 +13,7 @@ class Api::ShipmentsController < ApplicationController
 
   def create
     @shipment = Shipment.new(shipment_params)
-    # this needs checking
-    @shipment.source ||= "Shopify"
-    air_tailor_co = Company.where(name: "Air Tailor").select(:id)
-
-    @shipment.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
-    @shipment.fulfilled ||= false
-
-    stores_with_tailors = [
-      "Steven Alan - Tribeca",
-      "Frame Denim - SoHo",
-      "Rag & Bone - SoHo"
-    ]
-
-    @shipment.weight = self.orders.sum(:weight)
-
-    if @shipment.retailer.name.in? stores_with_tailors
-      @shipment.tailor = Tailor.where(name: "Tailoring NYC").first
-    end
+    @shipment.set_default_fields
 
 
     case @shipment.shipment_type
