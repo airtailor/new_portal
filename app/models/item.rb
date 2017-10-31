@@ -12,14 +12,27 @@ class Item < ApplicationRecord
 
       item_name = remove_number_from_item_name(item_name_num)
       item_type = grab_item_type_from_title(item_name)
-      alteration_name = get_alteration_name(item["variant_title"], item_name)
+
+      if item["title"] == "Tie Slimming Service"
+        old_notes = order.requester_notes
+        new_notes = ""
+
+        if old_notes && old_notes.length > 0
+          new_notes = old_notes + " || Number of Ties: #{item["quantity"]}"
+        else
+          new_notes = "Number of Ties: #{item["quantity"]}"
+        end
+        order.update_attributes(requester_notes: new_notes)
+      end
 
       new_item = self.find_or_create_by(order: order, name: item_name_num) do |new_item|
         new_item.item_type = item_type
       end
 
-      alteration = find_or_create_alteration(alteration_name)
-      find_or_create_alteration_item(alteration, new_item)
+      unless item["variant_title"] == item_name
+        alteration = find_or_create_alteration(item["variant_title"])
+        find_or_create_alteration_item(alteration, new_item)
+      end
     end
   end
 
@@ -60,6 +73,10 @@ class Item < ApplicationRecord
   end
 
   def self.get_alteration_name(variant_title, item_name)
+    puts "\n]n\n\n\n\n\n\n\n ###################################################"
+    puts "variant_title ##{variant_title}"
+    puts "\n]n\n\n\n\n\n\n\n ###################################################"
+
     variant_title.split("#{item_name.split(" ")[0]} ").second
   end
 
