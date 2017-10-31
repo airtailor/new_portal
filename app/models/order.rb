@@ -117,7 +117,7 @@ class Order < ApplicationRecord
   end
 
   def self.find_or_create(order_info, customer, source = "Shopify")
-    order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
+    order = self.find_or_create_by(source_order_id: order_info["name"].gsub("#", "").to_i, source: source) do |order|
       order.customer = customer
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
