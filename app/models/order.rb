@@ -2,23 +2,16 @@ class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
 
-  # has_many :shipment_orders
-  # has_many :shipments, through: :shipment_orders
+  has_many :shipment_orders
+  has_many :shipments, through: :shipment_orders
 
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
     optional: true
 
-  has_one :outgoing_shipment, class_name: "OutgoingShipment",
-    foreign_key: "order_id"
-  has_one :incoming_shipment, class_name: "IncomingShipment",
-    foreign_key: "order_id"
-
   validates :retailer, presence: true
-  after_initialize :init
-  # after_create :send_order_confirmation_text
-
+  
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
   scope :arrived, -> bool { where(arrived: bool)}
@@ -33,9 +26,7 @@ class Order < ApplicationRecord
 
 
   def customer_needs_shipping_label
-    self.type != "WelcomeKit" &&
-    self.retailer.name == "Air Tailor" &&
-    !self.incoming_shipment
+    (self.type != "WelcomeKit") && (self.retailer.name == "Air Tailor") && (!self.incoming_shipment)
   end
 
   def send_customer_shipping_label_email
@@ -143,6 +134,12 @@ class Order < ApplicationRecord
     set_fulfilled_date
   end
 
+  def grab_items_by_type(item_name)
+    self.items.select do |item|
+      item.item_type.name == item_name
+    end
+  end
+
   def set_arrived
     self.update_attributes(arrived: true)
     set_arrival_date
@@ -157,10 +154,26 @@ class Order < ApplicationRecord
     self.where("orders.provider_id IS NOT NULL")
   end
 
+  def self.needs_assigned
+    self.where("orders.provider_id IS NULL")
+  end
+
+  def items_count
+    self.items.count
+  end
+
   def alterations_count
     self.items.reduce(0) do |prev, curr|
       prev += AlterationItem.where(item: curr).count
     end
+  end
+
+  def self.search(search)
+    id = Order.first.id
+    where("id ILIKE ?", "%#{id}%")
+    #where("id ILIKE ? OR customer.first_name ILIKE ? OR customer.last_name ILIKE ?", "%#{search}%", "%#{search}%", "%#{search}%")
+    #
+     #Order.joins(:customers).where("customer.name like '%?%'", search)
   end
 
   private
