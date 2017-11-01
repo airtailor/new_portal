@@ -4,15 +4,23 @@ class Api::OrdersController < ApplicationController
   def index
     render :json => current_user.store.open_orders
                       .as_json(
-                        include: [:customer],
+                        include: [
+                          :tailor,
+                          :retailer,
+                          :customer
+                        ],
                         methods: [:alterations_count]
                       )
   end
 
   def show
     @order = Order.find(params[:id])
+    @shipments = @order.shipments
+    # add @shipments in
     data = @order.as_json(include: [
             :shipments,
+            :tailor,
+            :retailer,
             :customer,
             :items => { include: [:item_type, :alterations] }
           ])
@@ -22,17 +30,22 @@ class Api::OrdersController < ApplicationController
   def new_orders
     unassigned = TailorOrder.all.where(tailor: nil)
                   .as_json( include: [
-                    :shipments, :customer,
+                    :shipments,
+                    :tailor,
+                    :retailer,
+                    :customer,
                     :items => {
                         include: [:item_type, :alterations]
                     }]
                   )
     welcome_kits = WelcomeKit.all.where(fulfilled: false)
                     .as_json( include: [
-                      :shipments, :customer,
+                      :shipments,
+                      :retailer,
+                      :customer,
                       :items => { include: [ :item_type, :alterations ] }
                     ])
-                    
+
     data = { unassigned: unassigned, welcome_kits: welcome_kits }
     render :json => data
   end
@@ -41,7 +54,9 @@ class Api::OrdersController < ApplicationController
     @order = Order.find(params[:id])
     if @order.update(order_params)
       render :json => @order.as_json(include: [
-                        :customer, :incoming_shipment, :outgoing_shipment,
+                        :tailor,
+                        :retailer,
+                        :customer,
                         items:  { include: [ :item_type, :alterations ] },
                       ])
     else
@@ -58,7 +73,10 @@ class Api::OrdersController < ApplicationController
         garments = params[:order][:garments]
         Item.create_items_portal(@order, garments)
         render :json => @order.as_json(include: [
-          :customer, :retailer, :items => {
+          :tailor,
+          :retailer,
+          :customer,
+          :items => {
             include: [ :item_type, :alterations ]
           }
         ])
