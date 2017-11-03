@@ -183,6 +183,14 @@ class Order < ApplicationRecord
      #Order.joins(:customers).where("customer.name like '%?%'", search)
   end
 
+  def self.mark_orders_late
+    orders = Order.all.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today)
+
+    orders.each do |order|
+      order.update_attributes(late: true)
+    end
+  end
+
   private
 
   def set_arrival_date
