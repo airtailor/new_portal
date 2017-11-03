@@ -3,7 +3,13 @@ class Api::OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update]
 
   def index
-    render :json => current_user.store.open_orders.as_json(include: [:customer], methods: [:alterations_count])
+    if current_user.admin?  
+      store = Store.find(params[:store_id]) 
+    else 
+      store = current_user.store
+    end
+
+    render :json => store.open_orders.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   def show
