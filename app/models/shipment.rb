@@ -5,6 +5,9 @@ class Shipment < ApplicationRecord
   validates :delivery_type, inclusion: { in:
     [ MAIL, MESSENGER, "OutgoingShipment", "IncomingShipment" ]
   }, presence: true
+
+  validates :source_type, inclusion: { in: [ 'Address' ] }, presence: true
+  validates :destination_type, inclusion: { in: [ 'Address' ] }, presence: true
   # shipment is created, without shippo stuff
   # deliver method fires to parse + create label on shippo (async)
   # returns to the front-end
@@ -18,9 +21,6 @@ class Shipment < ApplicationRecord
 
   has_many :shipment_orders
   has_many :orders, through: :shipment_orders
-
-  has_many :addresses, as: :source
-  has_many :addresses, as: :destination
 
   def deliver
     case self.delivery_type
@@ -65,8 +65,8 @@ class Shipment < ApplicationRecord
       #
       shippo = Shippo::Shipment.create(
         object_purpose: "PURCHASE",
-        address_from: self.source,
-        address_to: self.destination,
+        address_from: self.source.for_shippo,
+        address_to: self.destination.for_shippo,
         parcels: get_parcel,
         async: false
       )
@@ -98,7 +98,10 @@ class Shipment < ApplicationRecord
   end
 
   def get_parcel
-    case self.orders.select(:type).distinct
+    all_order_types = self.orders.map(&:type).distinct
+    return nil if all_order_types.length > 1
+
+    case all_order_types.first
     when "WelcomeKit"
       return {
         length: 6,
@@ -119,6 +122,58 @@ class Shipment < ApplicationRecord
       }
     end
   end
+
+  def parse_src_dest(action)
+    type = self.shipment_type
+
+    case action
+    when SHIP_RETAILER_TO_TAILOR
+      [:retailer, :tailor]
+    when SHIP_TAILOR_TO_RETAILER
+      type == MAIL ? [:tailor, :retailer] : nil
+    when SHIP_CUSTOMER_TO_TAILOR
+      type == MAIL ? [:customer, :tailor] : nil
+    when SHIP_TAILOR_TO_CUSTOMER
+      type == MAIL ? [:tailor, :customer] : nil
+    when SHIP_RETAILER_TO_CUSTOMER
+      type == MAIL ? [:retailer, :customer] : nil
+    else
+      nil
+    end
+  end
+
+  def can_be_executed?(action)
+    source, dest =
+    return true if self.orders.length == 1
+
+    counts = {
+      retailer: orders.map(&:requester_id).uniq,
+      tailor: orders.map(&:provider_id).uniq,
+      customer: orders.map(&:customer_id).uniq
+    }
+
+    return [source, dest].all?{ |klass|
+      counts[klass] == 1
+    }
+  end
+
+  def set_source(source_model)
+    self.source = get_address(source)
+  end
+
+  def set_destination(destination_model)
+    self.destination = get_address(destination)
+  end
+
+  def get_address(klass)
+    record = self.orders.first.send(klass)
+    if klass == :customer
+      return record.addresses.first
+    else
+      return record.address
+    end
+  end
+
 
 
 end

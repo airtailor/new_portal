@@ -12,35 +12,18 @@ class Api::ShipmentsController < ApplicationController
   end
 
   def create
-    shipment_action = params[:shipment][:shipment_action]
     @shipment = Shipment.new(shipment_params)
-
+    @shipment.orders = Order.where(id: [ params[:shipment][:order_id] ])
     @shipment.set_default_fields
-    source_model, destination_model = @shipment.parse_src_dest(
-      shipment_action, @shipment.delivery_type
-    )
+    # the front-end should pass an arr
 
-    order_ids = [params[:shipment][:order_id]]  # the front-end should pass an arr
-    orders_in_shipment = Order.where(id: order_ids)
-    count_entities_in_order = {
-      retailer: orders_in_shipment.select(:requester_id).distinct.count,
-      tailor: orders_in_shipment.select(:provider_id).distinct.count,
-      customer: orders_in_shipment.select(:customer_id).distinct.count
-    }
+    shipment_action = params[:shipment][:shipment_action]
+    source, dest = @shipment.parse_src_dest(shipment_action)
 
-    relevant_entities = [source_model, destination_model]
-    valid_shipment = relevant_entities.all?{ |klass|
-      count_entities_in_order[klass] == 1
-    }
-
-    if valid_shipment
-      @shipment.source = orders_in_shipment.first.send(source_model)
-      @shipment.destination = orders_in_shipment.first.send(destination_model)
+    if @shipment.can_be_executed?(shipment_action)
+      @shipment.set_source(source)
+      @shipment.set_destination(dest)
     end
-
-    binding.pry
-    @shipment.deliver
-
 
     if @shipment.deliver && @shipment.save
       #@shipment.text_all_shipment_customers
