@@ -2,7 +2,9 @@ class Shipment < ApplicationRecord
   include ShipmentConstants
 
   validates :source, :destination, presence: true
-  validates :delivery_type, inclusion: [ MAIL, MESSENGER ], presence: true
+  validates :delivery_type, inclusion: { in:
+    [ MAIL, MESSENGER, "OutgoingShipment", "IncomingShipment" ]
+  }, presence: true
   # shipment is created, without shippo stuff
   # deliver method fires to parse + create label on shippo (async)
   # returns to the front-end
