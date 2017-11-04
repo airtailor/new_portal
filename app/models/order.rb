@@ -144,7 +144,7 @@ class Order < ApplicationRecord
   end
 
   def self.find_or_create(order_info, customer, source = "Shopify")
-    order = self.find_or_create_by(source_order_id: order_info["id"], source: source) do |order|
+    order = self.find_or_create_by(source_order_id: order_info["name"].gsub("#", "").to_i, source: source) do |order|
       order.customer = customer
       order.total = order_info["total_price"]
       order.subtotal = order_info["subtotal_price"]
@@ -190,6 +190,14 @@ class Order < ApplicationRecord
     #where("id ILIKE ? OR customer.first_name ILIKE ? OR customer.last_name ILIKE ?", "%#{search}%", "%#{search}%", "%#{search}%")
     #
      #Order.joins(:customers).where("customer.name like '%?%'", search)
+  end
+
+  def self.mark_orders_late
+    orders = Order.all.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today)
+
+    orders.each do |order|
+      order.update_attributes(late: true)
+    end
   end
 
   private
