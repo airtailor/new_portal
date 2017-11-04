@@ -53,27 +53,28 @@ class Shipment < ApplicationRecord
     end
   end
 
+  def needs_label
+    !shipping_label || !tracking_number
+  end
 
   def create_label
-    # NOTE: this should work. A single source and single destination.
-    # But! it might not later!
+    # check for needing a label here
+    if is_mail_shipment? && needs_label
+      Shippo::API.token, Shippo::API.version = ENV["SHIPPO_KEY"], ENV["SHIPPO_API_VERSION"]
 
-    binding.pry
-
-    if is_mail_shipment?
-      Shippo.api_token, Shippo.api_version = ENV["SHIPPO_KEY"], ENV["SHIPPO_API_VERSION"]
-      #
-      shippo = Shippo::Shipment.create(
+      shippo = Shippo::Shipment.create({
         object_purpose: "PURCHASE",
         address_from: self.source.for_shippo,
         address_to: self.destination.for_shippo,
         parcels: get_parcel,
         async: false
-      )
+      }).with_indifferent_access
 
-      rate = shippo.find {|r| r.attributes.include? "BESTVALUE"}
+      rate  = shippo[:rates].find {|r| r[:attributes].include? "BESTVALUE"}
+      rate  ||= shippo[:rates].min_by{|r| r[:amount_local].to_i}
+
       shippo_txn = Shippo::Transaction.create(
-        rate: rate, label_file_type: "PNG", async: false
+        rate: rate[:object_id], label_file_type: "PNG", async: false
       )
 
       self.shipping_label  = shippo_txn[:label_url]
@@ -98,7 +99,7 @@ class Shipment < ApplicationRecord
   end
 
   def get_parcel
-    all_order_types = self.orders.map(&:type).distinct
+    all_order_types = self.orders.map(&:type).uniq
     return nil if all_order_types.length > 1
 
     case all_order_types.first
@@ -117,14 +118,14 @@ class Shipment < ApplicationRecord
         width: 5,
         height: 3,
         distance_unit: :in,
-        weight: self.orders.sum(:weight),
+        weight: self.orders.sum(&:weight),
         mass_unit: :g
       }
     end
   end
 
   def parse_src_dest(action)
-    type = self.shipment_type
+    type = self.delivery_type
 
     case action
     when SHIP_RETAILER_TO_TAILOR
@@ -143,7 +144,7 @@ class Shipment < ApplicationRecord
   end
 
   def can_be_executed?(action)
-    source, dest =
+    source, dest = parse_src_dest(action)
     return true if self.orders.length == 1
 
     counts = {
@@ -158,11 +159,11 @@ class Shipment < ApplicationRecord
   end
 
   def set_source(source_model)
-    self.source = get_address(source)
+    self.source = get_address(source_model)
   end
 
   def set_destination(destination_model)
-    self.destination = get_address(destination)
+    self.destination = get_address(destination_model)
   end
 
   def get_address(klass)

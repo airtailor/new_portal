@@ -13,9 +13,10 @@ class Api::ShipmentsController < ApplicationController
 
   def create
     @shipment = Shipment.new(shipment_params)
+
+    # the front-end should pass an arr
     @shipment.orders = Order.where(id: [ params[:shipment][:order_id] ])
     @shipment.set_default_fields
-    # the front-end should pass an arr
 
     shipment_action = params[:shipment][:shipment_action]
     source, dest = @shipment.parse_src_dest(shipment_action)

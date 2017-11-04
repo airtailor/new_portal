@@ -98,17 +98,32 @@ class Address < ApplicationRecord
   def for_shippo
     contact = get_contact
     return {
-      name: contact.name,
-      phone: contact.try(:phone),
-      email: contact.try(:email),
-      street1: shippo_street_1,
-      street2: shippo_street_2,
-      city: self.city,
-      country: self.country,
-      state: self.state_province,
-      zip: self.zip_code
+      :name => contact.name,
+      :street1 => shippo_street_1,
+      :street2 => shippo_street_2,
+      :city => self.city,
+      :country => self.country,
+      :state => self.state_province,
+      :zip => self.zip_code,
+      :phone => contact.try(:phone),
+      :email => contact.try(:email)
     }
   end
+
+#   def shippo_address
+#   {
+#     # :object_purpose => "PURCHASE",
+#     :name => self.name,
+#     :street1 => self.street1,
+#     :street2 => self.street2,
+#     :city => self.city,
+#     :country => self.country,
+#     :state => self.state,
+#     :zip => self.zip,
+#     :phone => self.phone,
+#     :email => self.email,
+#   }
+# end
 
   def shippo_street_1
     "#{number} #{street}"
