@@ -8,22 +8,20 @@ class BackfillShipmentSourceAndDestination < ActiveRecord::Migration[5.0]
 
       if order
         customer, retailer, tailor = order.customer, order.retailer, order.tailor
-        type, order_type = shipment.type, order.type
+        type, order_type = shipment.shipment_type, order.type
 
         if type == "OutgoingShipment"
-          destination_address = order.tailor.address if order_type == 'TailorOrder'
-          destination_address = order.retailer.address if order_type == 'WelcomeKit'
+          source_address = order.tailor.address if order_type == "TailorOrder"
+          source_address = order.retailer.address if order_type == "WelcomeKit"
 
           if order.ship_to_store
-            source_address = order.retailer.address
+            destination_address = order.retailer.address
           else
-            source_address = order.customer.addresses.first
+            destination_address = order.customer.addresses.first
           end
         elsif type == "IncomingShipment"
-          source_address = order.tailor.address if order_type == 'TailorOrder'
-          source_address = order.retailer.address if order_type == 'WelcomeKit'
-
-          destination_address = order.customer.addresses.first
+          source_address = order.retailer.address if order_type == 'TailorOrder'
+          destination_address = order.tailor.addresses.first
         end
       end
 
