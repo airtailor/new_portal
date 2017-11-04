@@ -17,7 +17,7 @@ class Api::ShipmentsController < ApplicationController
 
     @shipment.set_default_fields
     source_model, destination_model = @shipment.parse_src_dest(
-      shipment_action, @shipment.shipment_type
+      shipment_action, @shipment.delivery_type
     )
 
     order_ids = [params[:shipment][:order_id]]  # the front-end should pass an arr
@@ -53,6 +53,6 @@ class Api::ShipmentsController < ApplicationController
   private
 
   def shipment_params
-    params.require(:shipment).permit(:shipment_type)
+    params.require(:shipment).permit(:delivery_type)
   end
 end

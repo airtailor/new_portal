@@ -2,7 +2,7 @@ class Shipment < ApplicationRecord
   include ShipmentConstants
 
   validates :source, :destination, presence: true
-  validates :shipment_type, inclusion: [ MAIL, MESSENGER ], presence: true
+  validates :delivery_type, inclusion: [ MAIL, MESSENGER ], presence: true
   # shipment is created, without shippo stuff
   # deliver method fires to parse + create label on shippo (async)
   # returns to the front-end
@@ -21,7 +21,7 @@ class Shipment < ApplicationRecord
   has_many :addresses, as: :destination
 
   def deliver
-    case self.shipment_type
+    case self.delivery_type
     when MAIL
       create_label
     when MESSENGER
@@ -83,11 +83,11 @@ class Shipment < ApplicationRecord
   end
   #
   def is_messenger_shipment?
-    self.shipment_type === MESSENGER
+    self.delivery_type === MESSENGER
   end
 
   def is_mail_shipment?
-    self.shipment_type === MAIL
+    self.delivery_type === MAIL
   end
   #
   def text_all_shipment_customers

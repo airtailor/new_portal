@@ -1,7 +1,7 @@
 class SetAllShipmentsAsMailShipments < ActiveRecord::Migration[5.0]
 
   def up
-    Shipment.update_all(shipment_type: 'mail_shipment')
+    Shipment.update_all(delivery_type: 'mail_shipment')
   end
 
   def down
@@ -12,7 +12,7 @@ class SetAllShipmentsAsMailShipments < ActiveRecord::Migration[5.0]
 
     # class IncomingShipment < Shipment
     # end
-    
+
     raise IrreversibleMigration unless OutgoingShipment && IncomingShipment
 
     Shipment.all.each do |shipment|
@@ -30,9 +30,9 @@ class SetAllShipmentsAsMailShipments < ActiveRecord::Migration[5.0]
       is_outgoing_shipment ||=  order_type == "tailor_order"
 
       if is_incoming_shipment
-        shipment.shipment_type = 'IncomingShipment'
+        shipment.delivery_type = 'IncomingShipment'
       elsif is_outgoing_shipment
-        shipment.shipment_type = 'OutgoingShipment'
+        shipment.delivery_type = 'OutgoingShipment'
       end
 
       shipment.save

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024152514) do
+ActiveRecord::Schema.define(version: 20171024184850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 20171024152514) do
     t.string   "weight"
     t.string   "shipping_label"
     t.string   "tracking_number"
-    t.string   "type"
+    t.string   "delivery_type"
     t.string   "source_type"
     t.integer  "source_id"
     t.string   "destination_type"

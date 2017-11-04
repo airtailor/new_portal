@@ -8,7 +8,7 @@ class BackfillShipmentSourceAndDestination < ActiveRecord::Migration[5.0]
 
       if order
         customer, retailer, tailor = order.customer, order.retailer, order.tailor
-        type, order_type = shipment.shipment_type, order.type
+        type, order_type = shipment.delivery_type, order.type
 
         if type == "OutgoingShipment"
           source_address = order.tailor.address if order_type == "TailorOrder"
@@ -21,7 +21,7 @@ class BackfillShipmentSourceAndDestination < ActiveRecord::Migration[5.0]
           end
         elsif type == "IncomingShipment"
           source_address = order.retailer.address if order_type == 'TailorOrder'
-          destination_address = order.tailor.addresses.first
+          destination_address = order.tailor.address
         end
       end
 
