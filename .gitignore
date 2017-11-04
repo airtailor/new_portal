@@ -13,6 +13,9 @@
 !/log/.keep
 !/tmp/.keep
 
+.env
+config/secrets.yml
+
 
 # Committing  makes the repo huge and exposes users.
 /lib/data/*

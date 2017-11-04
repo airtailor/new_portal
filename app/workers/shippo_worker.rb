@@ -3,8 +3,8 @@ class ShippoWorker < ServiceWorker
   # NOTE: We need to make ActionCable work to make this work asynchronously.
   # def perform(shipment, to, from, parcel)
   #
-  #   Shippo.api_token = ENV["SHIPPO_KEY"]
-  #   Shippo.api_version = ENV["SHIPPO_API_VERSION"]
+  #   Shippo.api_token = Credentials.shippo_key
+  #   Shippo.api_version = Credentials.shippo_api_version
   #   # Shippo.api_version = '2017-03-29'
   #
   #   shippo = Shippo::Shipment.create(

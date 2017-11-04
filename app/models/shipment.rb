@@ -1,5 +1,6 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
+  include PostmatesHelper
 
   validates :source, :destination, presence: true
   validates :delivery_type, inclusion: { in:
@@ -33,9 +34,18 @@ class Shipment < ApplicationRecord
     end
   end
 
-  # there was an error here for "needs something."
-  # i think it was needs_label.
-  #  double-check.
+  def needs_messenger
+    # just returns true for now
+    true
+  end
+
+  def request_messenger
+    if is_messenger_shipment? && needs_messenger
+      self.create_delivery(set_up_postmates)
+
+      self.update(response)
+    end
+  end
 
   def set_default_fields
     self.weight = order_weight
@@ -45,14 +55,6 @@ class Shipment < ApplicationRecord
     self.orders.sum(:weight)
   end
 
-  def request_messenger
-    if is_messenger_shipment?
-      PostmatesWorker.perform_async(shipment)
-    else
-      raise StandardError
-    end
-  end
-
   def needs_label
     !shipping_label || !tracking_number
   end
@@ -60,7 +62,7 @@ class Shipment < ApplicationRecord
   def create_label
     # check for needing a label here
     if is_mail_shipment? && needs_label
-      Shippo::API.token, Shippo::API.version = ENV["SHIPPO_KEY"], ENV["SHIPPO_API_VERSION"]
+      Shippo::API.token, Shippo::API.version = Credentials.shippo_key, Credentials.shippo_api_version
 
       shippo = Shippo::Shipment.create({
         object_purpose: "PURCHASE",
