@@ -108,14 +108,16 @@ class Shipment < ApplicationRecord
   end
 
   def get_shipping_rate(rates)
-    rates.find {|r| r.attributes.include? "BESTVALUE"}
+    #rates.find {|r| r.attributes.include? "BESTVALUE"}
+    rates.min_by{|r| r[:amount_local].to_i}
   end
 
   def create_shippo_transaction(shippo_shipment)
+    rate = get_shipping_rate(shippo_shipment[:rates])
     transaction = Shippo::Transaction.create(
       #rate: shippo_shipment[:rates].first[:object_id],
       #rate: shippo_shipment[:rates].find {|r| r.attributes.include? "BESTVALUE"},
-      rate: get_shipping_rate(shippo_shipment[:rates]),
+      rate: rate,
       label_file_type: "PNG",
       async: false
     )
