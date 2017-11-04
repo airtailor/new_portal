@@ -1,6 +1,7 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
 
+  validates :source, :destination, presence: true
   validates :shipment_type, inclusion: [ MAIL, MESSENGER ], presence: true
   # shipment is created, without shippo stuff
   # deliver method fires to parse + create label on shippo (async)
@@ -30,17 +31,9 @@ class Shipment < ApplicationRecord
     end
   end
 
-  def needs
-
-  def set_source_and_destination(src_dest_action)
-    # make sure that here we're parsing order properly to get this stuff
-    # we need a method where we pass in order and receive to and from
-
-    src_model, dest_model = parse_src_dest(src_dest_action)
-    return nil unless src_model && dest_model
-    self.source      = src_model.where(id: params[:source_id]).first
-    self.destination = dest_model.where(id: params[:dest_id]).first
-  end
+  # there was an error here for "needs something."
+  # i think it was needs_label.
+  #  double-check.
 
   def set_default_fields
     self.weight = order_weight
@@ -58,15 +51,15 @@ class Shipment < ApplicationRecord
     end
   end
 
-  def
 
   def create_label
     # NOTE: this should work. A single source and single destination.
     # But! it might not later!
+
+    binding.pry
+
     if is_mail_shipment?
-      Shippo.api_token = ENV["SHIPPO_KEY"]
-      Shippo.api_version = ENV["SHIPPO_API_VERSION"]
-      # Shippo.api_version = '2017-03-29'
+      Shippo.api_token, Shippo.api_version = ENV["SHIPPO_KEY"], ENV["SHIPPO_API_VERSION"]
       #
       shippo = Shippo::Shipment.create(
         object_purpose: "PURCHASE",
@@ -103,10 +96,8 @@ class Shipment < ApplicationRecord
   end
 
   def get_parcel
-    # NOTE: This will break rapidly! We're defaulting to the first one because we don't
-    # bundle them yet.
-    case order.first.type
-    when Order::WELCOME_KIT
+    case self.orders.select(:type).distinct
+    when "WelcomeKit"
       return {
         length: 6,
         width: 4,
@@ -115,13 +106,13 @@ class Shipment < ApplicationRecord
         weight: 28,
         mass_unit: :g
       }
-    when Order::TAILOR_ORDER
+    when "TailorOrder"
        return {
         length: 7,
         width: 5,
         height: 3,
         distance_unit: :in,
-        weight: self.order.weight,
+        weight: self.orders.sum(:weight),
         mass_unit: :g
       }
     end

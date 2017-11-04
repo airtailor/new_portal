@@ -16,6 +16,7 @@ class Api::OrdersController < ApplicationController
   def show
     @order = Order.find(params[:id])
     @shipments = @order.shipments
+
     # add @shipments in
     data = @order.as_json(include: [
             :shipments,
@@ -53,6 +54,8 @@ class Api::OrdersController < ApplicationController
   def update
     @order = Order.find(params[:id])
     if @order.update(order_params)
+
+        
       render :json => @order.as_json(include: [
                         :tailor,
                         :retailer,
@@ -136,7 +139,7 @@ class Api::OrdersController < ApplicationController
         :customer_id,
         :source,
         :ship_to_store
-        )
+      )
   end
 
 end
