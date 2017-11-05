@@ -6,7 +6,6 @@ module PostmatesHelper
       config.customer_id = Credentials.postmates_id
     end
 
-
     pickup, dropoff = self.source, self.destination
     pickup_address = pickup.postmates_address
     dropoff_address = dropoff.postmates_address
