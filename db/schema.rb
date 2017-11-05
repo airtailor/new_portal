@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104232721) do
+ActiveRecord::Schema.define(version: 20171105001311) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -201,6 +201,8 @@ ActiveRecord::Schema.define(version: 20171104232721) do
     t.integer  "source_id"
     t.string   "destination_type"
     t.integer  "destination_id"
+    t.string   "postmates_id"
+    t.string   "status"
     t.index ["destination_type", "destination_id"], name: "index_shipments_on_destination_type_and_destination_id", using: :btree
     t.index ["source_type", "source_id"], name: "index_shipments_on_source_type_and_source_id", using: :btree
   end

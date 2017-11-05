@@ -25,6 +25,7 @@ gem 'rack-cors'
 gem 'send_sonar'
 #gem 'shippo', '~> 2.0.4'
 gem 'shippo', '~> 3.0.0'
+gem 'postmates'
 gem 'airbrake'
 gem 'pdfkit'
 gem 'render_anywhere', :require => false

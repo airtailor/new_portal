@@ -1,6 +1,7 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
   include PostmatesHelper
+  include ShippoHelper
 
   validates :source, :destination, presence: true
   validates :delivery_type, inclusion: { in:
@@ -16,6 +17,9 @@ class Shipment < ApplicationRecord
 
   validates :shipping_label, :tracking_number, :weight, presence: true,
     if: :is_mail_shipment?
+
+  # validates :postmates_delivery_id, presence: true,
+  #   if: :is_messenger_shipment?
 
   belongs_to :source, polymorphic: true
   belongs_to :destination, polymorphic: true
@@ -36,14 +40,13 @@ class Shipment < ApplicationRecord
 
   def needs_messenger
     # just returns true for now
-    true
+    !postmates_delivery_id
   end
 
   def request_messenger
     if is_messenger_shipment? && needs_messenger
-      self.create_delivery(set_up_postmates)
-
-      self.update(response)
+      delivery = self.create_postmates_delivery
+      # self.postmates_delivery_id = delivery.id
     end
   end
 
@@ -62,28 +65,9 @@ class Shipment < ApplicationRecord
   def create_label
     # check for needing a label here
     if is_mail_shipment? && needs_label
-      Shippo::API.token, Shippo::API.version = Credentials.shippo_key, Credentials.shippo_api_version
-
-      shippo = Shippo::Shipment.create({
-        object_purpose: "PURCHASE",
-        address_from: self.source.for_shippo,
-        address_to: self.destination.for_shippo,
-        parcels: get_parcel,
-        async: false
-      }).with_indifferent_access
-
-      rate  = shippo[:rates].find {|r| r[:attributes].include? "BESTVALUE"}
-      rate  ||= shippo[:rates].min_by{|r| r[:amount_local].to_i}
-
-      shippo_txn = Shippo::Transaction.create(
-        rate: rate[:object_id], label_file_type: "PNG", async: false
-      )
-
+      shippo_txn = build_shippo_label
       self.shipping_label  = shippo_txn[:label_url]
       self.tracking_number = shippo_txn[:tracking_number]
-      # ShippoWorker.perform_async(shipment)
-    else
-      raise StandardError
     end
   end
   #

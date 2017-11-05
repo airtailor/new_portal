@@ -1,59 +1,45 @@
 module PostmatesHelper
   def create_postmates_delivery
-      from = shipment.source.for_postmates
-      to   = shipment.destination.for_postmates
-      parcel = shipment.get_parcel
-
-      return {
-        quote_id: nil
-        manifest: # some value here.
-        manifest_reference: # probably shipment #?
-        pickup_name: from[:full_name]
-        pickup_address: from.full_address
-        pickup_phone_number: from[:phone_number]
-        pickup_business_name: from.business_name || nil
-        pickup_notes: # notes?
-        dropoff_name: [:full_name]
-        dropoff_address: from.full_address
-        dropoff_phone_number: from[:phone_number]
-        dropoff_business_name: from.business_name || nil
-        dropoff_notes: # ??
-        requires_id: # ??
-      }
-
-    else
-      raise StandardError
+    @client = Postmates.new
+    @client.configure do |config|
+      config.api_key = Credentials.postmates_sandbox_token
+      config.customer_id = Credentials.postmates_id
     end
-  end
 
 
-  # NOTE: This is in-progress and doesn't do anything.
-  #
-  # def get_delivery_quote
-  #   # pings postmates for a quote
-  # end
-  #
-  def create_delivery(params, parcel)
-    postmates_token = Credentials.postmates_sandbox_token
-    postmates_id = Credentials.postmates_id
-    url = "https:://api.postmates.com/v1/customers/#{postmates_id}/deliveries"
-    uri = URI.parse(url)
+    pickup, dropoff = self.source, self.destination
+    pickup_address = pickup.postmates_address
+    dropoff_address = dropoff.postmates_address
+    pickup_contact = source.get_contact
+    dropoff_contact = destination.get_contact
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.set_form_data(
-      # params here
+    quote = @client.quote(
+      pickup_address: pickup_address, dropoff_address: dropoff_address
     )
+    # if this 400s, we're boned.
+    # not a big deal rn, but later it will be.
 
-    response = http.request(request)
-    # get a delivery
+    params = {
+      quote_id: quote.id,
+      manifest: postmates_manifest_content,
+      manifest_reference: "",
+      pickup_name: pickup_contact.name,
+      pickup_address: pickup_address,
+      pickup_phone_number: pickup_contact.phone,
+      pickup_business_name: "",
+      pickup_notes: "",
+      dropoff_name: dropoff_contact.name,
+      dropoff_address: dropoff_address,
+      dropoff_phone_number: dropoff_contact.phone,
+      dropoff_business_name: "",
+      dropoff_notes: ""
+    }
+
+    return @client.create(params)
   end
 
-  def get_delivery
-    # given an ID, pings postmates for details
+  def postmates_manifest_content
+    "Some stuff to send to postmates about a delivery."
   end
 
-  def cancel_delivery
-    # given an ID, cancels that delivery
-  end
 end

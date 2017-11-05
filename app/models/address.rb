@@ -82,6 +82,10 @@ class Address < ApplicationRecord
     self.country = country
   end
 
+  def postmates_address
+    "#{number} #{street}, #{city}, #{state_province}"
+  end
+
   def get_contact
     case self.address_type
     when CUSTOMER
@@ -95,59 +99,4 @@ class Address < ApplicationRecord
     end
   end
 
-  def for_shippo
-    contact = get_contact
-    return {
-      :name => contact.name,
-      :street1 => shippo_street_1,
-      :street2 => shippo_street_2,
-      :city => self.city,
-      :country => self.country,
-      :state => self.state_province,
-      :zip => self.zip_code,
-      :phone => contact.try(:phone),
-      :email => contact.try(:email)
-    }
-  end
-
-#   def shippo_address
-#   {
-#     # :object_purpose => "PURCHASE",
-#     :name => self.name,
-#     :street1 => self.street1,
-#     :street2 => self.street2,
-#     :city => self.city,
-#     :country => self.country,
-#     :state => self.state,
-#     :zip => self.zip,
-#     :phone => self.phone,
-#     :email => self.email,
-#   }
-# end
-
-  def shippo_street_1
-    "#{number} #{street}"
-  end
-
-  def shippo_street_2
-    "#{unit} #{floor}"
-  end
-
-  def for_postmates
-    return {
-      quote_id: "",
-      manifest: "",
-      manifest_reference: "",
-      pickup_name: "",
-      pickup_address: "",
-      pickup_phone_number: "",
-      pickup_business_name: "",
-      pickup_notes: "",
-      dropoff_name: "",
-      dropoff_address: "",
-      dropoff_phone_number: "",
-      dropoff_business_name: "",
-      dropoff_notes: ""
-    }
-  end
 end
