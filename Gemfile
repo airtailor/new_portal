@@ -35,6 +35,7 @@ gem 'groupdate'
 gem 'httparty'
 gem 'hashie'
 gem 'textacular', '~> 5.0'
+gem 'stripe'
 
 # Background job processing + asymc
 gem 'sidekiq'
