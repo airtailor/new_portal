@@ -1,11 +1,5 @@
 module StripeHelper
-  def config
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-  end
-
   def create_stripe_customer(customer)
-    config
-
     meta_data = {customer_type: customer.class.name}
     stripe_customer = Stripe::Customer.create(meta_data: meta_data)
 
@@ -17,8 +11,6 @@ module StripeHelper
   end
 
   def set_default_source_for_customer(customer, source_token)
-    config
-
     customer = Stripe::Customer.retrieve(customer.stripe_id)
     customer.source = source_token
 
@@ -30,8 +22,6 @@ module StripeHelper
   end
 
   def create_charge(amount, customer)
-    config
-
     charge = Stripe::Charge.create(
       amount: amount,
       customer: customer.stripe_id
