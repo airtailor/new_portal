@@ -3,9 +3,9 @@ class Api::OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update]
 
   def index
-    if current_user.admin?  
-      store = Store.find(params[:store_id]) 
-    else 
+    if current_user.admin?
+      store = Store.find(params[:store_id])
+    else
       store = current_user.store
     end
 
@@ -67,7 +67,7 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer])
+      data = TailorOrder.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer, :customer])
     else
       data = current_user.store.orders.archived.order(:fulfilled_date).reverse.as_json(include: [:customer], methods: [:alterations_count])
     end
