@@ -59,7 +59,8 @@ class Order < ApplicationRecord
 
     if (self.retailer.name == "Steven Alan - Tribeca" ||
         self.retailer.name == "Frame Denim - SoHo" ||
-        self.retailer.name == "Rag & Bone - SoHo")
+        self.retailer.name == "Rag & Bone - SoHo"
+        self.retailer.name == "Wolf & Badger")
 
       self.tailor = Tailor.find_by(name: "Tailoring NYC")
     end
