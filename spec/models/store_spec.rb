@@ -18,9 +18,51 @@ RSpec.describe Store, type: :model do
     end
 
     describe "#add_stripe_id" do 
+      before :each { @stripe_customer = @store.add_stripe_id }
+
       it "returns a valid Stripe customer" do 
-        stripe_customer = @store.add_stripe_id
-        expect(stripe_customer).to_not eq(nil)
+        expect(@stripe_customer).to_not eq(nil)
+      end
+
+      it "adds a stripe id to the store" do 
+        expect(@store.stripe_id).to eq(@stripe_customer["id"])
+      end
+    end
+
+    describe "#add_default_payment" do 
+      before :each do 
+        token = "tok_visa_debit"
+        @store.add_stripe_id
+        @stripe_customer = @store.add_default_payment(token)
+      end
+
+      it "returns a valid Stripe customer" do 
+        expect(@stripe_customer).to_not eq(nil)
+      end
+
+      it "adds a default payment method for the Stripe customer" do 
+        expect(@stripe_customer.default_source).to_not eq(nil)
+      end
+    end
+
+    describe "#charge" do 
+      it "returns a valid Stripe charge" do 
+        token = "tok_visa_debit"
+        @store.add_stripe_id
+        @stripe_customer = @store.add_default_payment(token)
+        @charge =  @store.charge(100)
+        expect(@charge).to_not eq(nil)
+        expect(@charge["status"]).to eq("succeeded")
+      end
+
+      context "when the payment is declined" do 
+        it "returns nil" do 
+          token = "tok_chargeDeclined"
+          @store.add_stripe_id
+          @stripe_customer = @store.add_default_payment(token)
+          @charge =  @store.charge(100)
+          expect(@charge).to eq(nil)
+        end
       end
     end
   end

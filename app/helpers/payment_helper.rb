@@ -5,6 +5,7 @@ module PaymentHelper
 
     if stripe_customer
       self.update_attributes(stripe_id: stripe_customer[:id])
+      stripe_customer
     else
       false
     end
