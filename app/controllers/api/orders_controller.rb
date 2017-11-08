@@ -40,7 +40,9 @@ class Api::OrdersController < ApplicationController
         Item.create_items_portal(@order, garments)
         render :json => @order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
       else
-        render :json => {errors: @order.errors.full_messages}
+        errors = {errors: @order.errors.full_messages}
+        errors = "WTF" if errors[:errors].empty?
+        render :json => errors
       end
     rescue => e
       if e.message.include?("Invalid Phone Number")
