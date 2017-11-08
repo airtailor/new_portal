@@ -42,15 +42,6 @@ class Order < ApplicationRecord
     super.merge "type" => type
   end
 
-
-  # nuke this
-  # def shipments
-  #   [
-  #     self.outgoing_shipment,
-  #     self.incoming_shipment
-  #   ]
-  # end
-
   def init
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
