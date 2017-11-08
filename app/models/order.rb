@@ -12,11 +12,11 @@ class Order < ApplicationRecord
     foreign_key: "order_id"
 
   validates :retailer, presence: true
-  after_initialize :init
-  #after_create :send_order_confirmation_text
 
-  #after_update :send_customer_shipping_label_email, if: :provider_id_changed?
-  #after_update :que_customer_for_delighted, if: :fulfilled_changed?
+  after_create :send_order_confirmation_text
+
+  after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+  after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
 
   def customer_needs_shipping_label
