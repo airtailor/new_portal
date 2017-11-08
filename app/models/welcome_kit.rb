@@ -1,13 +1,8 @@
 class WelcomeKit < Order
-  after_initialize :init
+  def set_default_fields
+    super
 
-  #overwrites parent's version to include set_arrived
-  def init
-    self.source ||= "Shopify"
     self.weight = 28
-    air_tailor_co = Company.where(name: "Air Tailor")
-    self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
-    # this is broken. do we need to say  welcome kits have arrived?
-    #self.arrived = true
+    self.fulfilled = true
   end
 end

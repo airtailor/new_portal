@@ -8,8 +8,9 @@ Bundler.require(*Rails.groups)
 
 module NewAirtailorPortal
   class Application < Rails::Application
-    config.autoload_paths << File.join(Rails.root, "app", "classes")
-    
+    config.autoload_paths << File.join(Rails.root, 'app', 'classes')
+    config.autoload_paths << File.join(Rails.root, 'app', 'classes', 'api')
+
     config.middleware.use Rack::Cors do
       allow do
         origins '*'

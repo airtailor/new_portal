@@ -7,7 +7,7 @@ class Api::OrdersController < ApplicationController
     else
       store = current_user.store
     end
-
+    
     render :json => store.open_orders.as_json(
                       include: [ :tailor, :retailer, :customer ],
                       methods: [:alterations_count]
@@ -20,10 +20,10 @@ class Api::OrdersController < ApplicationController
 
     # add @shipments in
     data = @order.as_json(include: [
-            :shipments,
             :tailor,
             :retailer,
             :customer,
+            :shipments,
             :items => { include: [:item_type, :alterations] }
           ])
     render :json => data
@@ -36,6 +36,7 @@ class Api::OrdersController < ApplicationController
                     :tailor,
                     :retailer,
                     :customer,
+                    :shipments,
                     :items => {
                         include: [:item_type, :alterations]
                     }]
@@ -45,6 +46,7 @@ class Api::OrdersController < ApplicationController
                       :shipments,
                       :retailer,
                       :customer,
+                      :shipments,
                       :items => { include: [ :item_type, :alterations ] }
                     ])
 
@@ -56,11 +58,11 @@ class Api::OrdersController < ApplicationController
     @order = Order.find(params[:id])
     if @order.update(order_params)
 
-
       render :json => @order.as_json(include: [
                         :tailor,
                         :retailer,
                         :customer,
+                        :shipments,
                         items:  { include: [ :item_type, :alterations ] },
                       ])
     else

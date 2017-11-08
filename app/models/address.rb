@@ -99,4 +99,19 @@ class Address < ApplicationRecord
     end
   end
 
+  def shippo_address
+    contact = self.get_contact
+    return {
+      :name => contact.name,
+      :street1 => "#{self.number} #{self.street}",
+      :street2 => "#{self.unit} #{self.floor}",
+      :city => self.city,
+      :country => self.country,
+      :state => self.state_province,
+      :zip => self.zip_code,
+      :phone => contact.try(:phone),
+      :email => contact.try(:email)
+    }
+  end
+
 end

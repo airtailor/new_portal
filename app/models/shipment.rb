@@ -1,7 +1,6 @@
 class Shipment < ApplicationRecord
   include ShipmentConstants
-  include PostmatesHelper
-  include ShippoHelper
+  include DeliveryHelper
 
   belongs_to :source, polymorphic: true
   belongs_to :destination, polymorphic: true
@@ -18,22 +17,32 @@ class Shipment < ApplicationRecord
 
   validates :postmates_delivery_id, presence: true, if: :is_messenger_shipment?
 
+  def shipment_action=(action)
+    @shipment_action = action if action.in?(legal_shipment_actions)
+  end
+
+  def shipment_action
+    @shipment_action
+  end
+
   def deliver
     case self.delivery_type
     when MAIL
-      create_label
+      if is_mail_shipment? && needs_label
+        delivery = create_label
+      end
     when MESSENGER
-      request_messenger
+      if is_messenger_shipment? && needs_messenger = true # for right now.
+        delivery = request_messenger
+      end
+    else
+      binding.pry
     end
-  end
 
-  def request_messenger
-    if is_messenger_shipment? && needs_messenger = true # for right now.
-      delivery = self.create_postmates_delivery
-
-      self.postmates_delivery_id = delivery.id
-      self.status = delivery.status
-    end
+    self.shipping_label  = delivery.try(:label_url)
+    self.tracking_number = delivery.try(:tracking_number)
+    # self.postmates_id = delivery.try(:id)
+    # self.status = delivery.try(:status)
   end
 
   def set_default_fields
@@ -46,11 +55,6 @@ class Shipment < ApplicationRecord
 
   def create_label
     # check for needing a label here
-    if is_mail_shipment? && needs_label
-      shippo_txn = build_shippo_label
-      self.shipping_label  = shippo_txn[:label_url]
-      self.tracking_number = shippo_txn[:tracking_number]
-    end
   end
   #
   def is_messenger_shipment?
@@ -66,43 +70,16 @@ class Shipment < ApplicationRecord
     orders.map(&:text_order_customers)
   end
 
-  def get_parcel
-    all_order_types = self.orders.map(&:type).uniq
-    return nil if all_order_types.length > 1
-
-    case all_order_types.first
-    when "WelcomeKit"
-      return {
-        length: 6,
-        width: 4,
-        height: 1,
-        distance_unit: :in,
-        weight: 28,
-        mass_unit: :g
-      }
-    when "TailorOrder"
-       return {
-        length: 7,
-        width: 5,
-        height: 3,
-        distance_unit: :in,
-        weight: self.orders.sum(&:weight),
-        mass_unit: :g
-      }
-    end
-  end
-
   def set_delivery_method(action)
-    source, dest = self.parse_src_dest(action)
-    if delivery_can_be_executed?(source, dest)
+    source_model, dest_model = self.parse_src_dest(action)
+    if delivery_can_be_executed?(source_model, dest_model, self.orders)
       self.source = get_address(source_model)
-      self.destination = get_address(destination_model)
+      self.destination = get_address(dest_model)
     end
   end
 
   def parse_src_dest(action)
     type = self.delivery_type
-
     case action
     when SHIP_RETAILER_TO_TAILOR
       return [:retailer, :tailor]
@@ -119,8 +96,8 @@ class Shipment < ApplicationRecord
     end
   end
 
-  def delivery_can_be_executed?(source, dest)
-    return true if self.orders.length == 1
+  def delivery_can_be_executed?(source, dest, orders)
+    return true if orders.length == 1
     counts = {
       retailer: orders.map(&:requester_id).uniq,
       tailor: orders.map(&:provider_id).uniq,

@@ -13,11 +13,8 @@ class Api::ShipmentsController < ApplicationController
 
   def create
     @shipment = Shipment.new(shipment_params)
-    # the front-end should pass an arr
-    @shipment.orders = Order.where(id: [ params[:shipment][:order_id] ])
-
-    shipment_action = params[:shipment][:shipment_action]
-    @shipment.set_delivery_method(shipment_action)
+    @shipment.orders = Order.where(id: params[:shipment][:order_ids])
+    @shipment.set_delivery_method(params[:shipment][:shipment_action])
     @shipment.set_default_fields
 
     if @shipment.deliver && @shipment.save
@@ -31,6 +28,6 @@ class Api::ShipmentsController < ApplicationController
   private
 
   def shipment_params
-    params.require(:shipment).permit(:delivery_type)
+    params.require(:shipment).permit(:delivery_type, :shipment_action, order_ids: [])
   end
 end

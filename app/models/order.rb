@@ -29,18 +29,8 @@ class Order < ApplicationRecord
 
   def set_default_fields
     self.source ||= "Shopify"
-    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").select(:id)).first
+    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor")).first
     self.fulfilled ||= false
-
-    stores_with_tailors = [
-      "Steven Alan - Tribeca",
-      "Frame Denim - SoHo",
-      "Rag & Bone - SoHo"
-    ]
-
-    if self.retailer.name.in? stores_with_tailors
-      self.tailor = Tailor.where(name: "Tailoring NYC").first
-    end
   end
 
 

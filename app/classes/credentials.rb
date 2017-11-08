@@ -4,6 +4,10 @@ class Credentials
     Rails.application.secrets.secret_key_base
   end
 
+  def self.stripe_api_key
+    Rails.application.secrets.stripe_api_key
+  end
+
   def self.shippo_key
     Rails.application.secrets.shippo_key
   end

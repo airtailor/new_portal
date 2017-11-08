@@ -1,16 +1,15 @@
-module PostmatesHelper
-  def create_postmates_delivery
+class PostmatesAPI
+  def self.build_messenger_delivery(pickup, dropoff)
     @client = Postmates.new
     @client.configure do |config|
       config.api_key = Credentials.postmates_sandbox_token
       config.customer_id = Credentials.postmates_id
     end
 
-    pickup, dropoff = self.source, self.destination
     pickup_address = pickup.postmates_address
     dropoff_address = dropoff.postmates_address
-    pickup_contact = source.get_contact
-    dropoff_contact = destination.get_contact
+    pickup_contact = pickup.get_contact
+    dropoff_contact = dropoff.get_contact
 
     quote = @client.quote(
       pickup_address: pickup_address, dropoff_address: dropoff_address
@@ -37,8 +36,7 @@ module PostmatesHelper
     return @client.create(params)
   end
 
-  def postmates_manifest_content
+  def self.postmates_manifest_content
     "Some stuff to send to postmates about a delivery."
   end
-
 end
