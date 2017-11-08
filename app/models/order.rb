@@ -116,6 +116,7 @@ class Order < ApplicationRecord
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
+      order.init
     end
     order
   end
