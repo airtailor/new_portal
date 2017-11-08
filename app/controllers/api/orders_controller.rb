@@ -33,7 +33,7 @@ class Api::OrdersController < ApplicationController
   end
 
   def create
-    begin
+    #begin
       @order = Order.new(order_params)
       if @order.init && @order.save
         garments = params[:order][:garments]
@@ -44,13 +44,13 @@ class Api::OrdersController < ApplicationController
         errors = "WTF" if errors[:errors].empty?
         render :json => errors
       end
-    rescue => e
-      if e.message.include?("Invalid Phone Number")
-        render :json => {errors: ["Invalid Phone Number"]}
-      else
-        render :json => {errors: e}
-      end
-    end
+    # rescue => e
+    #   if e.message.include?("Invalid Phone Number")
+    #     render :json => {errors: ["Invalid Phone Number"]}
+    #   else
+    #     render :json => {errors: e}
+    #   end
+    #end
   end
 
   def search
