@@ -13,10 +13,10 @@ class Order < ApplicationRecord
 
   validates :retailer, presence: true
   after_initialize :init
-  after_create :send_order_confirmation_text
+  #after_create :send_order_confirmation_text
 
-  after_update :send_customer_shipping_label_email, if: :provider_id_changed?
-  after_update :que_customer_for_delighted, if: :fulfilled_changed?
+  #after_update :send_customer_shipping_label_email, if: :provider_id_changed?
+  #after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
 
   def customer_needs_shipping_label
@@ -55,7 +55,6 @@ class Order < ApplicationRecord
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
-    self.fulfilled ||= false
 
     if (self.retailer.name == "Steven Alan - Tribeca" ||
         self.retailer.name == "Frame Denim - SoHo" ||
@@ -186,11 +185,7 @@ class Order < ApplicationRecord
   end
 
   def self.mark_orders_late
-    orders = Order.all.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today)
-
-    orders.each do |order|
-      order.update_attributes(late: true)
-    end
+    Order.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today).update_all(late: true)
   end
 
   private
