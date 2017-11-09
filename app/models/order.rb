@@ -1,6 +1,8 @@
 class Order < ApplicationRecord
   has_many :items
   has_many :alterations, through: :items
+  has_many :charges, :as => :chargable
+
   belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
@@ -12,9 +14,9 @@ class Order < ApplicationRecord
     foreign_key: "order_id"
 
   validates :retailer, presence: true
+  
   after_initialize :init
   after_create :send_order_confirmation_text
-
   after_update :send_customer_shipping_label_email, if: :provider_id_changed?
   after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
