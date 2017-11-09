@@ -2,6 +2,8 @@ class Shipment < ApplicationRecord
   validates :type, :shipping_label, :tracking_number, :weight, presence: true
   belongs_to :order
 
+  has_many :charges, :as => :chargable
+
   after_initialize :add_order_weight, :configure_shippo
   after_create :send_text_to_customer
 

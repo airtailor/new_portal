@@ -10,10 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171106181842) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+ActiveRecord::Schema.define(version: 20171109182530) do
 
   create_table "alteration_items", id: false, force: :cascade do |t|
     t.integer "alteration_id"
@@ -24,6 +21,19 @@ ActiveRecord::Schema.define(version: 20171106181842) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "name"
+  end
+
+  create_table "charges", force: :cascade do |t|
+    t.integer  "amount"
+    t.string   "stripe_id"
+    t.string   "chargable_type"
+    t.integer  "chargable_id"
+    t.string   "payable_type"
+    t.integer  "payable_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.index ["chargable_type", "chargable_id"], name: "index_charges_on_chargable_type_and_chargable_id", using: :btree
+    t.index ["payable_type", "payable_id"], name: "index_charges_on_payable_type_and_payable_id", using: :btree
   end
 
   create_table "companies", force: :cascade do |t|

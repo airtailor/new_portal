@@ -34,21 +34,26 @@ class Api::OrdersController < ApplicationController
 
   def create
     begin
-      order = Order.create(order_params)
-      if order.save
+      @order = Order.new(order_params)
+      @order.init
+      if @order.save
         garments = params[:order][:garments]
-        Item.create_items_portal(order, garments)
-        render :json => order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
+        Item.create_items_portal(@order, garments)
+        render :json => @order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
       else
-        render :json => {errors: order.errors.full_messages}
+        errors = {errors: @order.errors.full_messages}
+        render :json => errors
       end
-    rescue => e
-      if e.message.include?("Invalid Phone Number")
-        render :json => {errors: ["Invalid Phone Number"]}
-      else
-        render :json => {errors: e}
-      end
+     rescue => e
+       if e.message.include?("Invalid Phone Number")
+         render :json => {errors: ["Invalid Phone Number"]}
+       else
+         render :json => {errors: e}
+       end
     end
+
+    # if @order.errors, render that Here
+    # else, do your json
   end
 
   def search

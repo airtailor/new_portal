@@ -14,8 +14,7 @@ class Order < ApplicationRecord
     foreign_key: "order_id"
 
   validates :retailer, presence: true
-  
-  after_initialize :init
+
   after_create :send_order_confirmation_text
   after_update :send_customer_shipping_label_email, if: :provider_id_changed?
   after_update :que_customer_for_delighted, if: :fulfilled_changed?
@@ -44,24 +43,16 @@ class Order < ApplicationRecord
     super.merge "type" => type
   end
 
-
-  # nuke this
-  # def shipments
-  #   [
-  #     self.outgoing_shipment,
-  #     self.incoming_shipment
-  #   ]
-  # end
-
   def init
     self.source ||= "Shopify"
     air_tailor_co = Company.where(name: "Air Tailor")
     self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
-    self.fulfilled ||= false
 
     if (self.retailer.name == "Steven Alan - Tribeca" ||
         self.retailer.name == "Frame Denim - SoHo" ||
-        self.retailer.name == "Rag & Bone - SoHo")
+        self.retailer.name == "Rag & Bone - SoHo" ||
+        self.retailer.name == "MOUSSY" ||
+        self.retailer.name == "Wolf & Badger")
 
       self.tailor = Tailor.find_by(name: "Tailoring NYC")
     end
@@ -126,6 +117,7 @@ class Order < ApplicationRecord
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
+      order.init
     end
     order
   end
@@ -186,11 +178,7 @@ class Order < ApplicationRecord
   end
 
   def self.mark_orders_late
-    orders = Order.all.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today)
-
-    orders.each do |order|
-      order.update_attributes(late: true)
-    end
+    Order.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today).update_all(late: true)
   end
 
   private
