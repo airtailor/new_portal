@@ -1,8 +1,5 @@
 class Tailor < Store
-  has_many :orders, foreign_key: "provider_id"
-  has_many :items, through: :orders
-  has_many :alterations, through: :orders
-
+  has_many :orders, inverse_of: :tailor, foreign_key: "provider_id"
 
   def late_orders
     self.orders.late(true)

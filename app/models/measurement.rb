@@ -1,5 +1,5 @@
 class Measurement < ApplicationRecord
-  belongs_to :customer
+  belongs_to :customer, inverse_of: :measurement
   after_initialize :default_values
 
   def default_values

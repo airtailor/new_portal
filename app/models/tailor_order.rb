@@ -1,4 +1,5 @@
 class TailorOrder < Order
+
   def set_default_fields
     super
 

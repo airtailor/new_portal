@@ -1,11 +1,11 @@
 module DeliveryHelper
 
-  def create_label
-    return ShippoAPI.build_label(self)
+  def create_label(shipment)
+    return Api::Shippo.build_label(shipment)
   end
 
   def request_messenger
-    return PostmatesAPI.build_messenger_delivery(self.source, self.destination)
+    return Api::Postmates.build_messenger_delivery(self.source, self.destination)
   end
 
   def delivery_can_be_executed?(source, dest)

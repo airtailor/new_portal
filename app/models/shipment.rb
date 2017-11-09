@@ -2,8 +2,8 @@ class Shipment < ApplicationRecord
   include ShipmentConstants
   include DeliveryHelper
 
-  belongs_to :source, polymorphic: true
-  belongs_to :destination, polymorphic: true
+  belongs_to :source, inverse_of: :shipments, polymorphic: true
+  belongs_to :destination, inverse_of: :shipments, polymorphic: true
 
   has_many :shipment_orders
   has_many :orders, through: :shipment_orders
@@ -29,14 +29,12 @@ class Shipment < ApplicationRecord
     case self.delivery_type
     when MAIL
       if is_mail_shipment? && needs_label
-        delivery = create_label
+        delivery = create_label(self)
       end
     when MESSENGER
       if is_messenger_shipment? && needs_messenger = true # for right now.
         delivery = request_messenger
       end
-    else
-      binding.pry
     end
 
     self.shipping_label  = delivery.try(:label_url)
@@ -53,16 +51,12 @@ class Shipment < ApplicationRecord
     !shipping_label || !tracking_number
   end
 
-  def create_label
-    # check for needing a label here
-  end
-  #
   def is_messenger_shipment?
-    self.delivery_type === MESSENGER
+    self.delivery_type == MESSENGER
   end
 
   def is_mail_shipment?
-    self.delivery_type === MAIL
+    self.delivery_type == MAIL
   end
   #
   def text_all_shipment_customers
@@ -71,10 +65,15 @@ class Shipment < ApplicationRecord
   end
 
   def set_delivery_method(action)
+    orders = self.orders
     source_model, dest_model = self.parse_src_dest(action)
-    if delivery_can_be_executed?(source_model, dest_model, self.orders)
+    if delivery_can_be_executed?(source_model, dest_model, orders)
       self.source = get_address(source_model)
-      self.destination = get_address(dest_model)
+      if orders.any?{|o| o.ship_to_store} && dest_model == :customer
+        self.destination = get_address(:retailer)
+      else
+        self.destination = get_address(dest_model)
+      end
     end
   end
 
@@ -109,13 +108,9 @@ class Shipment < ApplicationRecord
     }
   end
 
-  def get_address(klass)
-    record = self.orders.first.send(klass)
-    if klass == :customer
-      return record.addresses.first
-    else
-      return record.address
-    end
+  def get_address(klass_symbol)
+    record = self.orders.first.send(klass_symbol)
+    klass_symbol == :customer ? record.addresses.first : record.address
   end
 
 end

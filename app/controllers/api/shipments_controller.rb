@@ -16,10 +16,15 @@ class Api::ShipmentsController < ApplicationController
     @shipment.orders = Order.where(id: params[:shipment][:order_ids])
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
     @shipment.set_default_fields
+    @shipment.deliver
 
-    if @shipment.deliver && @shipment.save
+    if @shipment.save
       #@shipment.text_all_shipment_customers
-      render :json => @shipment.as_json
+      # pass the correct fucking address type here. god damn it. fucking hell.
+      #render :json => @shipment.as_json
+
+      # render :json => { destination_address_class: @shipment.destination_address}
+
     else
       render :json => { :errors => @shipment.errors.full_messages }
     end

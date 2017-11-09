@@ -7,7 +7,7 @@ class Api::OrdersController < ApplicationController
     else
       store = current_user.store
     end
-    
+
     render :json => store.open_orders.as_json(
                       include: [ :tailor, :retailer, :customer ],
                       methods: [:alterations_count]
@@ -30,18 +30,18 @@ class Api::OrdersController < ApplicationController
   end
 
   def new_orders
-    unassigned = TailorOrder.all.where(tailor: nil)
-                  .as_json( include: [
-                    :shipments,
-                    :tailor,
-                    :retailer,
-                    :customer,
-                    :shipments,
-                    :items => {
-                        include: [:item_type, :alterations]
-                    }]
-                  )
-    welcome_kits = WelcomeKit.all.where(fulfilled: false)
+    unassigned = TailorOrder.where(tailor: nil).as_json( include: [
+      :shipments,
+      :tailor,
+      :retailer,
+      :customer,
+      :shipments,
+      :items => {
+          include: [:item_type, :alterations]
+      }]
+    )
+    
+    welcome_kits = WelcomeKit.where(fulfilled: false)
                     .as_json( include: [
                       :shipments,
                       :retailer,
@@ -117,7 +117,7 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.all.archived.order(:fulfilled_date).reverse
+      data = Order.archived.order(:fulfilled_date).reverse
               .as_json(include: [:tailor, :retailer])
     else
       data = current_user.store.orders.archived.order(:fulfilled_date).reverse

@@ -7,9 +7,9 @@ class Order < ApplicationRecord
   has_many :shipment_orders
   has_many :shipments, through: :shipment_orders
 
-  belongs_to :customer, class_name: "Customer", foreign_key: "customer_id"
-  belongs_to :retailer, class_name: "Retailer", foreign_key: "requester_id"
-  belongs_to :tailor, class_name: "Tailor", foreign_key: "provider_id",
+  belongs_to :customer, inverse_of: :orders, class_name: "Customer", foreign_key: "customer_id"
+  belongs_to :retailer, inverse_of: :orders,  class_name: "Retailer", foreign_key: "requester_id"
+  belongs_to :tailor, inverse_of: :orders, class_name: "Tailor", foreign_key: "provider_id",
     optional: true
 
   validates :retailer, presence: true
