@@ -11,7 +11,6 @@ class StripeAPI
       customer.save
       return customer
     rescue => e
-      binding.pry
       case e.http_status
       when 402
           return e.message
@@ -22,16 +21,26 @@ class StripeAPI
   end
 
   def create_charge(amount, stripe_id)
-    charge = Stripe::Charge.create(
-      amount: amount,
-      customer: stripe_id,
-      currency: "usd"
-    )
+    begin
+      stripe_charge = Stripe::Charge.create(
+        amount: amount,
+        customer: stripe_id,
+        currency: "usd"
+      )
 
-    if charge["status"] == "succeeded"
+    rescue => e
+      case e.http_status
+      when 402
+          return {status: e.http_status, message: e.message}
+      else
+          return "Oops something went wrong"
+      end
+    end
+
+    if stripe_charge["status"] == "succeeded"
       charge
     else
-      false
+      e.message ||= false
     end
   end
 end
