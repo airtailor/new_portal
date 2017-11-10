@@ -3,11 +3,12 @@ class Customer < ApplicationRecord
   validates :shopify_id, uniqueness: true, allow_blank: true
   validates :first_name, :last_name, presence: true
 
+  # belongs_to :default_tailor, polymorphic: true
+
   has_many :orders, inverse_of: :customer
   has_many :measurements, inverse_of: :customer
   has_many :customer_addresses
   has_many :addresses, through: :customer_addresses
-
 
   def last_measurement
     self.measurements.last

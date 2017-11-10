@@ -3,10 +3,11 @@ class Api::OrdersController < ApplicationController
 
   def index
     if current_user.admin?
-      @store = Store.find(params[:store_id])
+      @store = Store.where(id: params[:store_id]).first
     else
-      @store = current_user.store
+      @store = Store.where(id: current_user.store.id).first
     end
+
     sql_includes = [ :tailor, :retailer, :customer, :shipments ]
     render :json => @store.open_orders.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
@@ -30,13 +31,11 @@ class Api::OrdersController < ApplicationController
 
   def new_orders
     sql_include = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
-    tailor_orders = TailorOrder.where(tailor: nil).includes(*sql_include)
-    welcome_kits = WelcomeKit.where(fulfilled: false).includes(*sql_include)
     @data = {
-      unassigned: tailor_orders.as_json( include: [
+      unassigned: TailorOrder.where(tailor: nil).includes(*sql_include).as_json( include: [
         :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
       ]),
-      welcome_kits: welcome_kits.as_json( include: [
+      welcome_kits: WelcomeKit.where(fulfilled: false).includes(*sql_include).as_json( include: [
         :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
       ])
     }
@@ -56,7 +55,7 @@ class Api::OrdersController < ApplicationController
                 include: [
                   :tailor, :retailer, :customer,
                   shipments: { include: [ :source, :destination ]},
-                  items:  { include: [ :item_type, :alterations ] },
+                  items:  { include: [ :item_type, :alterations ]}
                 ]).first
       render :json => data
     else
@@ -95,26 +94,24 @@ class Api::OrdersController < ApplicationController
   def search
     query = params[:query]
     store = current_user.store
-    results = Order.joins(:customer).order(created_at: :desc).advanced_search(
-      {
-        id: query,
-        customers: {
-          first_name: query,
-          last_name: query
+
+    results = Order.includes(:customer).joins(:customer).order(created_at: :desc)
+      .advanced_search(
+        {
+          id: query, customers: { first_name: query, last_name: query }
+        }, false).select { |order|
+          (order.retailer == store || order.tailor == store || current_user.admin?)
         }
-      }, false).select { |order|
-        (order.retailer == store || order.tailor == store || current_user.admin?)
-      }
 
     render :json => results.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   def archived
     if current_user.admin?
-      data = Order.includes(:tailor, :retailer).archived.order(:fulfilled_date).reverse
-              .as_json(include: [:tailor, :retailer])
+      data = Order.includes(:tailor, :retailer, :customer).archived.order(fulfilled_date: :desc)
+              .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.includes(:customer).archived.order(:fulfilled_date).reverse
+      data = current_user.store.orders.includes(:customer).archived.order(fulfilled_date: :desc)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
