@@ -4,7 +4,6 @@ class Api::TailorsController < ApplicationController
   def index
     data = Tailor.all.as_json(methods: [
       :active_orders_count,
-      :arrived_orders_count,
       :late_orders_count
     ])
     render :json => data

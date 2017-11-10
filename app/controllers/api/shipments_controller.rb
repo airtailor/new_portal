@@ -21,8 +21,9 @@ class Api::ShipmentsController < ApplicationController
     if @shipment.save
       #@shipment.text_all_shipment_customers
       # pass the correct fucking address type here. god damn it. fucking hell.
-      #render :json => @shipment.as_json
-
+      data = @shipment.as_json(include: [ :source, :destination ])
+      Rails.logger.debug(data)
+      render :json => data
       # render :json => { destination_address_class: @shipment.destination_address}
 
     else

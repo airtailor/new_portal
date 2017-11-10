@@ -19,7 +19,7 @@ class Order < ApplicationRecord
   scope :arrived, -> bool { where(arrived: bool)}
   scope :late, -> bool { where(late: bool) }
 
-  scope :open_orders, -> { order(:due_date).fulfilled(false)}
+  scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :archived, -> { fulfilled(true) }
 
@@ -29,7 +29,8 @@ class Order < ApplicationRecord
 
   def set_default_fields
     self.source ||= "Shopify"
-    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor")).first
+    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").first).first
+    self.tailor   ||= self.retailer.default_tailor
     self.fulfilled ||= false
   end
 

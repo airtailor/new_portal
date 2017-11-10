@@ -9,8 +9,8 @@ class Api::OrdersController < ApplicationController
     end
 
     render :json => store.open_orders.as_json(
-                      include: [ :tailor, :retailer, :customer ],
-                      methods: [:alterations_count]
+                      include: [ :tailor, :retailer, :customer, :shipments ],
+                      methods: [ :alterations_count ]
                     )
   end
 
@@ -23,34 +23,25 @@ class Api::OrdersController < ApplicationController
             :tailor,
             :retailer,
             :customer,
-            :shipments,
+            shipments: { include: [ :source, :destination ]},
             :items => { include: [:item_type, :alterations] }
           ])
     render :json => data
   end
 
   def new_orders
-    unassigned = TailorOrder.where(tailor: nil).as_json( include: [
-      :shipments,
-      :tailor,
-      :retailer,
-      :customer,
-      :shipments,
-      :items => {
-          include: [:item_type, :alterations]
-      }]
-    )
-    
-    welcome_kits = WelcomeKit.where(fulfilled: false)
-                    .as_json( include: [
-                      :shipments,
-                      :retailer,
-                      :customer,
-                      :shipments,
-                      :items => { include: [ :item_type, :alterations ] }
-                    ])
+    sql_include = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
+    tailor_orders = TailorOrder.where(tailor: nil).includes(*sql_include)
+    welcome_kits = WelcomeKit.where(fulfilled: false).includes(*sql_include)
+    data = {
+      unassigned: tailor_orders.as_json( include: [
+        :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
+      ]),
+      welcome_kits: welcome_kits.as_json( include: [
+        :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
+      ])
+    }
 
-    data = { unassigned: unassigned, welcome_kits: welcome_kits }
     render :json => data
   end
 
@@ -62,7 +53,7 @@ class Api::OrdersController < ApplicationController
                         :tailor,
                         :retailer,
                         :customer,
-                        :shipments,
+                        shipments: { include: [ :source, :destination ]},
                         items:  { include: [ :item_type, :alterations ] },
                       ])
     else
