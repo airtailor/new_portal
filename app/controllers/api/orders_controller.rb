@@ -8,25 +8,20 @@ class Api::OrdersController < ApplicationController
       @store = current_user.store
     end
     sql_includes = [ :tailor, :retailer, :customer, :shipments ]
-    render :json => @store.open_orders.includes(*sql_includes)
-                      .as_json(
-                        include: [ :tailor, :retailer, :customer, :shipments ],
-                        methods: [ :alterations_count ]
+    render :json => @store.open_orders.includes(*sql_includes).as_json(
+                        include: sql_includes, methods: [ :alterations_count ]
                       )
   end
 
   def show
     @order = Order.where(id: params[:id])
-    # add @shipments in
     sql_includes = [
       :tailor, :retailer, :customer,
       shipments: [ :source, :destination ],
       items: [ :item_type, :alterations ]
     ]
     data = @order.includes(*sql_includes).as_json(include: [
-            :tailor,
-            :retailer,
-            :customer,
+            :tailor, :retailer, :customer,
             shipments: { include: [ :source, :destination ]},
             items: { include: [ :item_type, :alterations ]}
           ]).first
@@ -82,13 +77,9 @@ class Api::OrdersController < ApplicationController
           items: [ :item_type, :alterations ]
         ]
         render :json => @order.includes(*sql_includes).as_json(include: [
-          :tailor,
-          :retailer,
-          :customer,
-          :items => {
-            include: [ :item_type, :alterations ]
-          }
-        ])
+            :tailor, :retailer, :customer,
+            :items => { include: [ :item_type, :alterations ] }
+          ])
       else
         render :json => {errors: @order.errors.full_messages}
       end

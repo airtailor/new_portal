@@ -5,14 +5,14 @@ class Api::UsersController < ApplicationController
   def update_password
     if @user.update_password(password_params)
       render :json => @user.as_json({include: [:roles]})
-    else 
+    else
       render :json => {errors: message.errors.full_message}
     end
   end
 
   private
 
-  def set_user 
+  def set_user
     @user = User.find(params[:id])
   end
 
