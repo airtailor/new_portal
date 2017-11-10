@@ -3,29 +3,33 @@ class Api::OrdersController < ApplicationController
 
   def index
     if current_user.admin?
-      store = Store.find(params[:store_id])
+      @store = Store.find(params[:store_id])
     else
-      store = current_user.store
+      @store = current_user.store
     end
-
-    render :json => store.open_orders.as_json(
-                      include: [ :tailor, :retailer, :customer, :shipments ],
-                      methods: [ :alterations_count ]
-                    )
+    sql_includes = [ :tailor, :retailer, :customer, :shipments ]
+    render :json => @store.open_orders.includes(*sql_includes)
+                      .as_json(
+                        include: [ :tailor, :retailer, :customer, :shipments ],
+                        methods: [ :alterations_count ]
+                      )
   end
 
   def show
-    @order = Order.find(params[:id])
-    @shipments = @order.shipments
-
+    @order = Order.where(id: params[:id])
     # add @shipments in
-    data = @order.as_json(include: [
+    sql_includes = [
+      :tailor, :retailer, :customer,
+      shipments: [ :source, :destination ],
+      items: [ :item_type, :alterations ]
+    ]
+    data = @order.includes(*sql_includes).as_json(include: [
             :tailor,
             :retailer,
             :customer,
             shipments: { include: [ :source, :destination ]},
-            :items => { include: [:item_type, :alterations] }
-          ])
+            items: { include: [ :item_type, :alterations ]}
+          ]).first
     render :json => data
   end
 
@@ -33,7 +37,7 @@ class Api::OrdersController < ApplicationController
     sql_include = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
     tailor_orders = TailorOrder.where(tailor: nil).includes(*sql_include)
     welcome_kits = WelcomeKit.where(fulfilled: false).includes(*sql_include)
-    data = {
+    @data = {
       unassigned: tailor_orders.as_json( include: [
         :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
       ]),
@@ -42,20 +46,24 @@ class Api::OrdersController < ApplicationController
       ])
     }
 
-    render :json => data
+    render :json => @data
   end
 
   def update
-    @order = Order.find(params[:id])
-    if @order.update(order_params)
-
-      render :json => @order.as_json(include: [
-                        :tailor,
-                        :retailer,
-                        :customer,
-                        shipments: { include: [ :source, :destination ]},
-                        items:  { include: [ :item_type, :alterations ] },
-                      ])
+    @order = Order.where(id: params[:id])
+    if @order.first.update(order_params)
+      sql_includes = [
+        :tailor, :retailer, :customer,
+        shipments: [ :source, :destination ],
+        items: [ :item_type, :alterations ]
+      ]
+      data =  @order.includes(*sql_includes).as_json(
+                include: [
+                  :tailor, :retailer, :customer,
+                  shipments: { include: [ :source, :destination ]},
+                  items:  { include: [ :item_type, :alterations ] },
+                ]).first
+      render :json => data
     else
       byebug
     end
@@ -69,7 +77,11 @@ class Api::OrdersController < ApplicationController
       if @order.save
         garments = params[:order][:garments]
         Item.create_items_portal(@order, garments)
-        render :json => @order.as_json(include: [
+        sql_includes = [
+          :tailor, :retailer, :customer,
+          items: [ :item_type, :alterations ]
+        ]
+        render :json => @order.includes(*sql_includes).as_json(include: [
           :tailor,
           :retailer,
           :customer,
@@ -108,10 +120,10 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.archived.order(:fulfilled_date).reverse
+      data = Order.includes(:tailor, :retailer).archived.order(:fulfilled_date).reverse
               .as_json(include: [:tailor, :retailer])
     else
-      data = current_user.store.orders.archived.order(:fulfilled_date).reverse
+      data = current_user.store.orders.includes(:customer).archived.order(:fulfilled_date).reverse
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
