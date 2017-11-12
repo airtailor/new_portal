@@ -16,24 +16,40 @@ class Order < ApplicationRecord
 
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
+  scope :assigned, -> bool { where(provider_id: nil) }
+  scope :unassigned, -> bool { where.not(provider_id: nil) }
+
   scope :arrived, -> bool { where(arrived: bool)}
   scope :late, -> bool { where(late: bool) }
 
+  scope :past_due, -> bool { where('due_date <= ?', Date.today) }
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
-  scope :archived, -> { fulfilled(true) }
 
   # after_update :send_customer_shipping_label_email, if: :provider_id_changed?
   # after_update :que_customer_for_delighted, if: :fulfilled_changed?
 
+  def set_order_defaults
+    self.source         ||= "Shopify"
+    self.retailer       ||= Retailer.where(
+                              company: Company.where(name: "Air Tailor").first
+                            ).first
+    self.tailor         ||= self.retailer.default_tailor
 
-  def set_default_fields
-    self.source ||= "Shopify"
-    self.retailer ||= Retailer.where(company: Company.where(name: "Air Tailor").first).first
-    self.tailor   ||= self.retailer.default_tailor
-    self.fulfilled ||= false
+    self.arrived        ||= false
+    self.fulfilled      ||= false
+    self.late           ||= false
+    self.dismissed      ||= false
+
+    date = DateTime.now.in_time_zone.midnight
+
+    self.arrival_date   = date if self.arrived && !self.arrival_date
+    self.due_date       = self.arrival_date + 6.days if !self.due_date
+    self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
+
+    order_past_due      = self.due_date < date
+    self.late           = true if self.due_date && order_past_due
   end
-
 
   def needs_shipping_label
     self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
@@ -51,11 +67,12 @@ class Order < ApplicationRecord
     end
   end
 
+  def needs_delighted
+    self.fulfilled && self.type == "TailorOrder"
+  end
 
   def que_customer_for_delighted
-    return nil unless Rails.env == 'production'
-
-    if needs_delighted
+    if Rails.env == 'production' && needs_delighted
       Delighted::Person.create(
         :email => self.customer.email, :delay => 518400,
         :properties => { :tailor_name => self.tailor.name }
@@ -75,23 +92,6 @@ class Order < ApplicationRecord
         "Airtailor Order (id: #{id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
-    end
-  end
-
-  def init
-    self.source ||= "Shopify"
-    air_tailor_co = Company.where(name: "Air Tailor")
-    self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
-    self.fulfilled ||= false
-
-    stores_with_tailors = [
-      "Steven Alan - Tribeca",
-      "Frame Denim - SoHo",
-      "Rag & Bone - SoHo"
-    ]
-
-    if self.retailer.name.in? stores_with_tailors
-      self.tailor = Tailor.where(name: "Tailoring NYC").first
     end
   end
 
@@ -123,16 +123,6 @@ class Order < ApplicationRecord
     end
   end
 
-  def arrived=(boolean)
-    super(boolean)
-    set_arrival_date
-    set_due_date
-  end
-
-  def fulfilled=(boolean)
-    super(boolean)
-    set_fulfilled_date
-  end
 
   def self.find_or_create(order_info, customer, source = "Shopify")
     order = self.find_or_create_by(source_order_id: order_info["name"].gsub("#", "").to_i, source: source) do |order|
@@ -146,23 +136,8 @@ class Order < ApplicationRecord
     order
   end
 
-  def set_fulfilled
-    self.fulfilled = true
-    set_fulfilled_date
-  end
-
-  def set_arrived
-    self.update_attributes(arrived: true)
-    set_arrival_date
-    set_due_date
-  end
-
   def assigned?
-    self.tailor != nil
-  end
-
-  def self.assigned
-    self.where("orders.provider_id IS NOT NULL")
+    self.tailor.present?
   end
 
   def items_count
@@ -170,9 +145,7 @@ class Order < ApplicationRecord
   end
 
   def alterations_count
-    self.items.reduce(0) do |prev, curr|
-      prev += AlterationItem.where(item: curr).count
-    end
+    AlterationItem.where(item: self.items).count
   end
 
   def self.search(search)
@@ -183,25 +156,4 @@ class Order < ApplicationRecord
      #Order.joins(:customers).where("customer.name like '%?%'", search)
   end
 
-  def self.mark_orders_late
-    orders = Order.all.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today)
-
-    orders.each do |order|
-      order.update_attributes(late: true)
-    end
-  end
-
-  private
-
-  def set_arrival_date
-    self.update_attributes(arrival_date: DateTime.now.in_time_zone.midnight)
-  end
-
-  def set_due_date
-    self.update_attributes(due_date: 6.days.from_now.in_time_zone.midnight)
-  end
-
-  def set_fulfilled_date
-    self.update_attributes(fulfilled_date: DateTime.now)
-  end
 end
