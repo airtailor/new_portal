@@ -8,6 +8,10 @@ class Api::OrdersController < ApplicationController
       @store = Store.where(id: current_user.store.id).first
     end
 
+    # NOTE: i think we can speed these up if we get the initial sql to include
+    # items + alterations. it's doing the "many successive SQL calls" thing.
+    # but it's NBD, it's still pretty fast. - NABM.
+
     sql_includes = [ :tailor, :retailer, :customer, :shipments ]
     render :json => @store.open_orders.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
