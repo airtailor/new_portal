@@ -35,7 +35,7 @@ class Api::OrdersController < ApplicationController
       unassigned: TailorOrder.where(tailor: nil).includes(*sql_include).as_json( include: [
         :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
       ]),
-      welcome_kits: WelcomeKit.where(fulfilled: false).includes(*sql_include).as_json( include: [
+      welcome_kits: WelcomeKit.fulfilled(false).includes(*sql_include).as_json( include: [
         :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
       ])
     }
@@ -66,7 +66,7 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
-      @order.set_default_fields
+      @order.set_order_defaults
 
       if @order.save
         garments = params[:order][:garments]
@@ -108,10 +108,10 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.includes(:tailor, :retailer, :customer).archived.order(fulfilled_date: :desc)
+      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc)
               .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.includes(:customer).archived.order(fulfilled_date: :desc)
+      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
