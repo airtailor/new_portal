@@ -191,8 +191,8 @@ ActiveRecord::Schema.define(version: 20171105001311) do
   end
 
   create_table "shipments", force: :cascade do |t|
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.string   "weight"
     t.string   "shipping_label"
     t.string   "tracking_number"
@@ -201,7 +201,7 @@ ActiveRecord::Schema.define(version: 20171105001311) do
     t.integer  "source_id"
     t.string   "destination_type"
     t.integer  "destination_id"
-    t.string   "postmates_id"
+    t.string   "postmates_delivery_id"
     t.string   "status"
     t.index ["destination_type", "destination_id"], name: "index_shipments_on_destination_type_and_destination_id", using: :btree
     t.index ["source_type", "source_id"], name: "index_shipments_on_source_type_and_source_id", using: :btree
