@@ -13,6 +13,11 @@ class Order < ApplicationRecord
     optional: true
 
   validates :retailer, presence: true
+<<<<<<< HEAD
+=======
+
+  after_create :send_order_confirmation_text
+>>>>>>> origin
 
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
@@ -88,12 +93,27 @@ def parse_order_lifecycle_stage
     super.merge "type" => type
   end
 
+<<<<<<< HEAD
   def text_order_customers
     if ((retailer.name != "Air Tailor") && (order_status == "completed"))
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
         "Airtailor Order (id: #{id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
+=======
+  def init
+    self.source ||= "Shopify"
+    air_tailor_co = Company.where(name: "Air Tailor")
+    self.retailer ||= Retailer.find_by(company: air_tailor_co, name: "Air Tailor")
+
+    if (self.retailer.name == "Steven Alan - Tribeca" ||
+        self.retailer.name == "Frame Denim - SoHo" ||
+        self.retailer.name == "Rag & Bone - SoHo" ||
+        self.retailer.name == "MOUSSY" ||
+        self.retailer.name == "Wolf & Badger")
+
+      self.tailor = Tailor.find_by(name: "Tailoring NYC")
+>>>>>>> origin
     end
   end
 
@@ -134,6 +154,7 @@ def parse_order_lifecycle_stage
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
+      order.init
     end
     order
   end
@@ -158,4 +179,24 @@ def parse_order_lifecycle_stage
      #Order.joins(:customers).where("customer.name like '%?%'", search)
   end
 
+<<<<<<< HEAD
+=======
+  def self.mark_orders_late
+    Order.where(arrived: true).where(fulfilled: false).where('due_date <= ?', Date.today).update_all(late: true)
+  end
+
+  private
+
+  def set_arrival_date
+    self.update_attributes(arrival_date: DateTime.now.in_time_zone.midnight)
+  end
+
+  def set_due_date
+    self.update_attributes(due_date: 6.days.from_now.in_time_zone.midnight)
+  end
+
+  def set_fulfilled_date
+    self.update_attributes(fulfilled_date: DateTime.now)
+  end
+>>>>>>> origin
 end

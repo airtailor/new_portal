@@ -22,7 +22,11 @@ class Api::ShipmentsController < ApplicationController
       #@shipment.text_all_shipment_customers
       render :json => @shipment.as_json(include: [ :source, :destination ])
     else
+<<<<<<< HEAD
       render :json => { :errors => @shipment.errors.full_messages }
+=======
+      render :json => { :errors => shipment.errors.full_messages }
+>>>>>>> origin
     end
   end
 

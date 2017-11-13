@@ -3,9 +3,15 @@ class Api::OrdersController < ApplicationController
 
   def index
     if current_user.admin?
+<<<<<<< HEAD
       @store = Store.where(id: params[:store_id]).first
     else
       @store = Store.where(id: current_user.store.id).first
+=======
+      store = Store.find(params[:store_id])
+    else
+      store = current_user.store
+>>>>>>> origin
     end
 
     # NOTE: i think we can speed these up if we get the initial sql to include
@@ -73,6 +79,7 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
+<<<<<<< HEAD
       @order.set_order_defaults
       @order.parse_order_lifecycle_stage(order_params)
 
@@ -95,8 +102,27 @@ class Api::OrdersController < ApplicationController
         render :json => {errors: ["Invalid Phone Number"]}
       else
         render :json => {errors: e}
+=======
+      @order.init
+      if @order.save
+        garments = params[:order][:garments]
+        Item.create_items_portal(@order, garments)
+        render :json => @order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
+      else
+        errors = {errors: @order.errors.full_messages}
+        render :json => errors
+>>>>>>> origin
       end
+     rescue => e
+       if e.message.include?("Invalid Phone Number")
+         render :json => {errors: ["Invalid Phone Number"]}
+       else
+         render :json => {errors: e}
+       end
     end
+
+    # if @order.errors, render that Here
+    # else, do your json
   end
 
   def search
@@ -116,8 +142,12 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
+<<<<<<< HEAD
       data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc)
               .as_json(include: [:tailor, :retailer, :customer])
+=======
+      data = TailorOrder.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer, :customer])
+>>>>>>> origin
     else
       data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc)
               .as_json(include: [:customer], methods: [:alterations_count])
