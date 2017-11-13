@@ -252,6 +252,7 @@ module AddressConstants
     "CO" => "COLORADO",
     "CT" => "CONNECTICUT",
     "DE" => "DELAWARE",
+    "DC" => "DISTRICT OF COLUMBIA",
     "FL" => "FLORIDA",
     "GA" => "GEORGIA",
     "HI" => "HAWAII",
@@ -300,7 +301,7 @@ module AddressConstants
 
   [ COUNTRIES, COUNTRY_CODES, STATES, STATE_CODES ].each do |constant|
     def constant.get(code)
-      self[code.upcase]
+      self[code.upcase.gsub(".", "")]
     end
   end
 

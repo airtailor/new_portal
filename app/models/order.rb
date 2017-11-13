@@ -40,7 +40,9 @@ class Order < ApplicationRecord
     self.fulfilled      ||= false
     self.late           ||= false
     self.dismissed      ||= false
+end
 
+def parse_order_lifecycle_stage
     date = DateTime.now.in_time_zone.midnight
 
     self.arrival_date   = date if self.arrived && !self.arrival_date

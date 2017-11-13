@@ -12,6 +12,47 @@ class Address < ApplicationRecord
   has_many :customers, through: :customer_addresses
   has_many :stores
 
+  def parse_and_save(params)
+    self.assign_attributes(params)
+
+    self.set_country_and_country_code
+    self.set_state_abbreviation
+    self.extract_street_and_number(params)
+
+    self.save
+  end
+
+  def set_state_abbreviation
+    state = self.state_province
+    return if state.in?(STATE_CODES.values)
+
+    current_state = state
+    state = STATE_CODES.get(current_state)
+    state ||= current_state
+
+    self.state_province = state
+  end
+
+  def set_country_and_country_code
+    country_code, country = self.country_code, self.country
+    return if country_code.in?(COUNTRY_CODES.values) && country.in?(COUNTRIES.values)
+
+    if country.in?(COUNTRIES.values)
+      country = country
+      country_code = COUNTRY_CODES.get(country)
+    elsif country.in?(COUNTRY_CODES.values)
+      country_code = country
+      country = COUNTRIES.get(country)
+    else
+      # leave country alone if not found.
+      country_code = COUNTRY_CODES.get(country)
+      country_code ||= country
+    end
+
+    self.country_code = country_code
+    self.country = country
+  end
+
   def parse_street_name(street, country_code)
     return nil unless country_code.to_sym == :US
     StreetAddress::US.parse(street)
@@ -38,48 +79,6 @@ class Address < ApplicationRecord
         self.street = street.split(/^\d+\W+/).reject{|elem| elem == ""}.join("")
       end
     end
-  end
-
-  def parse_and_save(params)
-    self.assign_attributes(params)
-
-    self.extract_street_and_number(params)
-    self.set_state_abbreviation
-    self.set_country_and_country_code
-
-    self.save
-  end
-
-  def set_state_abbreviation
-    state = self.state_province
-    return if state.in?(STATE_CODES.values)
-
-    current_state = state
-    state = STATE_CODES.get(current_state)
-    state ||= current_state
-
-    self.state_province = state
-  end
-
-  def set_country_and_country_code
-    country_code, country = self.country_code, self.country
-    return if country_code.in?(COUNTRY_CODES.values) && country.in?(COUNTRIES.values)
-
-    current_country = country.upcase
-    if country.in?(COUNTRIES.values)
-      country = country
-      country_code = country_codes.get(country)
-    elsif country.in?(COUNTRY_CODES.values)
-      country = COUNTRY_CODES.get(country)
-      country_code = country
-    else
-      # leave country alone if not found.
-      country_code = COUNTRY_CODES.get(current_country)
-      country_code ||= current_country
-    end
-
-    self.country_code = country_code
-    self.country = country
   end
 
   def postmates_address

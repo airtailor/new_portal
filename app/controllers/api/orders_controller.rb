@@ -49,7 +49,10 @@ class Api::OrdersController < ApplicationController
 
   def update
     @order = Order.where(id: params[:id])
-    if @order.first.update(order_params)
+
+    @order.first.assign_attributes(order_params)
+    @order.first.parse_order_lifecycle_stage
+    if @order.first.save
       sql_includes = [
         :tailor, :retailer, :customer,
         shipments: [ :source, :destination ],
@@ -71,6 +74,7 @@ class Api::OrdersController < ApplicationController
     begin
       @order = Order.new(order_params)
       @order.set_order_defaults
+      @order.parse_order_lifecycle_stage(order_params)
 
       if @order.save
         garments = params[:order][:garments]
