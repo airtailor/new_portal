@@ -37,14 +37,14 @@ RSpec.describe Charge, type: :model do
         expect(charge.valid?).to eq(false)
       end
 
-      it "is invalid without a chargable" do
-        charge = Charge.new(
-          payable: @payable,
-          amount: @chargable.total,
-          stripe_id: @stripe_charge[:id]
-        )
-        expect(charge.valid?).to eq(false)
-      end
+      #it "is invalid without a chargable" do
+      #  charge = Charge.new(
+      #    payable: @payable,
+      #    amount: @chargable.total,
+      #    stripe_id: @stripe_charge[:id]
+      #  )
+      #  expect(charge.valid?).to eq(false)
+      #end
 
       it "is invalid without a payable" do
         charge = Charge.new(

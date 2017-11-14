@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth'
-  #devise_for :users
-
   root to: "home#index"
 
   resources :stores do
@@ -11,16 +9,6 @@ Rails.application.routes.draw do
   patch "/tailor_orders/:id", to: "orders#update", type: "tailor_order", as: :tailor_order
   patch "/welcome_kits/:id", to: "orders#update", type: "welcome_kit", as: :welcome_kit
 
-
-  # namespace :admin  do
-  #   get "/users", to: "users#index", as: :users
-  #   get "/users/new", to: "users#new", as: :new_user
-  #   get "/users/:id", to: "users#show", as: :user
-  #   get "/users/:id/edit", to: "users#edit", as: :edit_user
-  #   post "/users", to: "users#create"
-  #   patch "/users/:id", to: "users#update"
-  #   delete "/users/:id", to: "users#destroy"
-  # end
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
@@ -50,6 +38,9 @@ Rails.application.routes.draw do
     post "/shopify_order", to: "shopify#receive"
     resources :sessions, only: [:create, :destroy]
     resources :tailors
+
+    resources :charges
+    post "/update_payment_method", to: "payments#update_payment_method"
 
     put "/users/:id/update_password", to: "users#update_password"
   end

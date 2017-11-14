@@ -45,8 +45,9 @@ RSpec.describe Store, type: :model do
       end
     end
 
-  it "is invalid without a name" do
-    invalid_store = FactoryGirl.build(:store, name: nil)
-    expect(invalid_store).to_not be_valid
+    it "is invalid without a name" do
+      invalid_store = FactoryGirl.build(:store, name: nil)
+      expect(invalid_store).to_not be_valid
+    end
   end
 end

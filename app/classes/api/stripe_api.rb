@@ -11,12 +11,7 @@ class StripeAPI
       customer.save
       return customer
     rescue => e
-      case e.http_status
-      when 402
-          return e.message
-      else
-          return "Oops something went wrong"
-      end
+      return {error: {status: e.http_status, message: e.message}}
     end
   end
 
@@ -29,16 +24,11 @@ class StripeAPI
       )
 
     rescue => e
-      case e.http_status
-      when 402
-          return {status: e.http_status, message: e.message}
-      else
-          return "Oops something went wrong"
-      end
+      return {error: {status: e.http_status, message: e.message}}
     end
 
     if stripe_charge["status"] == "succeeded"
-      charge
+      stripe_charge
     else
       e.message ||= false
     end

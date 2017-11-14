@@ -4,5 +4,5 @@ class Charge < ApplicationRecord
   belongs_to :chargable, :polymorphic => true
   belongs_to :payable, :polymorphic => true
 
-  validates :chargable, :payable, :amount, presence: true
+  validates :payable, :amount, :stripe_id, presence: true
 end
