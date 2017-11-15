@@ -1,4 +1,4 @@
-class PostmatesAPI
+class Api::Postmates
   def self.build_messenger_delivery(pickup, dropoff)
     @client = Postmates.new
     @client.configure do |config|
