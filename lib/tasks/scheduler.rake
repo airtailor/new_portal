@@ -7,11 +7,11 @@ desc "This task will make sure we have all orders from Shopify from the last 2 w
 task :daily_shopify_reconciliation => :environment do
   shopify_key = ENV["SHOPIFY_API_KEY"]
   shopify_password = ENV["SHOPIFY_API_PASSWORD"]
-  base_url = "https://#{shopify_key}:#{shopify_password}@skinnyfatties.myshopify.com/admin/orders.json?created_at_min=#{2.weeks.ago}"
+  base_url = "https://#{shopify_key}:#{shopify_password}@skinnyfatties.myshopify.com/admin/orders.json?created_at_min=#{25.hours.ago}"
   response = HTTParty.get(base_url, format: :plain)
 
   shopify_orders = JSON.parse(response)["orders"]
-  db_orders = Order.where(source: "Shopify").where("created_at >= ?", 2.weeks.ago)
+  db_orders = Order.where(source: "Shopify").where("created_at >= ?", 25.hours.ago)
 
   needed_orders = shopify_orders.reject do |shopify_order|
     db_orders.where(source_order_id: shopify_order["name"].gsub("#", "")).length > 0
