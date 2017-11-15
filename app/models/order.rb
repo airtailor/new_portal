@@ -3,6 +3,7 @@ class Order < ApplicationRecord
 
   has_many :items
   has_many :alterations, through: :items
+  has_many :item_types, through: :items
 
   has_many :shipment_orders
   has_many :shipments, through: :shipment_orders

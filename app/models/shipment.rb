@@ -36,11 +36,10 @@ class Shipment < ApplicationRecord
         delivery = request_messenger
       end
     end
-
     self.shipping_label  = delivery.try(:label_url)
     self.tracking_number = delivery.try(:tracking_number)
-    # self.postmates_id = delivery.try(:id)
-    # self.status = delivery.try(:status)
+    self.postmates_delivery_id = delivery.try(:id)
+    self.status = delivery.try(:status)
   end
 
   def set_default_fields
@@ -60,7 +59,6 @@ class Shipment < ApplicationRecord
   end
   #
   def text_all_shipment_customers
-    # this shouldn't be generic
     orders.map(&:text_order_customers)
   end
 
@@ -98,9 +96,9 @@ class Shipment < ApplicationRecord
   def delivery_can_be_executed?(source, dest, orders)
     return true if orders.length == 1
     counts = {
-      retailer: orders.map(&:requester_id).uniq,
-      tailor: orders.map(&:provider_id).uniq,
-      customer: orders.map(&:customer_id).uniq
+      retailer: orders.map(&:requester_id).uniq.count,
+      tailor: orders.map(&:provider_id).uniq.count,
+      customer: orders.map(&:customer_id).uniq.count
     }
 
     return [source, dest].all?{ |klass|
