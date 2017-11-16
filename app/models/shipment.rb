@@ -32,7 +32,7 @@ class Shipment < ApplicationRecord
         delivery = create_label(self)
       end
     when MESSENGER
-      if is_messenger_shipment? && needs_messenger = true # for right now.
+      if is_messenger_shipment? && needs_messenger
         delivery = request_messenger
       end
     end
@@ -40,6 +40,10 @@ class Shipment < ApplicationRecord
     self.tracking_number = delivery.try(:tracking_number)
     self.postmates_delivery_id = delivery.try(:id)
     self.status = delivery.try(:status)
+  end
+
+  def needs_messenger
+    !self.postmates_delivery_id || !self.status
   end
 
   def set_default_fields
