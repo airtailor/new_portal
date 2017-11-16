@@ -2,7 +2,7 @@ class Api::Postmates
   def self.build_messenger_delivery(pickup, dropoff)
     @client = Postmates.new
     @client.configure do |config|
-      config.api_key = Credentials.postmates_sandbox_token
+      config.api_key = Credentials.postmates_token
       config.customer_id = Credentials.postmates_id
     end
 

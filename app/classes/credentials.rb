@@ -4,8 +4,17 @@ class Credentials
     Rails.application.secrets.secret_key_base
   end
 
-  def self.stripe_api_key
-    Rails.application.secrets.stripe_api_key
+  def self.stripe_secret_key
+    Rails.application.secrets.stripe_secret_key
+  end
+
+
+  def self.shopify_api_key
+    Rails.application.secrets.shopify_api_key
+  end
+
+  def self.shopify_api_password
+    Rails.application.secrets.shopify_api_password
   end
 
   def self.shippo_key
@@ -20,16 +29,8 @@ class Credentials
     Rails.application.secrets.shipping_carrier_account
   end
 
-  def self.sonar_sandbox_token
-    Rails.application.secrets.sonar_sandbox_token
-  end
-
-  def self.sonar_sandbox_token
-    Rails.application.secrets.sonar_sandbox_token
-  end
-
-  def self.sonar_production_token
-    Rails.application.secrets.sonar_production_token
+  def self.sonar_token
+    Rails.application.secrets.sonar_token
   end
 
   def self.at_gmail_pw
@@ -40,12 +41,12 @@ class Credentials
     Rails.application.secrets.at_gmail_user
   end
 
-  def self.delighted_production_token
-    Rails.application.secrets.delighted_production_token
+  def self.delighted_token
+    Rails.application.secrets.delighted_token
   end
 
-  def self.postmates_sandbox_token
-    Rails.application.secrets.postmates_sandbox_token
+  def self.postmates_token
+    Rails.application.secrets.postmates_token
   end
 
   def self.postmates_id

@@ -36,6 +36,7 @@ class Shipment < ApplicationRecord
         delivery = request_messenger
       end
     end
+    
     self.shipping_label  = delivery.try(:label_url)
     self.tracking_number = delivery.try(:tracking_number)
     self.postmates_delivery_id = delivery.try(:id)

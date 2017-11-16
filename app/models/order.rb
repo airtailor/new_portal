@@ -27,9 +27,6 @@ class Order < ApplicationRecord
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
 
-  # after_update :send_customer_shipping_label_email, if: :provider_id_changed?
-  # after_update :que_customer_for_delighted, if: :fulfilled_changed?
-
   def set_order_defaults
     self.source         ||= "Shopify"
     self.retailer       ||= Retailer.where(
@@ -48,33 +45,34 @@ def parse_order_lifecycle_stage
 
     self.arrival_date   = date if self.arrived && !self.arrival_date
     self.due_date       = self.arrival_date + 6.days if !self.due_date
-    self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
+    self.fulfilled_date = date if self.d && !self.fulfilled_date
 
-    order_past_due      = self.due_date < date
-    self.late           = true if self.due_date && order_past_due
+    order_past_due      = self.due_date && self.due_date < date
+    self.late           = true if order_past_due
   end
 
-  def needs_shipping_label
-    self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
-  end
+  def send_shipping_label_email_to_customer
+    if is_customer_direct_tailor_order
+      customer, tailor = self.customer, self.tailor
+      params = {
+        source: customer, destination: tailor,
+        delivery_type: Shipment::MAIL
+      }
 
+      unless shipment = self.shipments.where(params).first
+        shipment = self.shipments.build(params)
+        shipment.deliver
+        shipment.save
+      end
 
-  def send_shipping_label_email
-    if needs_shipping_label
-      shipment = self.shipments
-      shipment ||= Shipment.new(order: self, type: Shipment::INCOMING)
-      shipment.set_defaults
-      shipment.save
-
-      AirtailorMailer.label_email(self.customer, self, self.tailor, shipment).deliver!
+      if Rails.env == 'production'
+        AirtailorMailer.label_email(customer, self, tailor, shipment).deliver!
+      end
     end
   end
 
-  def needs_delighted
-    self.fulfilled && self.type == "TailorOrder"
-  end
 
-  def que_customer_for_delighted
+  def queue_customer_for_delighted
     if Rails.env == 'production' && needs_delighted
       Delighted::Person.create(
         :email => self.customer.email, :delay => 518400,
@@ -100,7 +98,6 @@ def parse_order_lifecycle_stage
 
   def send_order_confirmation_text
     customer = self.customer
-
     SendSonar.add_customer(
       phone_number: customer.phone,
       email: customer.email,
@@ -113,16 +110,12 @@ def parse_order_lifecycle_stage
         "Tailor order (##{self.id}) has been placed and we are SO excited to " +
         "get to work. We'll text you updates along the way. Thank you!"
 
-        #tags = [self.retailer.name]
         m_url = "https://cdn.shopify.com/s/files/1/0184/1540/files/dancing_kid.gif?9975520961070565248"
-
         SendSonar.message_customer(
           text: customer_message,
           to: phone,
-          #tag_names: tags,
           media_url: m_url
         )
-    else
     end
   end
 
@@ -135,17 +128,12 @@ def parse_order_lifecycle_stage
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
       order.weight = order_info["total_weight"]
-      order.init
+
+      order.set_order_defaults
+      order.parse_order_lifecycle_stage
     end
+
     order
-  end
-
-  def assigned?
-    self.tailor.present?
-  end
-
-  def items_count
-    self.items.count
   end
 
   def alterations_count
@@ -158,6 +146,16 @@ def parse_order_lifecycle_stage
     #where("id ILIKE ? OR customer.first_name ILIKE ? OR customer.last_name ILIKE ?", "%#{search}%", "%#{search}%", "%#{search}%")
     #
      #Order.joins(:customers).where("customer.name like '%?%'", search)
+  end
+
+  private
+
+  def is_customer_direct_tailor_order
+    self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
+  end
+
+  def needs_delighted
+    self.fulfilled && self.type == "TailorOrder"
   end
 
 end

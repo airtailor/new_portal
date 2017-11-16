@@ -56,15 +56,19 @@ class Store < ApplicationRecord
   end
 
   def late_orders_count
-    self.orders.late(true).count
+    open_orders.late(true).count
   end
 
   def active_orders_count
     if self.type == "Retailer"
-      self.orders.fulfilled(false).count
+      open_orders.count
     elsif self.type == "Tailor"
-      self.orders.active.count
+      open_orders.active.count
     end
+  end
+
+  def arrived_orders_count
+    self.orders.fulfilled(false).arrived(true).count
   end
 
   def transit_to_tailor_count

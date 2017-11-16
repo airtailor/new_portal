@@ -1,18 +1,16 @@
 class Api::CustomersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create]
+  before_action :set_customer, only: [:update]
 
   def update
-    @customer = Customer.where(id: params[:id]).first
     if @customer
       @customer.assign_attributes(customer_params)
-
       if required_address_fields.all?{|f| params[f]}
         @customer.set_address(params)
       end
-
     else
       errors = ActiveModel::Errors.new(Customer.new)
-      errors.add(:id, :not_found, message: "is not found in DB")
+      errors.add(:id, :not_found, message: "Oops! that customer wasn't found in the db.")
       render :json => {errors: errors.full_messages}
     end
 
@@ -24,7 +22,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def find_or_create
-    @customer = Customer.where(phone: customer_params[:phone]).first
+    @customer = Customer.where( phone: customer_params[:phone] ).first
     @customer ||= Customer.new
 
     @customer.assign_attributes(customer_params)
@@ -42,6 +40,10 @@ class Api::CustomersController < ApplicationController
 
   private
 
+  def set_customer
+    @customer = Customer.where(id: params[:id]).first
+  end
+
   def customer_params
     params.require(:customer)
       .except(*permitted_address_fields)
@@ -58,7 +60,6 @@ class Api::CustomersController < ApplicationController
 
   def permitted_address_fields
     fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
-
     return fields + required_address_fields
   end
 end

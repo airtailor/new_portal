@@ -1,5 +1,7 @@
+
 class Api::OrdersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update]
+  before_action :set_order, only: [:show, :update]
 
   def index
     if current_user.admin?
@@ -9,21 +11,21 @@ class Api::OrdersController < ApplicationController
     end
 
     sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
-    render :json => @store.open_orders.includes(*sql_includes)
-                      .as_json(
+    render :json => @store.open_orders.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
   end
 
   def show
-    @order = Order.where(id: params[:id])
     sql_includes = [
       :tailor, :retailer, :customer,
       shipments: [ :source, :destination ],
       items: [ :item_type, :alterations ]
     ]
+
     data = @order.includes(*sql_includes)
     items = data.first.items.as_json(include: [ :item_type, :alterations ])
+
     render :json => data.as_json(include: [
         :tailor, :retailer, :customer,
         shipments: { include: [ :source, :destination ]}
@@ -31,13 +33,15 @@ class Api::OrdersController < ApplicationController
   end
 
   def new_orders
-    sql_include = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
+    sql_includes = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
     @data = {
-      unassigned: TailorOrder.where(tailor: nil).includes(*sql_include).as_json( include: [
-        :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
+      unassigned: TailorOrder.where(tailor: nil).includes(*sql_includes).as_json(
+        include: [
+          :shipments, :customer, :items => { include: [ :item_type, :alterations ]}
       ]),
-      welcome_kits: WelcomeKit.fulfilled(false).includes(*sql_include).as_json( include: [
-        :shipments, :customer, :items => { include: [ :item_type, :alterations ] }
+      welcome_kits: WelcomeKit.fulfilled(false).includes(*sql_includes).as_json(
+        include: [
+          :shipments, :customer, :items => { include: [ :item_type, :alterations ]}
       ])
     }
 
@@ -45,11 +49,13 @@ class Api::OrdersController < ApplicationController
   end
 
   def update
-    @order = Order.where(id: params[:id])
-
     @order.first.assign_attributes(order_params)
     @order.first.parse_order_lifecycle_stage
+
     if @order.first.save
+      @order.first.send_shipping_label_email_to_customer
+      @order.first.queue_customer_for_delighted
+
       sql_includes = [
         :tailor, :retailer, :customer, :items, :item_types, :alterations,
         shipments: [ :source, :destination ]
@@ -70,15 +76,17 @@ class Api::OrdersController < ApplicationController
     begin
       @order = Order.new(order_params)
       @order.set_order_defaults
-      @order.parse_order_lifecycle_stage(order_params)
+      @order.parse_order_lifecycle_stage
 
       if @order.save
-        garments = params[:order][:garments]
-        Item.create_items_portal(@order, garments)
+        Item.create_items_portal(@order, params[:order][:garments])
+        @order.send_order_confirmation_text
+
         sql_includes = [
           :tailor, :retailer, :customer,
           items: [ :item_type, :alterations ]
         ]
+
         render :json => @order.includes(*sql_includes).as_json(include: [
             :tailor, :retailer, :customer,
             :items => { include: [ :item_type, :alterations ] }
@@ -131,6 +139,10 @@ class Api::OrdersController < ApplicationController
   end
 
   private
+
+  def set_order
+    @order = Order.where(id: params[:id])
+  end
 
   def order_params
     params.require(:order).permit(

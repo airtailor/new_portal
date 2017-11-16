@@ -42,6 +42,8 @@ class Api::ShopifyController < ApplicationController
       puts "\norder: #{order}"
       puts "\ncustomer: #{customer}"
       puts "\n\n\n shopify json #{data}"
+    else
+      order.send_order_confirmation_text
     end
 
     Item.create_items_shopify(order, data["line_items"]) if order_type == TailorOrder

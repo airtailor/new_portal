@@ -5,8 +5,8 @@ end
 
 desc "This task will make sure we have all orders from Shopify from the last 2 weeks"
 task :daily_shopify_reconciliation => :environment do
-  shopify_key = ENV["SHOPIFY_API_KEY"]
-  shopify_password = ENV["SHOPIFY_API_PASSWORD"]
+  shopify_key = Credentials.shopify_api_key
+  shopify_password = Credentials.shopify_api_password
   base_url = "https://#{shopify_key}:#{shopify_password}@skinnyfatties.myshopify.com/admin/orders.json?created_at_min=#{25.hours.ago}"
   response = HTTParty.get(base_url, format: :plain)
 
