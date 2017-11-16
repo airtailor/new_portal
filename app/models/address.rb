@@ -5,6 +5,9 @@ class Address < ApplicationRecord
 
   validates_presence_of :number, :street, :city, :state_province, :zip_code
 
+  has_many :shipments, as: :source
+  has_many :shipments, as: :destination
+
   has_many :customer_addresses
   has_many :customers, through: :customer_addresses
   has_many :stores
@@ -84,26 +87,43 @@ class Address < ApplicationRecord
     when CUSTOMER
       # NOTE: without the UI, this will always work.
       # When we implement the UI, this'll break immediately.
-      return customers.first
-    when RETAILER || TAILOR
-      return  store
+      return self.customers.first
+    when TAILOR
+      return self.stores.where(type: "Tailor").first
+    when RETAILER
+      return self.stores.where(type: "Retailer").first
     end
   end
 
   def for_shippo
     contact = get_contact
     return {
-      name: contact.name,
-      phone: contact.phone,
-      email: contact.email,
-      street1: shippo_street_1,
-      street2: shippo_street_2,
-      city: self.city,
-      country: self.country,
-      state: self.state,
-      zip: self.zip_code
+      :name => contact.name,
+      :street1 => shippo_street_1,
+      :street2 => shippo_street_2,
+      :city => self.city,
+      :country => self.country,
+      :state => self.state_province,
+      :zip => self.zip_code,
+      :phone => contact.try(:phone),
+      :email => contact.try(:email)
     }
   end
+
+#   def shippo_address
+#   {
+#     # :object_purpose => "PURCHASE",
+#     :name => self.name,
+#     :street1 => self.street1,
+#     :street2 => self.street2,
+#     :city => self.city,
+#     :country => self.country,
+#     :state => self.state,
+#     :zip => self.zip,
+#     :phone => self.phone,
+#     :email => self.email,
+#   }
+# end
 
   def shippo_street_1
     "#{number} #{street}"

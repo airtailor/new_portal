@@ -27,8 +27,11 @@ namespace :db do
   #     file_path ||= default_file
   #
   #     if File.exist?(file_path)
-  #       # copy it to a new file
-  #       # pg_restore --verbose --clean --no-acl --no-owner -h localhost -U galactus -d airtailor_development ./lib/data/latest.dump
+  #       # copy it to a new
+
+
+  #       pg_restore --verbose --clean --no-acl --no-owner -h localhost -U galactus -d airtailor_development ./lib/data/latest.dump
+
   #       sh %{ pg_restore --verbose --clean --no-acl --no-owner -h localhost -d #{environment_db} #{file_path} }
   #       sh %{ bin/rails db:environment:set RAILS_ENV=#{Rails.env} }
   #     else

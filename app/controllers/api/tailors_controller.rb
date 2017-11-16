@@ -1,9 +1,12 @@
 class Api::TailorsController < ApplicationController
-  before_action :authenticate_user!#, except: [:new, :create, :edit, :update]
-  #before_action :set_order, only: [:show, :update]
+  before_action :authenticate_user!
 
   def index
-    #render :json => current_user.store.open_orders.as_json(include: [:customer], methods: [:alterations_count])
-    render :json => Tailor.all
+    data = Tailor.all.as_json(methods: [
+      :active_orders_count,
+      :arrived_orders_count,
+      :late_orders_count
+    ])
+    render :json => data
   end
 end

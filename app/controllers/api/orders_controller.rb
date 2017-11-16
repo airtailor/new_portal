@@ -1,20 +1,28 @@
 class Api::OrdersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update]
-  before_action :set_order, only: [:show, :update]
 
   def index
-    render :json => current_user.store.open_orders
-                      .as_json(
-                        include: [:customer],
-                        methods: [:alterations_count]
-                      )
+    if current_user.admin?
+      store = Store.find(params[:store_id])
+    else
+      store = current_user.store
+    end
+
+    render :json => store.open_orders.as_json(
+                      include: [ :tailor, :retailer, :customer ],
+                      methods: [:alterations_count]
+                    )
   end
 
   def show
     @order = Order.find(params[:id])
+    @shipments = @order.shipments
+
+    # add @shipments in
     data = @order.as_json(include: [
-            :incoming_shipment,
-            :outgoing_shipment,
+            :shipments,
+            :tailor,
+            :retailer,
             :customer,
             :items => { include: [:item_type, :alterations] }
           ])
@@ -22,25 +30,37 @@ class Api::OrdersController < ApplicationController
   end
 
   def new_orders
-    unassigned = TailorOrder.all.where(tailor: nil).as_json( include: [
-                  :incoming_shipment, :outgoing_shipment, :customer,
-                  :items => {
-                      include: [:item_type, :alterations]
-                  }]
-                )
-    welcome_kits = WelcomeKit.all.where(fulfilled: false).as_json( include: [
-                    :incoming_shipment, :outgoing_shipment, :customer,
-                    :items => { include: [ :item_type, :alterations ] }
-                  ])
-    data = {unassigned: unassigned, welcome_kits: welcome_kits}
+    unassigned = TailorOrder.all.where(tailor: nil)
+                  .as_json( include: [
+                    :shipments,
+                    :tailor,
+                    :retailer,
+                    :customer,
+                    :items => {
+                        include: [:item_type, :alterations]
+                    }]
+                  )
+    welcome_kits = WelcomeKit.all.where(fulfilled: false)
+                    .as_json( include: [
+                      :shipments,
+                      :retailer,
+                      :customer,
+                      :items => { include: [ :item_type, :alterations ] }
+                    ])
+
+    data = { unassigned: unassigned, welcome_kits: welcome_kits }
     render :json => data
   end
 
   def update
     @order = Order.find(params[:id])
     if @order.update(order_params)
+
+
       render :json => @order.as_json(include: [
-                        :customer, :incoming_shipment, :outgoing_shipment,
+                        :tailor,
+                        :retailer,
+                        :customer,
                         items:  { include: [ :item_type, :alterations ] },
                       ])
     else
@@ -51,11 +71,16 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
+      @order.set_default_fields
+
       if @order.save
         garments = params[:order][:garments]
         Item.create_items_portal(@order, garments)
         render :json => @order.as_json(include: [
-          :customer, :retailer, :items => {
+          :tailor,
+          :retailer,
+          :customer,
+          :items => {
             include: [ :item_type, :alterations ]
           }
         ])
@@ -115,7 +140,7 @@ class Api::OrdersController < ApplicationController
         :customer_id,
         :source,
         :ship_to_store
-        )
+      )
   end
 
 end

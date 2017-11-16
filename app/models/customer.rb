@@ -68,7 +68,7 @@ class Customer < ApplicationRecord
       customer.street1 = cust_details["address1"]
       customer.street2 = cust_details["address2"]
       customer.city = cust_details["city"]
-      customer.state = cust_details["state"]
+      customer.state = cust_details["province"]
       customer.zip = cust_details["zip"]
       customer.country = cust_details["country_name"]
     end
@@ -84,7 +84,7 @@ class Customer < ApplicationRecord
     customer.street1 = cust_details["address1"]
     customer.street2 = cust_details["address2"]
     customer.city = cust_details["city"]
-    customer.state = cust_details["state"]
+    customer.state = cust_details["province"]
     customer.zip = cust_details["zip"]
     customer.country = cust_details["country_name"]
     customer
