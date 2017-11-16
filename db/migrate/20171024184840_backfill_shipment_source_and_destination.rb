@@ -11,17 +11,22 @@ class BackfillShipmentSourceAndDestination < ActiveRecord::Migration[5.0]
         type, order_type = shipment.delivery_type, order.type
 
         if type == "OutgoingShipment"
-          source_address = order.tailor.address if order_type == "TailorOrder"
-          source_address = order.retailer.address if order_type == "WelcomeKit"
+          source_address = tailor.address if order_type == "TailorOrder"
+          source_address = retailer.address if order_type == "WelcomeKit"
 
           if order.ship_to_store
-            destination_address = order.retailer.address
+            destination_address = retailer.address
           else
-            destination_address = order.customer.addresses.first
+            destination_address = customer.addresses.first
           end
         elsif type == "IncomingShipment"
-          source_address = order.retailer.address if order_type == 'TailorOrder'
-          destination_address = order.tailor.address
+          if retailer.name != "Air Tailor"
+            source_address = retailer.address
+          else
+            source_address = customer.addresses.first
+          end
+
+          destination_address = tailor.address
         end
       end
 
@@ -32,9 +37,6 @@ class BackfillShipmentSourceAndDestination < ActiveRecord::Migration[5.0]
   end
 
   def down
-    Shipment.update_all(
-      source_id: nil, source_type: nil,
-      destination_id: nil, destination_type: nil
-    )
+    Shipment.update_all( source: nil, destination: nil)
   end
 end

@@ -19,12 +19,7 @@ class Store < ApplicationRecord
   after_create :initiate_conversation
 
   def set_address(params)
-    address = Address.where(params).first
-    if !address
-      self.build_address.parse_and_save(params)
-    end
-
-    return address
+    self.build_address.parse_and_save(params) if Address.where(params).blank?
   end
 
   def update_address(params)
@@ -61,9 +56,9 @@ class Store < ApplicationRecord
 
   def active_orders_count
     if self.type == "Retailer"
-      open_orders.count
+      self.open_orders.count
     elsif self.type == "Tailor"
-      open_orders.active.count
+      self.orders.active.count
     end
   end
 
@@ -90,9 +85,7 @@ class Store < ApplicationRecord
   end
 
   def initiate_conversation
-    if self.name == "Air Tailor"
-      # do nothing
-    else
+    if self.name != "Air Tailor"
       air_tailor = Store.where(name: "Air Tailor").first
       convo = Conversation.create(sender: air_tailor, recipient: self)
 

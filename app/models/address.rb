@@ -3,7 +3,8 @@ class Address < ApplicationRecord
   include AddressConstants
   include TypeConstants
 
-  validates_presence_of :number, :street, :city, :state_province, :zip_code
+  validates_presence_of :number, :street, :city, :state_province,
+    :zip_code, :country, :country_code
 
   has_many :shipments, as: :source
   has_many :shipments, as: :destination
@@ -58,6 +59,7 @@ class Address < ApplicationRecord
     StreetAddress::US.parse(street)
   end
 
+  # NOTE: street_two does not get touched by this method. Ask nialbima.
   def extract_street_and_number(params)
     addy_string = "#{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
     if parsed_street = parse_street_name(addy_string, self.country_code)
@@ -89,7 +91,7 @@ class Address < ApplicationRecord
     case self.address_type
     when CUSTOMER
       # NOTE: without the UI, this will always work.
-      # When we implement the UI, this'll break immediately.
+      # When we implement the UI for multi-customer shipping, this'll break immediately.
       return self.customers.first
     when TAILOR
       return self.stores.where(type: "Tailor").first

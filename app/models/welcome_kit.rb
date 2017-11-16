@@ -3,6 +3,6 @@ class WelcomeKit < Order
     super
 
     self.weight = 28
-    self.fulfilled = true
+    self.fulfilled = false
   end
 end

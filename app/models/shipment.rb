@@ -36,32 +36,17 @@ class Shipment < ApplicationRecord
         delivery = request_messenger
       end
     end
-    
+
     self.shipping_label  = delivery.try(:label_url)
     self.tracking_number = delivery.try(:tracking_number)
     self.postmates_delivery_id = delivery.try(:id)
     self.status = delivery.try(:status)
   end
 
-  def needs_messenger
-    !self.postmates_delivery_id || !self.status
-  end
-
   def set_default_fields
     self.weight = self.orders.sum(:weight)
   end
 
-  def needs_label
-    !shipping_label || !tracking_number
-  end
-
-  def is_messenger_shipment?
-    self.delivery_type == MESSENGER
-  end
-
-  def is_mail_shipment?
-    self.delivery_type == MAIL
-  end
   #
   def text_all_shipment_customers
     orders.map(&:text_order_customers)
@@ -79,6 +64,8 @@ class Shipment < ApplicationRecord
       end
     end
   end
+
+  private
 
   def parse_src_dest(action)
     type = self.delivery_type
@@ -98,22 +85,27 @@ class Shipment < ApplicationRecord
     end
   end
 
-  def delivery_can_be_executed?(source, dest, orders)
-    return true if orders.length == 1
-    counts = {
-      retailer: orders.map(&:requester_id).uniq.count,
-      tailor: orders.map(&:provider_id).uniq.count,
-      customer: orders.map(&:customer_id).uniq.count
-    }
-
-    return [source, dest].all?{ |klass|
-      counts[klass] == 1
-    }
-  end
-
+  # NOTE: we need this because of the differing wys in which customer/tailor/
+  # retailer relate to the address table.
   def get_address(klass_symbol)
     record = self.orders.first.send(klass_symbol)
     klass_symbol == :customer ? record.addresses.first : record.address
+  end
+
+  def needs_label
+    !shipping_label || !tracking_number
+  end
+
+  def is_messenger_shipment?
+    self.delivery_type == MESSENGER
+  end
+
+  def is_mail_shipment?
+    self.delivery_type == MAIL
+  end
+
+  def needs_messenger
+    !self.postmates_delivery_id || !self.status
   end
 
 end

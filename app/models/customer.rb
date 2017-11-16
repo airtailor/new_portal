@@ -22,11 +22,7 @@ class Customer < ApplicationRecord
   end
 
   def set_address(address_params)
-    if !address = self.addresses.first
-      address = self.addresses.build.parse_and_save(address_params)
-    end
-
-    return address
+    self.addresses.build.parse_and_save(address_params) if self.addresses.blank?
   end
 
   def create_blank_measurements

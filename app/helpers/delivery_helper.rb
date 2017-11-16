@@ -7,16 +7,18 @@ module DeliveryHelper
   def request_messenger
     return Api::Postmates.build_messenger_delivery(self.source, self.destination)
   end
-
-  def delivery_can_be_executed?(source, dest)
-    orders = self.orders
+  
+  def delivery_can_be_executed?(source, dest, orders)
+    return true if orders.length == 1
     counts = {
-      retailer: orders.map(&:requester_id).uniq,
-      tailor: orders.map(&:provider_id).uniq,
-      customer: orders.map(&:customer_id).uniq
+      retailer: orders.map(&:requester_id).uniq.count,
+      tailor: orders.map(&:provider_id).uniq.count,
+      customer: orders.map(&:customer_id).uniq.count
     }
 
-    return [source, dest].all?{ |klass| counts[klass] == 1 }
+    return [source, dest].all?{ |klass|
+      counts[klass] == 1
+    }
   end
 
   def get_parcel

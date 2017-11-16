@@ -19,7 +19,7 @@ class Api::ShipmentsController < ApplicationController
     @shipment.deliver
 
     if @shipment.save
-      #@shipment.text_all_shipment_customers
+      @shipment.text_all_shipment_customers
       render :json => @shipment.as_json(include: [ :source, :destination ])
     else
       render :json => { :errors => @shipment.errors.full_messages }

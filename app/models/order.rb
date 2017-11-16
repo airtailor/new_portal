@@ -9,8 +9,8 @@ class Order < ApplicationRecord
   has_many :shipments, through: :shipment_orders
 
   belongs_to :customer, inverse_of: :orders, class_name: "Customer", foreign_key: "customer_id"
-  belongs_to :retailer, inverse_of: :orders,  class_name: "Retailer", foreign_key: "requester_id"
-  belongs_to :tailor, inverse_of: :orders, class_name: "Tailor", foreign_key: "provider_id",
+  belongs_to :retailer, inverse_of: :orders, class_name: "Retailer", foreign_key: "requester_id"
+  belongs_to :tailor,   inverse_of: :orders, class_name: "Tailor",   foreign_key: "provider_id",
     optional: true
 
   validates :retailer, presence: true
@@ -28,16 +28,14 @@ class Order < ApplicationRecord
   scope :active, -> { arrived(true).fulfilled(false) }
 
   def set_order_defaults
-    self.source         ||= "Shopify"
-    self.retailer       ||= Retailer.where(
-                              company: Company.where(name: "Air Tailor").first
-                            ).first
-    self.tailor         ||= self.retailer.default_tailor
+    self.source ||= "Shopify"
+    self.retailer ||= Retailer.where( company: Company.where(name: "Air Tailor")).first
+    self.tailor ||= self.retailer.default_tailor
 
-    self.arrived        ||= false
-    self.fulfilled      ||= false
-    self.late           ||= false
-    self.dismissed      ||= false
+    self.arrived ||= false
+    self.fulfilled ||= false
+    self.late ||= false
+    self.dismissed ||= false
 end
 
 def parse_order_lifecycle_stage
@@ -88,10 +86,11 @@ def parse_order_lifecycle_stage
   end
 
   def text_order_customers
-    if ((retailer.name != "Air Tailor") && (order_status == "completed"))
+    if (self.retailer.name != "Air Tailor") && (self.fulfilled)
+      customer = self.customer
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
-        "Airtailor Order (id: #{id}) is finished and is on its way to you! " +
-        "Here's your USPS tracking number: #{tracking_number}"
+        "Airtailor Order (id: #{self.id}) is finished and is on its way to you! " +
+        "Here's your USPS tracking number: #{self.tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
   end
