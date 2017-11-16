@@ -56,6 +56,7 @@ class Customer < ApplicationRecord
       .gsub("-", "")
       .gsub(" ", "")
       .gsub("–", "")
+      .gsub("+", "")
 
     customer = Customer.find_or_create_by(phone: phone) do |customer|
       customer.email = shopify_customer["email"]
