@@ -1,4 +1,3 @@
-
 class Api::OrdersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update]
   before_action :set_order, only: [:show, :update]

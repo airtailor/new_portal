@@ -30,21 +30,17 @@ class Shipment < ApplicationRecord
     when MAIL
       if is_mail_shipment? && needs_label
         delivery = create_label(self)
+        self.shipping_label  = delivery.try(:label_url)
+        self.tracking_number = delivery.try(:tracking_number)
       end
+
     when MESSENGER
       if is_messenger_shipment? && needs_messenger
         delivery = request_messenger
+        self.postmates_delivery_id = delivery.try(:id)
+        self.status = delivery.try(:status)
       end
     end
-
-    self.shipping_label  = delivery.try(:label_url)
-    self.tracking_number = delivery.try(:tracking_number)
-    self.postmates_delivery_id = delivery.try(:id)
-    self.status = delivery.try(:status)
-  end
-
-  def set_default_fields
-    self.weight = self.orders.sum(:weight)
   end
 
   #

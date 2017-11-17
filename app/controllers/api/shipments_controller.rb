@@ -13,9 +13,11 @@ class Api::ShipmentsController < ApplicationController
 
   def create
     @shipment = Shipment.new(shipment_params)
-    @shipment.orders = Order.where(id: params[:shipment][:order_ids])
+
+    orders = Order.where(id: params[:shipment][:order_ids])
+    @shipment.orders = orders
+    @shipment.weight = orders.sum(:weight)
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
-    @shipment.set_default_fields
     @shipment.deliver
 
     if @shipment.save

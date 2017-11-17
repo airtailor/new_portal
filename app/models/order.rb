@@ -44,7 +44,6 @@ def parse_order_lifecycle_stage
     self.arrival_date   = date if self.arrived && !self.arrival_date
     self.due_date       = date + 6.days if !self.due_date
     self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
-
     self.late           = true if self.due_date && self.due_date < date
   end
 
