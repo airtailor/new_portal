@@ -43,14 +43,13 @@ class Shipment < ApplicationRecord
     end
   end
 
-  #
   def text_all_shipment_customers
     orders.map(&:text_order_customers)
   end
 
   def set_delivery_method(action)
     orders = self.orders
-    source_model, dest_model = self.parse_src_dest(action)
+    source_model, dest_model = parse_src_dest(action)
     if delivery_can_be_executed?(source_model, dest_model, orders)
       self.source = get_address(source_model)
       if orders.any?{|o| o.ship_to_store} && dest_model == :customer

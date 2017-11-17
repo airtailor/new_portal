@@ -48,11 +48,15 @@ class Api::OrdersController < ApplicationController
   end
 
   def update
+    tailor_assigned = @order.first.tailor.present?
+
     @order.first.assign_attributes(order_params)
     @order.first.parse_order_lifecycle_stage
 
     if @order.first.save
-      @order.first.send_shipping_label_email_to_customer
+      if params[:order][:provider_id] && !tailor_assigned
+        @order.first.send_shipping_label_email_to_customer
+      end
       @order.first.queue_customer_for_delighted
 
       sql_includes = [
