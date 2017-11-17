@@ -42,11 +42,10 @@ def parse_order_lifecycle_stage
     date = DateTime.now.in_time_zone.midnight
 
     self.arrival_date   = date if self.arrived && !self.arrival_date
-    self.due_date       = self.arrival_date + 6.days if !self.due_date
-    self.fulfilled_date = date if self.d && !self.fulfilled_date
+    self.due_date       = date + 6.days if !self.due_date
+    self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
 
-    order_past_due      = self.due_date && self.due_date < date
-    self.late           = true if order_past_due
+    self.late           = true if self.due_date && self.due_date < date
   end
 
   def send_shipping_label_email_to_customer

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024184840) do
+ActiveRecord::Schema.define(version: 20171115184748) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,9 +103,9 @@ ActiveRecord::Schema.define(version: 20171024184840) do
   create_table "items", force: :cascade do |t|
     t.integer  "order_id"
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "type_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.integer  "item_type_id"
     t.index ["order_id"], name: "index_items_on_order_id", using: :btree
   end
 
@@ -191,8 +191,8 @@ ActiveRecord::Schema.define(version: 20171024184840) do
   end
 
   create_table "shipments", force: :cascade do |t|
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.string   "weight"
     t.string   "shipping_label"
     t.string   "tracking_number"
@@ -201,6 +201,8 @@ ActiveRecord::Schema.define(version: 20171024184840) do
     t.integer  "source_id"
     t.string   "destination_type"
     t.integer  "destination_id"
+    t.string   "postmates_delivery_id"
+    t.string   "status"
     t.index ["destination_type", "destination_id"], name: "index_shipments_on_destination_type_and_destination_id", using: :btree
     t.index ["source_type", "source_id"], name: "index_shipments_on_source_type_and_source_id", using: :btree
   end
