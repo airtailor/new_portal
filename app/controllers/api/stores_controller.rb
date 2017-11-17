@@ -3,20 +3,20 @@ class Api::StoresController < ApplicationController
   before_action :set_store, only: [:show, :update]
 
   def show
-    data =  @store.as_json(
-      methods: [
-        :active_orders_count,
-        :unread_messages_count,
-        :late_orders_count,
-        :transit_to_tailor_count
-      ]
-    )
-    render :json => data
-  end
+  render :json => @store.includes(:address).as_json(
+    include: [ :address ],
+    methods: [
+      :active_orders_count,
+      :unread_messages_count,
+      :late_orders_count,
+      :transit_to_tailor_count
+    ]
+  ).first
+end
 
   def update
-    if @store.update(store_params)
-      render :json => @store.as_json
+    if @store.first.update(store_params)
+      render :json => @store.as_json.first
     else
       render :json => {errors: @store.errors.full_messages}
     end
@@ -44,7 +44,7 @@ class Api::StoresController < ApplicationController
   private
 
   def set_store
-    @store = Store.find(params[:id])
+    @store = Store.where(id: params[:id])
   end
 
   def store_params

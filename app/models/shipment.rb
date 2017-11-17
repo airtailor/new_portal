@@ -33,6 +33,7 @@ class Shipment < ApplicationRecord
         self.shipping_label  = delivery.try(:label_url)
         self.tracking_number = delivery.try(:tracking_number)
       end
+
     when MESSENGER
       if is_messenger_shipment? && needs_messenger
         delivery = request_messenger
@@ -42,11 +43,6 @@ class Shipment < ApplicationRecord
     end
   end
 
-  def set_default_fields
-    self.weight = self.orders.sum(:weight)
-  end
-
-  #
   def text_all_shipment_customers
     orders.map(&:text_order_customers)
   end
