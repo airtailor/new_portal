@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
+    put "/stores/:id/orders/alert_customers", to: "orders#alert_customers"
 
     get "/orders/search/:query", to: "orders#search"
     get "/orders/archived", to: "orders#archived"
@@ -45,5 +46,6 @@ Rails.application.routes.draw do
     resources :tailors
 
     put "/users/:id/update_password", to: "users#update_password"
+
   end
 end

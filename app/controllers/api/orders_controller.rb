@@ -1,5 +1,5 @@
 class Api::OrdersController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :edit, :update]
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :alert_customers]
   before_action :set_order, only: [:show, :update]
 
   def index
@@ -152,6 +152,13 @@ class Api::OrdersController < ApplicationController
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
+  end
+
+  def alert_customers
+    orders = Order.where(id: params[:orders])
+    orders.map(&:alert_customer_order_ready_for_pickup)
+    orders.update_all(customer_alerted: true)
+    render :json => {status: 200}
   end
 
   private

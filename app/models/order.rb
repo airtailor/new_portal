@@ -71,6 +71,14 @@ class Order < ApplicationRecord
     end
   end
 
+  def alert_customer_order_ready_for_pickup
+      customer = self.customer
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Air Tailor Order (id: #{self.id}) is finished and is ready for you to " +
+        "pick up at #{self.retailer.name}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+  end
+
 
   def queue_customer_for_delighted
     if Rails.env == 'production' && needs_delighted
@@ -91,7 +99,7 @@ class Order < ApplicationRecord
     if (self.retailer.name != "Air Tailor") && (self.fulfilled)
       customer = self.customer
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
-        "Airtailor Order (id: #{self.id}) is finished and is on its way to you! " +
+        "Air Tailor Order (id: #{self.id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{self.tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
