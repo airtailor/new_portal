@@ -18,7 +18,7 @@ end
     if @store.first.update(store_params)
       render :json => @store.as_json.first
     else
-      render :json => {errors: @store.errors.full_messages}
+      render :json => {errors: @store.first.errors.full_messages}
     end
   end
 

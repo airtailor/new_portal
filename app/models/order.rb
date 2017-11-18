@@ -95,10 +95,14 @@ def parse_order_lifecycle_stage
 
   def send_order_confirmation_text
     customer = self.customer
+
+    phone = customer.phone
+    first_name = customer.first_name
+
     SendSonar.add_customer(
       phone_number: customer.phone,
       email: customer.email,
-      first_name: customer.first_name,
+      first_name: first_name,
       last_name: customer.last_name,
     )
 

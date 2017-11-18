@@ -87,13 +87,16 @@ class Api::OrdersController < ApplicationController
 
         sql_includes = [
           :tailor, :retailer, :customer,
+          shipments: [ :source, :destination ],
           items: [ :item_type, :alterations ]
         ]
 
-        render :json => @order.includes(*sql_includes).as_json(include: [
-            :tailor, :retailer, :customer,
-            :items => { include: [ :item_type, :alterations ] }
-          ])
+        data = Order.where(id: @order.id).includes(*sql_includes)
+        items = data.first.items.as_json(include: [ :item_type, :alterations ])
+
+        render :json => data.as_json(include: [
+            :tailor, :retailer, :customer
+          ]).first.merge("items" => items)
       else
         render :json => {errors: @order.errors.full_messages}
       end
@@ -101,12 +104,14 @@ class Api::OrdersController < ApplicationController
       if e.message.include?("Invalid Phone Number")
         render :json => {errors: ["Invalid Phone Number"]}
       else
+        binding.pry
         render :json => {errors: e}
       end
      rescue => e
        if e.message.include?("Invalid Phone Number")
          render :json => {errors: ["Invalid Phone Number"]}
        else
+         binding.pry
          render :json => {errors: e}
        end
     end
