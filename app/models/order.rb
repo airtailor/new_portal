@@ -27,6 +27,10 @@ class Order < ApplicationRecord
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
 
+  def self.retailer_view
+    where(dismissed: false).where(customer_alerted: false)
+  end
+
   def set_order_defaults
     self.source ||= "Shopify"
     self.retailer ||= Retailer.where( company: Company.where(name: "Air Tailor")).first
@@ -36,15 +40,15 @@ class Order < ApplicationRecord
     self.fulfilled ||= false
     self.late ||= false
     self.dismissed ||= false
-end
+  end
 
-def parse_order_lifecycle_stage
-    date = DateTime.now.in_time_zone.midnight
+  def parse_order_lifecycle_stage
+      date = DateTime.now.in_time_zone.midnight
 
-    self.arrival_date   = date if self.arrived && !self.arrival_date
-    self.due_date       = date + 6.days if !self.due_date
-    self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
-    self.late           = true if self.due_date && self.due_date < date
+      self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
+      self.update_attributes(due_date: date + 6.days) if !self.due_date
+      self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
+      self.update_attributes(late: true) if self.due_date && self.due_date < date
   end
 
   def send_shipping_label_email_to_customer

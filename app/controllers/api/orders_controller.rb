@@ -3,14 +3,21 @@ class Api::OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update]
 
   def index
+    sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
+
     if current_user.admin?
-      @store = Store.where(id: params[:store_id]).first
-    else
-      @store = Store.where(id: current_user.store.id).first
+      store = Store.where(id: params[:store_id]).first
+      data = store.open_orders
+    elsif current_user.tailor?
+      store = Store.where(id: current_user.store.id).first
+      data = store.open_orders
+    elsif current_user.retailer?
+      store = Store.where(id: current_user.store.id).first
+      data = store.retailer_orders
     end
 
-    sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
-    render :json => @store.open_orders.includes(*sql_includes).as_json(
+
+    render :json => data.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
   end
