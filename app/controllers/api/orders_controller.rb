@@ -4,20 +4,21 @@ class Api::OrdersController < ApplicationController
 
   def index
     sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
+    user_roles = current_user.roles
 
-    if current_user.admin?
+    if user_roles.first.name == "admin"
       store = Store.where(id: params[:store_id]).first
-      data = store.open_orders
-    elsif current_user.tailor?
+      @data = store.open_orders
+    elsif user_roles.first.name == "tailor"
       store = Store.where(id: current_user.store.id).first
-      data = store.open_orders
-    elsif current_user.retailer?
+      @data = store.open_orders
+    elsif user_roles.first.name == "retailer"
       store = Store.where(id: current_user.store.id).first
-      data = store.retailer_orders
+      @data = store.retailer_orders
     end
 
-
-    render :json => data.includes(*sql_includes).as_json(
+    binding.pry if !@data
+    render :json => @data.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
   end
