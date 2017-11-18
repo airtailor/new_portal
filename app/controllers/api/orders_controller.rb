@@ -132,10 +132,10 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc)
+      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
               .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc)
+      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
