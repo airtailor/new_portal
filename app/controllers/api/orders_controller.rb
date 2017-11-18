@@ -1,16 +1,24 @@
 class Api::OrdersController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :edit, :update]
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :alert_customers]
   before_action :set_order, only: [:show, :update]
 
   def index
-    if current_user.admin?
-      @store = Store.where(id: params[:store_id]).first
-    else
-      @store = Store.where(id: current_user.store.id).first
+    sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
+    user_roles = current_user.roles
+
+    if user_roles.first.name == "admin"
+      store = Store.where(id: params[:store_id]).first
+      @data = store.open_orders
+    elsif user_roles.first.name == "tailor"
+      store = Store.where(id: current_user.store.id).first
+      @data = store.open_orders
+    elsif user_roles.first.name == "retailer"
+      store = Store.where(id: current_user.store.id).first
+      @data = store.retailer_orders
     end
 
-    sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
-    render :json => @store.open_orders.includes(*sql_includes).as_json(
+    binding.pry if !@data
+    render :json => @data.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
   end
@@ -87,13 +95,16 @@ class Api::OrdersController < ApplicationController
 
         sql_includes = [
           :tailor, :retailer, :customer,
+          shipments: [ :source, :destination ],
           items: [ :item_type, :alterations ]
         ]
 
-        render :json => @order.includes(*sql_includes).as_json(include: [
-            :tailor, :retailer, :customer,
-            :items => { include: [ :item_type, :alterations ] }
-          ])
+        data = Order.where(id: @order.id).includes(*sql_includes)
+        items = data.first.items.as_json(include: [ :item_type, :alterations ])
+
+        render :json => data.as_json(include: [
+            :tailor, :retailer, :customer
+          ]).first.merge("items" => items)
       else
         render :json => {errors: @order.errors.full_messages}
       end
@@ -101,12 +112,14 @@ class Api::OrdersController < ApplicationController
       if e.message.include?("Invalid Phone Number")
         render :json => {errors: ["Invalid Phone Number"]}
       else
+        binding.pry
         render :json => {errors: e}
       end
      rescue => e
        if e.message.include?("Invalid Phone Number")
          render :json => {errors: ["Invalid Phone Number"]}
        else
+         binding.pry
          render :json => {errors: e}
        end
     end
@@ -132,13 +145,20 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc)
+      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
               .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc)
+      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
     render :json => data
+  end
+
+  def alert_customers
+    orders = Order.where(id: params[:orders])
+    orders.map(&:alert_customer_order_ready_for_pickup)
+    orders.update_all(customer_alerted: true)
+    render :json => {status: 200}
   end
 
   private

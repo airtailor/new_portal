@@ -50,6 +50,10 @@ class Store < ApplicationRecord
     self.orders.open_orders
   end
 
+  def retailer_orders
+    self.orders.retailer_view
+  end
+
   def late_orders_count
     open_orders.late(true).count
   end

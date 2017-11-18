@@ -27,6 +27,10 @@ class Order < ApplicationRecord
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
 
+  def self.retailer_view
+    where(dismissed: false).where(customer_alerted: false)
+  end
+
   def set_order_defaults
     self.source ||= "Shopify"
     self.retailer ||= Retailer.where( company: Company.where(name: "Air Tailor")).first
@@ -36,15 +40,15 @@ class Order < ApplicationRecord
     self.fulfilled ||= false
     self.late ||= false
     self.dismissed ||= false
-end
+  end
 
-def parse_order_lifecycle_stage
-    date = DateTime.now.in_time_zone.midnight
+  def parse_order_lifecycle_stage
+      date = DateTime.now.in_time_zone.midnight
 
-    self.arrival_date   = date if self.arrived && !self.arrival_date
-    self.due_date       = date + 6.days if !self.due_date
-    self.fulfilled_date = date if self.fulfilled && !self.fulfilled_date
-    self.late           = true if self.due_date && self.due_date < date
+      self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
+      self.update_attributes(due_date: date + 6.days) if !self.due_date
+      self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
+      self.update_attributes(late: true) if self.due_date && self.due_date < date
   end
 
   def send_shipping_label_email_to_customer
@@ -67,6 +71,14 @@ def parse_order_lifecycle_stage
     end
   end
 
+  def alert_customer_order_ready_for_pickup
+      customer = self.customer
+      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
+        "Air Tailor Order (id: #{self.id}) is finished and is ready for you to " +
+        "pick up at #{self.retailer.name}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+  end
+
 
   def queue_customer_for_delighted
     if Rails.env == 'production' && needs_delighted
@@ -87,7 +99,7 @@ def parse_order_lifecycle_stage
     if (self.retailer.name != "Air Tailor") && (self.fulfilled)
       customer = self.customer
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
-        "Airtailor Order (id: #{self.id}) is finished and is on its way to you! " +
+        "Air Tailor Order (id: #{self.id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{self.tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
@@ -95,10 +107,14 @@ def parse_order_lifecycle_stage
 
   def send_order_confirmation_text
     customer = self.customer
+
+    phone = customer.phone
+    first_name = customer.first_name
+
     SendSonar.add_customer(
       phone_number: customer.phone,
       email: customer.email,
-      first_name: customer.first_name,
+      first_name: first_name,
       last_name: customer.last_name,
     )
 
