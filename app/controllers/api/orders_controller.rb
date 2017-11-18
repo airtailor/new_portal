@@ -72,7 +72,7 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = TailorOrder.all.archived.order(:fulfilled_date).reverse.as_json(include: [:tailor, :retailer, :customer])
+      data = TailorOrder.all.archived.order(:fulfilled_date).reverse.first(100).as_json(include: [:tailor, :retailer, :customer])
     else
       data = current_user.store.orders.archived.order(:fulfilled_date).reverse.as_json(include: [:customer], methods: [:alterations_count])
     end
