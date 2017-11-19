@@ -17,7 +17,6 @@ class Api::OrdersController < ApplicationController
       @data = store.retailer_orders
     end
 
-    binding.pry if !@data
     render :json => @data.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
@@ -145,13 +144,15 @@ class Api::OrdersController < ApplicationController
 
   def archived
     if current_user.admin?
-      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
+      data = Order.includes(:tailor, :retailer, :customer).fulfilled(true)
+              .order(fulfilled_date: :desc).first(100)
               .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.includes(:customer).fulfilled(true).order(fulfilled_date: :desc).first(100)
+      data = current_user.store.orders.includes(:customer).fulfilled(true)
+              .order(fulfilled_date: :desc).first(100)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
-    render :json => data
+    render :json => data.as_json(include: [:tailor, :retailer, :customer])
   end
 
   def alert_customers
