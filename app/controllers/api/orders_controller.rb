@@ -17,7 +17,8 @@ class Api::OrdersController < ApplicationController
       @data = store.retailer_orders
     end
 
-    binding.pry if !@data
+    render :jason => {errors: @data.errors} if !@data
+    
     render :json => @data.includes(*sql_includes).as_json(
                         include: sql_includes, methods: [ :alterations_count ]
                       )
