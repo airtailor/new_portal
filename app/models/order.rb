@@ -96,11 +96,12 @@ class Order < ApplicationRecord
   end
 
   def text_order_customers
-    if (self.retailer.name != "Air Tailor") && (self.fulfilled)
+    if self.fulfilled && !self.ship_to_store
       customer = self.customer
+      tracking_number = self.shipments.last.tracking_number
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
         "Air Tailor Order (id: #{self.id}) is finished and is on its way to you! " +
-        "Here's your USPS tracking number: #{self.tracking_number}"
+        "Here's your USPS tracking number: #{tracking_number}"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
   end
