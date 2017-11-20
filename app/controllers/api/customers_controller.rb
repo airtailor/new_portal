@@ -1,13 +1,11 @@
 class Api::CustomersController < ApplicationController
   before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create]
-  before_action :set_customer, only: [:update]
+  before_action :set_customer
 
   def update
     if @customer
       @customer.assign_attributes(customer_params)
-      if required_address_fields.all?{|f| params[f]}
-        @customer.set_address(params)
-      end
+      @customer.set_address(params)
     else
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "Oops! that customer wasn't found in the db.")
@@ -22,16 +20,8 @@ class Api::CustomersController < ApplicationController
   end
 
   def find_or_create
-    @customer = Customer.where( phone: customer_params[:phone] ).first
     @customer ||= Customer.new
-
-    @customer.assign_attributes(customer_params)
-
-    if required_address_fields.all?{|f| params[f]}
-      @customer.set_address(address_params)
-    end
-
-    if @customer.save
+    if @customer.present?
       render :json => @customer.as_json
     else
       render :json => {errors: @customer.errors.full_messages}
@@ -41,13 +31,18 @@ class Api::CustomersController < ApplicationController
   private
 
   def set_customer
-    @customer = Customer.where(id: params[:id]).first
+      @customer_relation = Customer.where(id: params[:id])
+                            .or(Customer.where(phone: customer_params[:phone]))
+    @customer = @customer_relation.first
   end
 
   def customer_params
-    params.require(:customer)
-      .except(*permitted_address_fields)
+    params.require(:customer).except(*permitted_address_fields)
       .permit(*permitted_customer_fields)
+  end
+
+  def address_params
+    params[:customer].require(:address).permit(*permitted_address_fields)
   end
 
   def permitted_customer_fields

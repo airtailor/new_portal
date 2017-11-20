@@ -1,7 +1,6 @@
 class Customer < ApplicationRecord
-  validates :email, :phone, presence: true, uniqueness: true
+  validates :email, :phone, uniqueness: true
   validates :shopify_id, uniqueness: true, allow_blank: true
-  validates :first_name, :last_name, presence: true
 
   has_many :orders, inverse_of: :customer
   has_many :measurements, inverse_of: :customers

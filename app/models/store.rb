@@ -19,17 +19,24 @@ class Store < ApplicationRecord
   after_create :initiate_conversation
 
   def set_address(params)
-    self.build_address.parse_and_save(params) if Address.where(params).blank?
+    extant_address = Address.where(params).first
+    if !extant_address
+      self.build_address.parse_and_save(params)
+    else
+      self.address = extant_address
+    end
   end
 
   def update_address(params)
-    address = self.address
-    address ||= Address.where(params).first
-
-    if address
-      self.address = address.parse_and_save(params)
+    if current_address = self.address
+      current_address.assign_attributes(params)
     else
-      self.build_address.parse_and_save(params)
+      extant_address = Address.where(params).first
+      if extant_address
+        self.address = extant_address
+      else
+        self.build_address.parse_and_save(params)
+      end
     end
   end
 

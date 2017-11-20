@@ -59,10 +59,10 @@ class Api::OrdersController < ApplicationController
   end
 
   def update
-    tailor_assigned = @order.first.tailor.present?
+    tailor_assigned = @order_object.tailor.present?
 
-    @order.first.assign_attributes(order_params)
-    @order.first.parse_order_lifecycle_stage
+    @order_object.assign_attributes(order_params)
+    @order_object.parse_order_lifecycle_stage
 
     if @order.first.save
       if params[:order][:provider_id] && !tailor_assigned
@@ -156,7 +156,7 @@ class Api::OrdersController < ApplicationController
               .order(fulfilled_date: :desc).first(100)
               .as_json(include: [:customer], methods: [:alterations_count])
     end
-    
+
     render :json => data.as_json(include: [:tailor, :retailer, :customer])
   end
 
