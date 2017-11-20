@@ -31,8 +31,8 @@ class Api::CustomersController < ApplicationController
   private
 
   def set_customer
-      @customer_relation = Customer.where(id: params[:id])
-                            .or(Customer.where(phone: customer_params[:phone]))
+    @customer_relation = Customer.where(id: params[:id])
+                          .or(Customer.where(phone: customer_params[:phone]))
     @customer = @customer_relation.first
   end
 

@@ -53,11 +53,11 @@ class Api::StoresController < ApplicationController
   end
 
   def store_params
-    @params.require(:store).except(:address).permit(*permitted_store_fields)
+    params.require(:store).except(:address).permit(*permitted_store_fields)
   end
 
   def address_params
-    @params[:store].require(:address).permit(*permitted_address_fields)
+    params[:store].require(:address).permit(*permitted_address_fields)
   end
 
   def permitted_store_fields
