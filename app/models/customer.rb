@@ -4,7 +4,7 @@ class Customer < ApplicationRecord
   validates :first_name, :last_name, presence: true
 
   has_many :orders, inverse_of: :customer
-  has_many :measurements, inverse_of: :customer
+  has_many :measurements, inverse_of: :customers
   has_many :customer_addresses
   has_many :addresses, through: :customer_addresses
 
