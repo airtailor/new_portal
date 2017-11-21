@@ -54,7 +54,7 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
     address.street_two = geo_obj.street2
 
     addy_string = "#{geo_obj.street1} #{geo_obj.city}, #{geo_obj.state} #{geo_obj.zip}"
-    parsed_street = parse_street_name(addy_string, address.country_code).gsub(/^\W/, "")
+    parsed_street = parse_street_name(addy_string, address.country_code).gsub(/^\W+/, "")
 
     if parsed_street
       address.number = parsed_street.number

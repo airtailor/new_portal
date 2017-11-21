@@ -19,7 +19,13 @@ class Customer < ApplicationRecord
   end
 
   def set_address(address_params)
-    self.addresses.build.parse_and_save(address_params) if self.addresses.blank?
+    # NOTE: customers are locked into a single address, but can have more later
+    # without DB updates.
+    address = Address.new
+    if address.parse_and_save(address_params, "customer")
+      self.customer_addresses.destroy_all
+      self.addresses << address
+    end
   end
 
   def create_blank_measurements

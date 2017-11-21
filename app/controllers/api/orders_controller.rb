@@ -33,7 +33,7 @@ class Api::OrdersController < ApplicationController
       items: [ :item_type, :alterations ]
     ]
 
-    data = @order.includes(*sql_includes)
+    data = @order_relation.includes(*sql_includes)
     items = data.first.items.as_json(include: [ :item_type, :alterations ])
 
     render :json => data.as_json(include: [
@@ -64,17 +64,17 @@ class Api::OrdersController < ApplicationController
     @order_object.assign_attributes(order_params)
     @order_object.parse_order_lifecycle_stage
 
-    if @order.first.save
+    if @order_object.save
       if params[:order][:provider_id] && !tailor_assigned
-        @order.first.send_shipping_label_email_to_customer
+        @order_object.send_shipping_label_email_to_customer
       end
-      @order.first.queue_customer_for_delighted
+      @order_object.queue_customer_for_delighted
 
       sql_includes = [
         :tailor, :retailer, :customer, :items, :item_types, :alterations,
         shipments: [ :source, :destination ]
       ]
-      data =  @order.includes(*sql_includes)
+      data =  @order_relation.includes(*sql_includes)
       items = data.first.items.as_json(include: [ :item_type, :alterations ])
       render :json => data.as_json(
                 include: [
@@ -122,13 +122,9 @@ class Api::OrdersController < ApplicationController
        if e.message.include?("Invalid Phone Number")
          render :json => {errors: ["Invalid Phone Number"]}
        else
-         binding.pry
          render :json => {errors: e}
        end
     end
-
-    # if @order.errors, render that Here
-    # else, do your json
   end
 
   def search
@@ -170,7 +166,8 @@ class Api::OrdersController < ApplicationController
   private
 
   def set_order
-    @order = Order.where(id: params[:id])
+    @order_relation = Order.where(id: params[:id])
+    @order_object = @order_relation.first
   end
 
   def order_params
