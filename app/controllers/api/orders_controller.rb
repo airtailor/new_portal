@@ -92,7 +92,7 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
-      binding.pry
+
       @order.set_order_defaults
       @order.parse_order_lifecycle_stage
 

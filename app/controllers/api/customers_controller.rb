@@ -26,7 +26,8 @@ class Api::CustomersController < ApplicationController
 
   def find_or_create
     if @customer.present?
-      render :json => @customer.as_json
+      data  = @customer_relation.includes(:addresses)
+      render :json => data.as_json(include: [ :addresses ]).first
     else
       render :json => {status: 404}
       #render :json => {errors: @customer.errors.full_messages}
