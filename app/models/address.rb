@@ -6,21 +6,26 @@ class Address < ApplicationRecord
   validates_presence_of :number, :street, :city, :state_province,
     :zip_code, :country, :country_code
 
-  has_many :shipments, as: :source
-  has_many :shipments, as: :destination
+  has_many :shipments, inverse_of: :address, as: :source
+  has_many :shipments, inverse_of: :address, as: :destination
 
   has_many :customer_addresses
   has_many :customers, through: :customer_addresses
   has_many :stores
 
-  def parse_and_save(params)
+  def parse_and_save(params, model)
     self.assign_attributes(params)
 
+    self.set_address_type(model)
     self.set_country_and_country_code
     self.set_state_abbreviation
     self.extract_street_and_number(params)
 
     self.save
+  end
+
+  def set_address_type(string)
+    self.address_type = string
   end
 
   def set_state_abbreviation
@@ -61,12 +66,12 @@ class Address < ApplicationRecord
 
   # NOTE: street_two does not get touched by this method. Ask nialbima.
   def extract_street_and_number(params)
-    addy_string = "#{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
+    addy_string = "#{params['number']} #{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
     if parsed_street = parse_street_name(addy_string, self.country_code)
       if parsed_street.street && parsed_street.street_type
         self.street = [
           parsed_street.prefix,
-          parsed_street.street.gsub(/^\W/, ""),
+          parsed_street.street.gsub(/^\W+/, ""),
           parsed_street.street_type
         ].join(" ")
       end
@@ -74,7 +79,7 @@ class Address < ApplicationRecord
       self.number   = parsed_street.number
       self.city     = parsed_street.city
       self.zip_code = parsed_street.postal_code
-      self.unit = parsed_street.unit
+      self.unit     = parsed_street.unit
     else
       self.number = street.scan(/^\d+/)[0] || nil
       if self.number
@@ -105,7 +110,7 @@ class Address < ApplicationRecord
     return {
       :name => contact.name,
       :street1 => "#{self.number} #{self.street}",
-      :street2 => "#{self.unit} #{self.floor}",
+      :street2 => "#{self.unit} #{self.floor} #{self.street_two}",
       :city => self.city,
       :country => self.country,
       :state => self.state_province,

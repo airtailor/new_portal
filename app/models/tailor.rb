@@ -12,4 +12,8 @@ class Tailor < Store
   def new_orders
     self.orders.where(arrived: false)
   end
+
+  def address_type_string
+    "tailor"
+  end
 end

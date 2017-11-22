@@ -15,4 +15,8 @@ class Retailer < Store
   def default_tailor
     return Tailor.where(id: TAILOR_IDS[self.id]).first
   end
+
+  def address_type_string
+    "retailer"
+  end
 end

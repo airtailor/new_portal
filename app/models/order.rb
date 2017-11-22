@@ -6,7 +6,7 @@ class Order < ApplicationRecord
   has_many :item_types, through: :items
 
   has_many :shipment_orders
-  has_many :shipments, through: :shipment_orders
+  has_many :shipments, through: :shipment_orders, inverse_of: :orders
 
   belongs_to :customer, inverse_of: :orders, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, inverse_of: :orders, class_name: "Retailer", foreign_key: "requester_id"
@@ -51,18 +51,22 @@ class Order < ApplicationRecord
       self.update_attributes(late: true) if self.due_date && self.due_date < date
   end
 
+  # This method assumes that only 1 order will be on this shipment always.
   def send_shipping_label_email_to_customer
     if is_customer_direct_tailor_order
       customer, tailor = self.customer, self.tailor
       params = {
-        source: customer, destination: tailor,
+        source: customer.addresses.first, destination: tailor.address,
         delivery_type: Shipment::MAIL
       }
 
       unless shipment = self.shipments.where(params).first
-        shipment = self.shipments.build(params)
+        shipment = Shipment.new(params)
+        shipment.weight = self.weight
         shipment.deliver
         shipment.save
+
+        self.shipments << shipment
       end
 
       if Rails.env == 'production'

@@ -5,7 +5,7 @@ class Api::CustomersController < ApplicationController
   def update
     if @customer
       @customer.assign_attributes(customer_params)
-      @customer.set_address(params)
+      @customer.set_address(address_params)
     else
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "Oops! that customer wasn't found in the db.")
@@ -19,20 +19,25 @@ class Api::CustomersController < ApplicationController
     end
   end
 
+  def show
+    data  = @customer_relation.includes(:addresses)
+    render :json => data.as_json(include: [ :addresses ]).first
+  end
+
   def find_or_create
-    @customer ||= Customer.new
     if @customer.present?
       render :json => @customer.as_json
     else
-      render :json => {errors: @customer.errors.full_messages}
+      render :json => {status: 404}
+      #render :json => {errors: @customer.errors.full_messages}
     end
   end
 
   private
 
   def set_customer
-    @customer_relation = Customer.where(id: params[:id])
-                          .or(Customer.where(phone: customer_params[:phone]))
+    phone = params[:customer].try(:[], :phone)
+    @customer_relation = Customer.where(id: params[:id]).or(Customer.where(phone: phone))
     @customer = @customer_relation.first
   end
 
