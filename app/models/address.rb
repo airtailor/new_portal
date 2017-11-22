@@ -6,8 +6,8 @@ class Address < ApplicationRecord
   validates_presence_of :number, :street, :city, :state_province,
     :zip_code, :country, :country_code
 
-  has_many :shipments, as: :source
-  has_many :shipments, as: :destination
+  has_many :shipments, inverse_of: :address, as: :source
+  has_many :shipments, inverse_of: :address, as: :destination
 
   has_many :customer_addresses
   has_many :customers, through: :customer_addresses
@@ -79,6 +79,7 @@ class Address < ApplicationRecord
       self.number   = parsed_street.number
       self.city     = parsed_street.city
       self.zip_code = parsed_street.postal_code
+      self.unit     = parsed_street.unit
     else
       self.number = street.scan(/^\d+/)[0] || nil
       if self.number
@@ -109,7 +110,7 @@ class Address < ApplicationRecord
     return {
       :name => contact.name,
       :street1 => "#{self.number} #{self.street}",
-      :street2 => "#{self.unit} #{self.floor}",
+      :street2 => "#{self.unit} #{self.floor} #{self.street_two}",
       :city => self.city,
       :country => self.country,
       :state => self.state_province,

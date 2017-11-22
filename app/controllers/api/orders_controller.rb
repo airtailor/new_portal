@@ -59,16 +59,19 @@ class Api::OrdersController < ApplicationController
   end
 
   def update
-    tailor_assigned = @order_object.tailor.present?
+
+    if @order_object
+      tailor_assigned = @order_object.tailor.present?
+    end
 
     @order_object.assign_attributes(order_params)
     @order_object.parse_order_lifecycle_stage
 
     if @order_object.save
+      @order_object.queue_customer_for_delighted
       if params[:order][:provider_id] && !tailor_assigned
         @order_object.send_shipping_label_email_to_customer
       end
-      @order_object.queue_customer_for_delighted
 
       sql_includes = [
         :tailor, :retailer, :customer, :items, :item_types, :alterations,
@@ -89,6 +92,7 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
+      binding.pry
       @order.set_order_defaults
       @order.parse_order_lifecycle_stage
 
@@ -110,13 +114,6 @@ class Api::OrdersController < ApplicationController
           ]).first.merge("items" => items)
       else
         render :json => {errors: @order.errors.full_messages}
-      end
-    rescue => e
-      if e.message.include?("Invalid Phone Number")
-        render :json => {errors: ["Invalid Phone Number"]}
-      else
-        binding.pry
-        render :json => {errors: e}
       end
      rescue => e
        if e.message.include?("Invalid Phone Number")

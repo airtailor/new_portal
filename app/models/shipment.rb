@@ -6,7 +6,8 @@ class Shipment < ApplicationRecord
   belongs_to :destination, inverse_of: :shipments, polymorphic: true
 
   has_many :shipment_orders
-  has_many :orders, through: :shipment_orders
+  has_many :orders, through: :shipment_orders, inverse_of: :shipments
+  has_many :customers, through: :orders
 
   validates :source, :destination, presence: true
   validates :delivery_type,

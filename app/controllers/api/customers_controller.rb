@@ -25,11 +25,11 @@ class Api::CustomersController < ApplicationController
   end
 
   def find_or_create
-    @customer ||= Customer.new
     if @customer.present?
       render :json => @customer.as_json
     else
-      render :json => {errors: @customer.errors.full_messages}
+      render :json => {status: 404}
+      #render :json => {errors: @customer.errors.full_messages}
     end
   end
 
