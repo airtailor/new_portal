@@ -34,15 +34,14 @@ class Api::CustomersController < ApplicationController
   end
 
   def create_or_validate_customer
-
     if @customer
       @customer.assign_attributes(customer_params)
-      @customer.set_address(address_params)
     else
       @customer = Customer.new(customer_params)
     end
 
     if @customer.save
+      @customer.set_address(address_params) unless address_params[:street].blank?
       data = Customer.where(id: @customer.id).includes(:addresses)
       render :json => data.as_json(include: [ :addresses ]).first
     else
