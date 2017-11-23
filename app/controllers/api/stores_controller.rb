@@ -16,12 +16,12 @@ class Api::StoresController < ApplicationController
 
   def update
     @store.assign_attributes(store_params)
-    @store.update_address(address_params)
+    @store.set_address(address_params)
 
     if @store.save
-      render :json => @store.as_json.first
+      render :json => @store.as_json
     else
-      render :json => {errors: @store.first.errors.full_messages}
+      render :json => {errors: @store.errors.full_messages}
     end
   end
 
