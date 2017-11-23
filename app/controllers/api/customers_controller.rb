@@ -1,5 +1,5 @@
 class Api::CustomersController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create]
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :find_or_create, :create_or_validate_customer]
   before_action :set_customer
 
   def update
@@ -30,7 +30,23 @@ class Api::CustomersController < ApplicationController
       render :json => data.as_json(include: [ :addresses ]).first
     else
       render :json => {status: 404}
-      #render :json => {errors: @customer.errors.full_messages}
+    end
+  end
+
+  def create_or_validate_customer
+
+    if @customer
+      @customer.assign_attributes(customer_params)
+      @customer.set_address(address_params)
+    else
+      @customer = Customer.new(customer_params)
+    end
+
+    if @customer.save
+      data = Customer.where(id: @customer.id).includes(:addresses)
+      render :json => data.as_json(include: [ :addresses ]).first
+    else
+      render :json => {errors: @customer.errors.full_messages}
     end
   end
 
