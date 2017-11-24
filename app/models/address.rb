@@ -71,9 +71,10 @@ class Address < ApplicationRecord
       if parsed_street.street && parsed_street.street_type
         self.street = [
           parsed_street.prefix,
-          parsed_street.street.gsub(/^\W+/, ""),
-          parsed_street.street_type
-        ].join(" ")
+          parsed_street.street,
+          parsed_street.street_type,
+          parsed_street.suffix
+        ].compact.join(" ")
       end
 
       self.number   = parsed_street.number

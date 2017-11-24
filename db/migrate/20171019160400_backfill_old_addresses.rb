@@ -7,86 +7,114 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
   end
 
   def down
-    Address.where(id: Store.select(:address_id)).destroy_all
-    Address.where(id: CustomerAddress.select(:address_id)).destroy_all
+    Store.update_all(address_id: nil)
     CustomerAddress.destroy_all
+    Address.destroy_all
   end
 
 
-  def build_address_table(klass)
-    if klass == Customer
-      build_through_join = true
-    end
+  def build_address_table(klass_string, id_array = nil)
+    build_through_join = true if klass_string == Customer
+    klass = id_array.blank? ? klass_string : klass_string.where(id: id_array)
 
     klass.all.each do |geo_obj|
       next if skip_obj(geo_obj)
       address = build_through_join ?  geo_obj.addresses.build : geo_obj.build_address
       address = set_address_fields(address, geo_obj)
-
-      next if [
-        address.city,
-        address.zip_code,
-        address.state_province,
-        address.number,
-        address.street
-      ].any?{ |field| field.blank?}
-
-      address.save
-      if build_through_join
-        geo_obj.addresses << address
+      if address_is_invalid?(address)
+        next
+      else
+        address.save
+        geo_obj.addresses << address if build_through_join
+        geo_obj.save
       end
-      geo_obj.save
     end
   end
 
+  def set_street(address, geo_obj)
+    addy_string = "#{geo_obj.street1} #{geo_obj.city}, #{geo_obj.state} #{geo_obj.zip}"
+    return nil unless address.country_code.to_sym == :US
+    return StreetAddress::US.parse(addy_string) rescue nil
+  end
+
+  def set_country(geo_obj)
+    all_countries, all_codes = Address::COUNTRIES, Address::COUNTRY_CODES
+    country = all_countries.get(geo_obj.country)
+    country ||= geo_obj.country if all_codes.get(geo_obj.country)
+    country ||= "UNITED STATES"
+    return country
+  end
+
+  def set_country_code(geo_obj)
+    Address::COUNTRY_CODES.get(geo_obj.country) || "US"
+  end
+
+  def set_state_province(geo_obj)
+    return geo_obj.state if Address::STATES.get(geo_obj.state)
+    Address::STATE_CODES.get(geo_obj.state)
+  end
+
+  def update_from_parsed_street(address, parsed_street)
+    address.assign_attributes({
+        number: parsed_street.number,
+        street: [ parsed_street.prefix, parsed_street.street,
+                  parsed_street.street_type, parsed_street.suffix
+                ].compact.join(" "),
+        city:  parsed_street.city,
+        zip_code: parsed_street.postal_code,
+        unit: parsed_street.unit
+    })
+
+    return address
+  end
+
+  def update_without_valid_parsed_street(address, geo_obj)
+    address.number = geo_obj.street1.scan(/^\d+/)[0] || nil
+    if address.number
+      just_street = geo_obj.street1.split(/^\d+\W+/).reject{|elem| elem == ""}
+      address.street = just_street.join(" ")
+    else
+      address.street = geo_obj.street1
+    end
+    address.city = geo_obj.city
+    address.zip_code = geo_obj.zip
+    return address
+  end
+
   def set_address_fields(address, geo_obj)
-    address.country = Address::COUNTRIES.get(geo_obj.country)
-    address.country ||= geo_obj.country if Address::COUNTRY_CODES.get(geo_obj.country)
-    address.country ||= "UNITED STATES"
-
-    address.country_code = Address::COUNTRIES.get(address.country)
-    address.country_code ||= "US"
-
-    address.state_province = geo_obj.state if Address::STATES.get(geo_obj.state)
-    address.state_province ||= Address::STATE_CODES.get(geo_obj.state)
+    address.country = set_country(geo_obj)
+    address.country_code = set_country_code(geo_obj)
+    address.state_province = set_state_province(geo_obj)
 
     address.floor, address.unit = nil, nil
     address.street_two = geo_obj.street2
 
-    addy_string = "#{geo_obj.street1} #{geo_obj.city}, #{geo_obj.state} #{geo_obj.zip}"
-    parsed_street = parse_street_name(addy_string, address.country_code).gsub(/^\W+/, "")
+    parsed_street = set_street(address, geo_obj)
+    if !parsed_street
+      street_split_arr = geo_obj.street1.split(", ")
+      geo_obj.street1 = street_split_arr.select{ |str| str.match(/^[0-9]+/) }.first
+      parsed_street = set_street(address, geo_obj)
+    end
 
     if parsed_street
-      address.number = parsed_street.number
-      address.street = [
-        parsed_street.prefix, parsed_street.street, parsed_street.street_type
-      ].join(" ")
-
-      address.city, address.zip_code = parsed_street.city, parsed_street.postal_code
-      address.unit = parsed_street.unit
+      address = update_from_parsed_street(address, parsed_street)
     else
-      address.number = geo_obj.street1.scan(/^\d+/)[0] || nil
-      if address.number
-        just_street = geo_obj.street1.split(/^\d+\W+/).reject{|elem| elem == ""}
-        address.street = just_street.join(" ")
-      end
-      address.city = geo_obj.city
-      address.zip_code = geo_obj.zip
+      address = update_without_valid_parsed_street(address, geo_obj)
     end
 
     return address
+  end
+
+  def address_is_invalid?(address)
+    [ address.city, address.zip_code, address.state_province, address.number,
+      address.street
+    ].any?{ |field| field.blank?}
   end
 
   def skip_obj(obj)
     [:street1, :city, :state, :zip, :country].any? { |a|
       obj.send(a).nil?
     }
-  end
-
-
-  def parse_street_name(street, country_code)
-    return nil unless country_code.to_sym == :US
-    StreetAddress::US.parse(street) rescue nil
   end
 
 end
