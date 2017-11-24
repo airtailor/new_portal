@@ -65,8 +65,11 @@ class Address < ApplicationRecord
   end
 
   # NOTE: street_two does not get touched by this method. Ask nialbima.
-  def extract_street_and_number(params)
-    addy_string = "#{params['number']} #{params['street']} #{params['city']}, #{params['state_province']} #{params['zip_code']}"
+  def extract_street_and_number(unparsed_params)
+    addy_string = "#{unparsed_params['street']}
+                   #{unparsed_params['city']},
+                   #{unparsed_params['state_province']}
+                   #{unparsed_params['zip_code']}"
     if parsed_street = parse_street_name(addy_string, self.country_code)
       if parsed_street.street && parsed_street.street_type
         self.street = [
@@ -86,6 +89,9 @@ class Address < ApplicationRecord
       if self.number
         self.street = street.split(/^\d+\W+/).reject{|elem| elem == ""}.join("")
       end
+      self.zip_code = unparsed_params.zip_code
+      self.city = unparsed_params.city
+      self.unit = unparsed_params.unit
     end
   end
 

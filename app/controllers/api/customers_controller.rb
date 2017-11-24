@@ -11,7 +11,7 @@ class Api::CustomersController < ApplicationController
       errors.add(:id, :not_found, message: "Oops! that customer wasn't found in the db.")
       render :json => {errors: errors.full_messages}
     end
-
+    binding.pry
     if @customer.save
       render :json => @customer.as_json
     else
@@ -58,7 +58,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def customer_params
-    params.require(:customer).except(*permitted_address_fields)
+    params.require(:customer).except(:address)
       .permit(*permitted_customer_fields)
   end
 

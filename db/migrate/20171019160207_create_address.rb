@@ -35,7 +35,7 @@ class CreateAddress < ActiveRecord::Migration[5.0]
 
     add_index(
       :addresses,
-      [ :country, :zip_code, :city, :street, :number, :floor, :unit ],
+      [ :country, :state_province, :zip_code, :city, :street, :number, :floor, :unit ],
       {
         using: 'btree',
         name: 'by_compound_location'

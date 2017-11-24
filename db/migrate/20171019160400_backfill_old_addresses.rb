@@ -12,21 +12,25 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
     Address.destroy_all
   end
 
-
   def build_address_table(klass_string, id_array = nil)
     build_through_join = true if klass_string == Customer
     klass = id_array.blank? ? klass_string : klass_string.where(id: id_array)
 
     klass.all.each do |geo_obj|
       next if skip_obj(geo_obj)
-      address = build_through_join ?  geo_obj.addresses.build : geo_obj.build_address
+      address = Address.new
       address = set_address_fields(address, geo_obj)
       if address_is_invalid?(address)
         next
       else
-        address.save
-        geo_obj.addresses << address if build_through_join
-        geo_obj.save
+        binding.pry unless address.save
+        if build_through_join
+          geo_obj.addresses << address
+        else
+          geo_obj.address = address
+        end
+
+        binding.pry unless geo_obj.save
       end
     end
   end

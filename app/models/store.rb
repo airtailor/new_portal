@@ -21,29 +21,7 @@ class Store < ApplicationRecord
   def set_address(params)
     address = Address.new
     if address.parse_and_save(params, self.type.downcase)
-      self.address  = address
-    end
-
-    # if !extant_address = Address.where(params).first
-    #   extant_address = Address.new
-    #   if extant_address.parse_and_save(params, address_type_string)
-    #     extant_address.stores << self
-    #   end
-    # end
-    #
-    # self.address = extant_address
-  end
-
-  def update_address(params)
-    if current_address = self.address
-      current_address.update(params)
-    else
-      extant_address = Address.where(params).first
-      if extant_address
-        self.address = extant_address
-      else
-        self.build_address.parse_and_save(params, address_type_string)
-      end
+      self.address = address
     end
   end
 

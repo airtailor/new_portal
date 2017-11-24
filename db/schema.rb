@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20171120191540) do
     t.datetime "updated_at", null: false
     t.string "address_type"
     t.index ["city"], name: "index_addresses_on_city"
-    t.index ["country", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location"
+    t.index ["country", "state_province", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location"
     t.index ["floor"], name: "index_addresses_on_floor"
     t.index ["number"], name: "index_addresses_on_number"
     t.index ["state_province"], name: "index_addresses_on_state_province"
