@@ -23,11 +23,19 @@ class Customer < ApplicationRecord
   def set_address(address_params)
     # NOTE: customers are locked into a single address, but can have more later
     # without DB updates.
-    address = Address.new
+      address = Address.new
     if address.parse_and_save(address_params, "customer")
       self.customer_addresses.destroy_all
       self.addresses << address
     end
+    # begin
+    #   address = Address.new
+    #   address.parse_and_save(address_params, "customer")
+    #   self.customer_addresses.destroy_all
+    #   self.addresses << address
+    # rescue => e
+    #   raise ActiveModel::Errors.new(e)
+    # end
   end
 
   def create_blank_measurements

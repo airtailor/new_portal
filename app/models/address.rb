@@ -22,6 +22,12 @@ class Address < ApplicationRecord
     self.extract_street_and_number(params)
 
     self.save
+
+    # begin
+    #   self.save
+    # rescue e
+    #   return e
+    # end
   end
 
   def set_address_type(string)
@@ -66,10 +72,7 @@ class Address < ApplicationRecord
 
   # NOTE: street_two does not get touched by this method. Ask nialbima.
   def extract_street_and_number(unparsed_params)
-    addy_string = "#{unparsed_params['street']}
-                   #{unparsed_params['city']},
-                   #{unparsed_params['state_province']}
-                   #{unparsed_params['zip_code']}"
+    addy_string = "#{unparsed_params['street']} #{unparsed_params['city']}, #{unparsed_params['state_province']} #{unparsed_params['zip_code']}"
     if parsed_street = parse_street_name(addy_string, self.country_code)
       if parsed_street.street && parsed_street.street_type
         self.street = [

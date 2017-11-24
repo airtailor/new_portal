@@ -10,8 +10,9 @@ class Api::CustomersController < ApplicationController
       errors = ActiveModel::Errors.new(Customer.new)
       errors.add(:id, :not_found, message: "Oops! that customer wasn't found in the db.")
       render :json => {errors: errors.full_messages}
+      return
     end
-    binding.pry
+
     if @customer.save
       render :json => @customer.as_json
     else
