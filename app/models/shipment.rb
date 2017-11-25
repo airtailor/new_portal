@@ -26,6 +26,31 @@ class Shipment < ApplicationRecord
     @shipment_action
   end
 
+
+
+  def handle_error(e)
+    @error_obj = e
+    error_class = e.class
+    if error_class == Postmates::BadRequest
+      self.postmates_error
+      self.undeliverable_area_error
+    else
+      self.unknown_shipment_error
+    end
+  end
+
+  def unknown_shipment_error
+    self.errors.add(:unknown_delivery_error, message: @error_obj.as_json)
+  end
+
+  def postmates_error
+    self.errors.add(:postmates, message: 'Postmates delivery failed.' )
+  end
+
+  def undeliverable_area_error
+    self.errors.add(:undeliverable_area, message: @error_obj.as_json.gsub("400 ", ""))
+  end
+
   def deliver
     case self.delivery_type
     when MAIL

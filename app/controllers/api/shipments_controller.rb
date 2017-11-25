@@ -18,32 +18,30 @@ class Api::ShipmentsController < ApplicationController
     @shipment.orders << orders
     @shipment.weight = orders.sum(:weight)
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
+
     begin
       @shipment.deliver
-    rescue => e
-      case e.class
-      when Postmates::BadRequest
-        errors = ActiveModel::Errors.new(Shipment.new)
-        errors.add(:postmates, :undeliverable_area, message: e.as_json.gsub("400 ", ""))
-        render :json => {errors: errors.full_messages}
-      end
-    end
 
-    if @shipment.save
-      @shipment.text_all_shipment_customers
-      sql_includes = [
-        :source, :destination, orders: [ :customer, items: [ :alterations ]]
-      ]
-      @shipment_relation = Shipment.where(id: @shipment.id).includes(*sql_includes)
-      render :json => @shipment_relation.map { |shipment|
-                        orders = shipment.orders.as_json(include: [
-                          :customer, items: { include: :alterations }
-                        ])
-                        shipment.as_json(include: [ :source, :destination ])
-                          .merge('orders' => orders)
-                      }.to_json
-    else
-      render :json => { :errors => @shipment.errors.full_messages }
+      if @shipment.save
+        @shipment.text_all_shipment_customers
+
+        sql_includes = [
+          :source, :destination, orders: [ :customer, items: [ :alterations ]]
+        ]
+        @shipment_relation = Shipment.where(id: @shipment.id).includes(*sql_includes)
+        render :json => @shipment_relation.map { |shipment|
+                          orders = shipment.orders.as_json(include: [
+                            :customer, items: { include: :alterations }
+                          ])
+                          shipment.as_json(include: [ :source, :destination ])
+                            .merge('orders' => orders)
+                        }.to_json
+      else
+        render :json => { :errors => @shipment.errors.full_messages }
+      end
+    rescue => e
+      @shipment.handle_error(e)
+      render :json => {errors: @shipment.errors.messages}.as_json
     end
   end
 
