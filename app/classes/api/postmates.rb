@@ -10,10 +10,16 @@ class Api::Postmates
     dropoff_address = dropoff.postmates_address
     pickup_contact = pickup.get_contact
     dropoff_contact = dropoff.get_contact
+    
+    begin
+      quote = @client.quote(
+        pickup_address: pickup_address, dropoff_address: dropoff_address
+      )
+    rescue => e
+      raise e
+    end
 
-    quote = @client.quote(
-      pickup_address: pickup_address, dropoff_address: dropoff_address
-    )
+
     # if this 400s, we're boned.
     # not a big deal rn, but later it will be.
 

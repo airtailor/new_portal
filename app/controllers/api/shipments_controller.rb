@@ -18,10 +18,17 @@ class Api::ShipmentsController < ApplicationController
     @shipment.orders << orders
     @shipment.weight = orders.sum(:weight)
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
-    @shipment.deliver
+    begin
+      @shipment.deliver
+    rescue => e
+      case e.class
+      when Postmates::BadRequest
+        errors = ActiveModel::Errors.new(Shipment.new)
+        errors.add(:postmates, :undeliverable_area, message: e.as_json.gsub("400 ", ""))
+        render :json => {errors: errors.full_messages}
+      end
+    end
 
-    # and then below, we'd update it to pass all ids to .where and load the associated
-    # stuff.
     if @shipment.save
       @shipment.text_all_shipment_customers
       sql_includes = [
