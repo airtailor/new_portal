@@ -11,11 +11,13 @@ class Api::Postmates
     pickup_contact = pickup.get_contact
     dropoff_contact = dropoff.get_contact
 
-    quote = @client.quote(
-      pickup_address: pickup_address, dropoff_address: dropoff_address
-    )
-    # if this 400s, we're boned.
-    # not a big deal rn, but later it will be.
+    begin
+      quote = @client.quote(
+        pickup_address: pickup_address, dropoff_address: dropoff_address
+      )
+    rescue => e
+      raise e
+    end
 
     params = {
       quote_id: quote.id,
@@ -33,7 +35,11 @@ class Api::Postmates
       dropoff_notes: ""
     }
 
-    return @client.create(params)
+    begin
+      return @client.create(params)
+    rescue => e
+      raise e
+    end
   end
 
   def self.postmates_manifest_content
