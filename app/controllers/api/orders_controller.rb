@@ -69,6 +69,7 @@ class Api::OrdersController < ApplicationController
 
     if @order_object.save
       @order_object.queue_customer_for_delighted
+
       if params[:order][:provider_id] && !tailor_assigned
         @order_object.send_shipping_label_email_to_customer
       end
