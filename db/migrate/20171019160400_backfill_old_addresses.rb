@@ -85,6 +85,10 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
     return address
   end
 
+  def street_rgx(string)
+    Regexp.new("("+string+")([^\s,.]*)\s*((n|e|w|s){1,2}*\w{0}[0-9]{0,4}(\w||\d){0})", 'i')
+  end
+
   def set_address_fields(address, geo_obj)
     address.country = set_country(geo_obj)
     address.country_code = set_country_code(geo_obj)
@@ -105,19 +109,16 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
         current_street = parsed_street.street
         street_type = parsed_street.street_type
         if current_street && street_type
-          regex = Regexp.new("("+street_type+")([^\s,.]*)", 'i')
-          match = regex.match(current_street)
+          match = street_rgx(street_type).match(current_street)
           if !match
             abbrevs = AddressConstants::STREET_ABBREVS
             possible_values = [abbrevs.get(street_type)].flatten
             while possible_values.present?
               current_test_match = possible_values.pop
-              regex = Regexp.new("("+current_test_match+")([^\s,.]*) (\d{0,3})", 'i')
-              match = regex.match(current_street)
+              match = street_rgx(current_test_match).match(current_street)
               break if match
             end
           end
-          binding.pry if !match
 
           if match[3].present?
             match_end = match.end(3)
@@ -127,29 +128,30 @@ class BackfillOldAddresses < ActiveRecord::Migration[5.0]
             match_end = match.end(1)
           end
 
-          if current_street[match_end] == " "
-            match_end += 1
-          end
+          parsed_street.street = current_street.slice(0...match_end).gsub(/\s$/, "")
+          remainder = current_street.slice(match_end..-1).gsub(/^\s/, "")
 
-          parsed_street.street = current_street.slice(0...match_end)
-          remainder = current_street.slice(match_end..-1)
-
-          directional =  AddressConstants::DIRECTIONAL.get(remainder[0..1])
+          directional =  AddressConstants::DIRECTION_CODES.get(remainder[0..1])
           if directional
-            parsed_street.street << AddressConstants::DIRECTION_CODES.get(directional)
+            dir_code = AddressConstants::DIRECTIONAL.get(directional)
+            parsed_street.street << dir_code
             remainder = nil
           end
 
           if remainder
-            if address.street_two.present?
+            if parsed_street.city.downcase == parsed_street.state.downcase
+              parsed_street.city = remainder if set_state_province(parsed_street)
+            elsif remainder.downcase.in?([parsed_street.city, parsed_street.number].map(&:downcase))
+              remainder = nil
+            elsif address.street_two.present?
               address.street_two << " #{remainder}"
             else
               address.street_two = remainder
             end
           end
         end
-      end
 
+      end
       address = update_from_parsed_street(address, parsed_street)
     else
       address = update_without_valid_parsed_street(address, geo_obj)

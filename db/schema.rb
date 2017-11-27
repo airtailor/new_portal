@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019160400) do
+ActiveRecord::Schema.define(version: 20171127160802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20171019160400) do
     t.string "unit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "address_type"
     t.index ["city"], name: "index_addresses_on_city"
     t.index ["country", "state_province", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location"
     t.index ["floor"], name: "index_addresses_on_floor"
@@ -93,6 +94,9 @@ ActiveRecord::Schema.define(version: 20171019160400) do
     t.datetime "updated_at", null: false
     t.string "company"
     t.boolean "agrees_to_terms"
+    t.index ["email"], name: "index_customers_on_email", unique: true
+    t.index ["first_name", "last_name"], name: "index_customers_on_first_name_and_last_name"
+    t.index ["phone"], name: "index_customers_on_phone", unique: true
   end
 
   create_table "item_types", id: :serial, force: :cascade do |t|
@@ -104,7 +108,7 @@ ActiveRecord::Schema.define(version: 20171019160400) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "type_id"
+    t.integer "item_type_id"
     t.index ["order_id"], name: "index_items_on_order_id"
   end
 
@@ -168,6 +172,7 @@ ActiveRecord::Schema.define(version: 20171019160400) do
     t.float "weight"
     t.boolean "ship_to_store"
     t.boolean "dismissed", default: false
+    t.boolean "customer_alerted", default: false
     t.index ["provider_id"], name: "index_orders_on_provider_id"
     t.index ["requester_id"], name: "index_orders_on_requester_id"
   end
@@ -182,14 +187,28 @@ ActiveRecord::Schema.define(version: 20171019160400) do
     t.index ["name"], name: "index_roles_on_name"
   end
 
-  create_table "shipments", id: :serial, force: :cascade do |t|
+  create_table "shipment_orders", id: :serial, force: :cascade do |t|
+    t.integer "shipment_id"
     t.integer "order_id"
+    t.index ["order_id"], name: "index_shipment_orders_on_order_id"
+    t.index ["shipment_id"], name: "index_shipment_orders_on_shipment_id"
+  end
+
+  create_table "shipments", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "weight"
     t.string "shipping_label"
     t.string "tracking_number"
-    t.string "type"
+    t.string "delivery_type"
+    t.string "source_type"
+    t.integer "source_id"
+    t.string "destination_type"
+    t.integer "destination_id"
+    t.string "postmates_delivery_id"
+    t.string "status"
+    t.index ["destination_type", "destination_id"], name: "index_shipments_on_destination_type_and_destination_id"
+    t.index ["source_type", "source_id"], name: "index_shipments_on_source_type_and_source_id"
   end
 
   create_table "stores", id: :serial, force: :cascade do |t|
