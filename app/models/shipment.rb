@@ -110,6 +110,11 @@ class Shipment < ApplicationRecord
   # retailer relate to the address table.
   def get_address(klass_symbol)
     record = self.orders.first.send(klass_symbol)
+    puts "\n\n\n get_address!!!!"
+    puts "\n record #{record}"
+    puts "\n self #{self}"
+    puts "\n orders #{self.orders}"
+
     klass_symbol == :customer ? record.addresses.first : record.address
   end
 
