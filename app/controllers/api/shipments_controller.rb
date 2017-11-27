@@ -17,6 +17,7 @@ class Api::ShipmentsController < ApplicationController
     @shipment.weight = @shipment.orders.reduce(0) {|prev, curr| prev + curr.weight }
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
     @shipment.deliver
+    
     # and then below, we'd update it to pass all ids to .where and load the associated
     # stuff.
     if @shipment.save
