@@ -3,19 +3,22 @@ class Api::StoresController < ApplicationController
   before_action :set_store, only: [:show, :update]
 
   def show
-    data =  @store.as_json(
+    render :json => @store_relation.includes(:address).as_json(
+      include: [ :address ],
       methods: [
         :active_orders_count,
         :unread_messages_count,
         :late_orders_count,
         :transit_to_tailor_count
       ]
-    )
-    render :json => data
+    ).first
   end
 
   def update
-    if @store.update(store_params)
+    @store.assign_attributes(store_params)
+    @store.set_address(address_params)
+
+    if @store.save
       render :json => @store.as_json
     else
       render :json => {errors: @store.errors.full_messages}
@@ -23,8 +26,10 @@ class Api::StoresController < ApplicationController
   end
 
   def create
-    store = Store.create(store_params)
-    if store.save
+    @store = Store.new(store_params)
+    @store.set_address(address_params)
+
+    if @store.save
       render :json => store.as_json
     else
       byebug
@@ -32,26 +37,40 @@ class Api::StoresController < ApplicationController
   end
 
   def orders_and_messages_count
-    store = current_user.store
-    data = {
-      unread_messages_count: store.unread_messages_count,
-      active_orders_count: store.active_orders_count,
-      late_orders_count: store.late_orders_count
+    @store = current_user.store
+    render :json =>  {
+      unread_messages_count: @store.unread_messages_count,
+      active_orders_count: @store.active_orders_count,
+      late_orders_count: @store.late_orders_count
     }
-    render :json => data
   end
 
   private
 
   def set_store
-    @store = Store.find(params[:id])
+    @store_relation = Store.where(id: params[:id])
+    @store = @store_relation.first
   end
 
   def store_params
-    #if current_user.tailor?
-      params.require(:store)
-        .permit(
-          :name, :phone, :street1, :street2, :city, :state, :zip, :company_id)
-    #end
+    params.require(:store).except(:address).permit(*permitted_store_fields)
+  end
+
+  def address_params
+    params[:store].require(:address).permit(*permitted_address_fields)
+  end
+
+  def permitted_store_fields
+    [ :name, :phone, :company_id ]
+  end
+
+  def required_address_fields
+    [ :street, :city, :state_province, :zip_code ]
+  end
+
+  def permitted_address_fields
+    fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
+
+    return fields + required_address_fields
   end
 end

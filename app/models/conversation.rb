@@ -1,7 +1,7 @@
 class Conversation < ApplicationRecord
   has_many :messages
-  belongs_to :sender, foreign_key: :sender_id, class_name: Store
-  belongs_to :recipient, foreign_key: :recipient_id, class_name: Store
+  belongs_to :sender, foreign_key: :sender_id, class_name: 'Store'
+  belongs_to :recipient, foreign_key: :recipient_id, class_name: 'Store'
 
   validates :sender_id, uniqueness: { scope: :recipient_id }
   attr_accessor :current_user
@@ -25,7 +25,7 @@ class Conversation < ApplicationRecord
   def sender_read
     sender_read = true
     self.messages.each do |message|
-      if !message.sender_read 
+      if !message.sender_read
         sender_read = false
       end
     end
@@ -35,7 +35,7 @@ class Conversation < ApplicationRecord
   def recipient_read
     recipient_read = true
     self.messages.each do |message|
-      if !message.recipient_read 
+      if !message.recipient_read
         recipient_read = false
       end
     end

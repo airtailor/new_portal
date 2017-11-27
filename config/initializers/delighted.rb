@@ -1,2 +1,2 @@
 require 'delighted'
-Delighted.api_key = ENV['DELIGHTED_PRODUCTION_TOKEN']
+Delighted.api_key = Credentials.delighted_token

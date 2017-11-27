@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.0.3'
+gem 'rails', '~> 5.0'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
 gem 'sass-rails', '~> 5.0'
@@ -25,6 +25,7 @@ gem 'rack-cors'
 gem 'send_sonar'
 #gem 'shippo', '~> 2.0.4'
 gem 'shippo', '~> 3.0.0'
+gem 'postmates'
 gem 'airbrake'
 gem 'pdfkit'
 gem 'render_anywhere', :require => false
@@ -38,6 +39,10 @@ gem 'textacular', '~> 5.0'
 
 # Background job processing + asymc
 gem 'sidekiq'
+
+# Address parsing.
+# IT IS OLD AND LIABLE TO EXPLODE.
+gem 'street_address', '~> 2.0', git: 'git@github.com:nialbima/street-address.git'
 
 group :development, :test do
   gem 'byebug', platform: :mri
@@ -55,10 +60,10 @@ group :development, :test do
 end
 
 group :development do
-  gem 'web-console', '>= 3.3.0'
-  gem 'listen', '~> 3.0.5'
+  gem 'web-console'
+  gem 'listen'
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

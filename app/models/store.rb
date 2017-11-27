@@ -1,59 +1,65 @@
 class Store < ApplicationRecord
+
   belongs_to :company
   belongs_to :primary_contact, class_name: "User", foreign_key: "primary_contact_id", optional: true
-  has_many :users
+  belongs_to :address
 
+  has_many :items, through: :orders
+  has_many :alterations, through: :orders
+
+  has_many :orders
+  has_many :users
   has_many :messages
+
   has_many :conversations, foreign_key: :sender_id
   has_many :conversations, foreign_key: :recipient_id
 
-  validates :name, :street1, :city, :state, :zip, :phone, :country, presence: true
+  validates :name, :phone, presence: true
 
-  before_validation :default_values
   after_create :initiate_conversation
 
-  def default_values
-    self.country = "United States" if self.country.nil?
+  def set_address(params)
+    address = Address.new
+    if address.parse_and_save(params, self.type.downcase)
+      self.address = address
+    end
   end
 
   def tailor_orders
-    self.orders.where(type: "TailorOrder")
+    self.orders.by_type("TailorOrder")
   end
 
   def welcome_kits
-    self.orders.where(type: "WelcomeKit")
+    self.orders.by_type("WelcomeKit")
   end
 
   def shippo_address
-    # removing email may break shippo
-    {
-      name: self.name,
-      street1: self.street1,
-      street2: self.street2,
-      city: self.city,
-      state: self.state,
-      country: self.country,
-      zip: self.zip,
-      phone: self.phone
-      # ,
-      # email: "air@airtailor.com"
-    }
+    return address.for_shippo if address
+    return nil
   end
 
   def open_orders
-    self.orders.order(:due_date).unfulfilled
+    self.orders.open_orders
+  end
+
+  def retailer_orders
+    self.orders.retailer_view
   end
 
   def late_orders_count
-    self.orders.late.count
+    open_orders.late(true).count
   end
 
   def active_orders_count
-    self.orders.where(fulfilled: false).count
+    if self.type == "Retailer"
+      self.open_orders.count
+    elsif self.type == "Tailor"
+      self.orders.active.count
+    end
   end
 
   def arrived_orders_count
-    self.orders.where(fulfilled: false).where(arrived: true).count
+    self.orders.fulfilled(false).arrived(true).count
   end
 
   def transit_to_tailor_count
@@ -75,9 +81,7 @@ class Store < ApplicationRecord
   end
 
   def initiate_conversation
-    if self.name == "Air Tailor"
-      # do nothing
-    else
+    if self.name != "Air Tailor"
       air_tailor = Store.where(name: "Air Tailor").first
       convo = Conversation.create(sender: air_tailor, recipient: self)
 

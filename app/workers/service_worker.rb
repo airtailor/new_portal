@@ -3,6 +3,6 @@ class ServiceWorker
 
   def perform(*args)
     # Do something generic
-    puts "SERVICE WORKER DID THIS ONE"
+    puts "SERVICE WORKER LOGGED THIS MESSAGE."
   end
 end

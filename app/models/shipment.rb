@@ -1,133 +1,107 @@
 class Shipment < ApplicationRecord
-  validates :type, :shipping_label, :tracking_number, :weight, presence: true
-  belongs_to :order
+  include ShipmentConstants
+  include DeliveryHelper
 
-  after_initialize :add_order_weight, :configure_shippo
-  after_create :send_text_to_customer
+  belongs_to :source, inverse_of: :shipments, polymorphic: true
+  belongs_to :destination, inverse_of: :shipments, polymorphic: true
+
+  has_many :shipment_orders
+  has_many :orders, through: :shipment_orders, inverse_of: :shipments
+  has_many :customers, through: :orders
+
+  validates :source, :destination, presence: true
+  validates :delivery_type,
+    inclusion: { in: [ MAIL, MESSENGER, OUTGOING, INCOMING ] }, presence: true
+
+  validates :shipping_label, :tracking_number, :weight, presence: true,
+    if: :is_mail_shipment?
+
+  validates :postmates_delivery_id, presence: true, if: :is_messenger_shipment?
+
+  def shipment_action=(action)
+    @shipment_action = action if action.in?(legal_shipment_actions)
+  end
+
+  def shipment_action
+    @shipment_action
+  end
+
+  def deliver
+    case self.delivery_type
+    when MAIL
+      if is_mail_shipment? && needs_label
+        delivery = create_label(self)
+        self.shipping_label  = delivery.try(:label_url)
+        self.tracking_number = delivery.try(:tracking_number)
+      end
+
+    when MESSENGER
+      if is_messenger_shipment? && needs_messenger
+        delivery = request_messenger
+        self.postmates_delivery_id = delivery.try(:id)
+        self.status = delivery.try(:status)
+      end
+    end
+  end
+
+  def text_all_shipment_customers
+    orders.map(&:text_order_customers)
+  end
+
+  def set_delivery_method(action)
+    orders = self.orders
+    source_model, dest_model = parse_src_dest(action)
+    if delivery_can_be_executed?(source_model, dest_model, orders)
+      self.source = get_address(source_model)
+      if orders.any?{|o| o.ship_to_store} && dest_model == :customer
+        self.destination = get_address(:retailer)
+      else
+        self.destination = get_address(dest_model)
+      end
+    end
+  end
 
   private
 
-  def send_text_to_customer
-    if ((self.order.retailer.name != "Air Tailor") && (self.type == "OutgoingShipment"))
-      customer = self.order.customer
-      customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
-        "Airtailor Order (id: #{self.order.id}) is finished and is on its way to you! " +
-        "Here's your USPS tracking number: #{self.tracking_number}"
-      SendSonar.message_customer(text: customer_message, to: customer.phone)
+  def parse_src_dest(action)
+    type = self.delivery_type
+    case action
+    when SHIP_RETAILER_TO_TAILOR
+      return [:retailer, :tailor]
+    when SHIP_TAILOR_TO_RETAILER
+      return type == MAIL ? [:tailor, :retailer] : nil
+    when SHIP_CUSTOMER_TO_TAILOR
+      return type == MAIL ? [:customer, :tailor] : nil
+    when SHIP_TAILOR_TO_CUSTOMER
+      return type == MAIL ? [:tailor, :customer] : nil
+    when SHIP_RETAILER_TO_CUSTOMER
+      return type == MAIL ? [:retailer, :customer] : nil
+    else
+      return nil
     end
   end
 
-  def add_order_weight
-    self.weight = self.order.weight
+  # NOTE: we need this because of the differing wys in which customer/tailor/
+  # retailer relate to the address table.
+  def get_address(klass_symbol)
+    record = self.orders.first.send(klass_symbol)
+    klass_symbol == :customer ? record.addresses.first : record.address
   end
 
-  def configure_shippo
-    Shippo.api_token = ENV["SHIPPO_KEY"]
-    Shippo.api_version = '2017-03-29'
-    to_address = get_ship_to_address
-    from_address = get_ship_from_address
-    parcel = get_parcel
-    puts "\n\n\n to_address #{to_address}"
-    puts "\n\n\n from_address #{from_address}"
-    puts "\n\n\n parcel #{parcel}"
-    shippo_shipment = create_shippo_shipment(to_address, from_address, parcel)
-    shippo_transaction = create_shippo_transaction(shippo_shipment)
-    add_shipping_label(shippo_transaction)
-    add_tracking_number(shippo_transaction)
+  def needs_label
+    !shipping_label || !tracking_number
   end
 
-  def get_ship_to_address
-    if self.type == "OutgoingShipment"
-      # outgoing shipments always go to customer! :* )
-      if self.order.ship_to_store
-        get_retailer_address
-      else
-        get_customer_address
-      end
-    elsif self.type == "IncomingShipment"
-      if self.order.type == "TailorOrder"
-        get_tailor_address
-      end
-      # Incoming Shipments should only be going to Tailor
-      #get_retailer_address if self.order.type == "WelcomeKit"
-    end
+  def is_messenger_shipment?
+    self.delivery_type == MESSENGER
   end
 
-  def get_ship_from_address
-    if self.type == "OutgoingShipment"
-      puts "GET SHIP FROM ADDRESS - OUTGOING SHIPMENT order type - #{self.order.type}"
-      return get_tailor_address if self.order.type == "TailorOrder"
-      return get_retailer_address if self.order.type == "WelcomeKit"
-    elsif self.type == "IncomingShipment"
-      return get_customer_address
-    end
+  def is_mail_shipment?
+    self.delivery_type == MAIL
   end
 
-  def get_customer_address
-    self.order.customer.shippo_address
+  def needs_messenger
+    !self.postmates_delivery_id || !self.status
   end
 
-  def get_tailor_address
-    self.order.tailor.shippo_address
-  end
-
-  def get_retailer_address
-    self.order.retailer.shippo_address
-  end
-
-  def get_parcel
-    if self.order.type == "WelcomeKit"
-      {
-        length: 6,
-        width: 4,
-        height: 1,
-        distance_unit: :in,
-        weight: 28,
-        mass_unit: :g
-      }
-    elsif self.order.type == "TailorOrder"
-       {
-        length: 7,
-        width: 5,
-        height: 3,
-        distance_unit: :in,
-        weight: self.order.weight,
-        mass_unit: :g
-      }
-    end
-  end
-
-  def create_shippo_shipment(to_address, from_address, parcel)
-    shipment = Shippo::Shipment.create(
-      object_purpose: "PURCHASE",
-      address_from: from_address,
-      address_to: to_address,
-      parcels: parcel,
-      async: false
-    )
-  end
-
-  def get_shipping_rate(rates)
-    #rates.find {|r| r.attributes.include? "BESTVALUE"}
-    rates.min_by{|r| r[:amount_local].to_i}
-  end
-
-  def create_shippo_transaction(shippo_shipment)
-    rate = get_shipping_rate(shippo_shipment[:rates])
-    transaction = Shippo::Transaction.create(
-      #rate: shippo_shipment[:rates].first[:object_id],
-      #rate: shippo_shipment[:rates].find {|r| r.attributes.include? "BESTVALUE"},
-      rate: rate,
-      label_file_type: "PNG",
-      async: false
-    )
-  end
-
-  def add_shipping_label(shippo_transaction)
-    self.shipping_label = shippo_transaction[:label_url]
-  end
-
-  def add_tracking_number(shippo_transaction)
-    self.tracking_number = shippo_transaction[:tracking_number]
-  end
 end

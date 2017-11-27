@@ -1,52 +1,43 @@
-# Message.destroy_all if Message.count > 0
-# Shipment.destroy_all if Shipment.count > 0
-# User.destroy_all if User.count > 0
-# Order.destroy_all if Order.count > 0
-# Store.destroy_all if Store.count > 0
-# Company.destroy_all if Company.count > 0
-#
-# Measurement.destroy_all if Measurement.count > 0
-# Customer.destroy_all if Customer.count > 0
-#
-# Alteration.destroy_all if Alteration.count > 0
-# Item.destroy_all if Item.count > 0
-# ItemType.destroy_all if ItemType.count > 0
-#
-# ItemType.create([
-#   {name: "Pants"},
-#   {name: "Shirt"},
-#   {name: "Tie"},
-#   {name: "Jacket"},
-#   {name: "Dress"}
-# ])
-#
-#
-# air_tailor_co = Company.create(name: "Air Tailor")
-# banana_co = Company.create(name: "Banana Republic")
-# frame_denim_co = Company.create(name: "Frame Denim")
-# steven_alan_co = Company.create(name: "Steven Alan")
-# t_nyc = Company.create(name: "Tailoring NYC")
-#
-# airtailor = FactoryGirl.create(:retailer, name: "Air Tailor", company: air_tailor_co )
-# steven_alan_tribeca_retailer = FactoryGirl.create(:retailer, name: "Steven Alan - Tribeca", company: steven_alan_co)
-# steven_alan_soho_retailer = FactoryGirl.create(:retailer, name: "Frame Denim - SoHo", company: steven_alan_co)
-# t_nyc_tailor = FactoryGirl.create(:tailor, name: "Tailoring NYC", company: t_nyc)
-#
-# steven_alan_user = User.create(
-#   email: "test@stevenalan.com",
-#   password: "stevenalan",
-#   store: steven_alan_tribeca_retailer
-# )
-# stevenalan_user.add_role :retailer
-#
-# frame_user = User.create(email: "test@framedenim.com", password: "framedenim", store: soho)
-# frame_user.add_role :retailer
-#
-# brian = User.create(email: "brian@airtailor.com", password: "airtailor", store: airtailor)
-# brian.add_role :admin
-#
-# tailor = User.create(email: "test@tailoringnyc.com", password: "tailoringnyc", store: tailoring)
-# tailor.add_role :tailor
+["Pants", "Shirt", "Tie", "Jacket", "Dress"].each do |type|
+  ItemType.find_or_create_by(name: type)
+end
+
+[ {
+    role: :retailer, name: "Air Tailor",  store_name: "Air Tailor", phone: "6302352554",
+    email: "brian@airtailor.com", password: 'airtailor'
+  }, {
+    role: :retailer, name: "Banana Republic",  store_name: "Banana Republic", phone: "6302352554",
+    email: "test@bananarepublic.com", password: 'bananarepublic'
+  }, {
+    role: :retailer, name: "Frame Denim",  store_name: "Frame Denim - Soho", phone: "6302352554",
+    email: "test@framedenim.com", password: 'framedenim'
+  }, {
+    role: :retailer, name: "Steven Alan",  store_name: "Steven Alan - Tribeca", phone: "6302352554",
+    email: "test@stevenalan.com", password: 'stevenalan'
+  }, {
+    role: :tailor, name: "Tailoring NYC",  store_name: "Tailoring NYC", phone: "6302352554",
+    email: "test@tailoringnyc.com", password: 'tailoringnyc'
+  } ].each do |data_hash|
+      company = Company.find_or_create_by(name: data_hash[:name])
+      unless company.stores.first
+        store = FactoryGirl.create(
+          data_hash[:role],
+          name: data_hash[:store_name],
+          phone: data_hash[:phone],
+          company: data_hash[:company]
+        )
+      end
+
+      unless User.where(name: data_hash[:name]).first
+        usr = User.create(
+          email: data_hash[:email],
+          password: data_hash[:password],
+          store: store
+        )
+        usr.add_role(data_hash[:role])
+      end
+
+    end
 
 #5.times do |n|
 #  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)

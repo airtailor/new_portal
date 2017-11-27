@@ -1,32 +1,89 @@
 class Api::OrdersController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :edit, :update]
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :alert_customers]
   before_action :set_order, only: [:show, :update]
 
   def index
-    if current_user.admin?
-      store = Store.find(params[:store_id])
-    else
-      store = current_user.store
+    sql_includes = [ :tailor, :retailer, :customer, :shipments, :items, :alterations   ]
+    user_roles = current_user.roles
+
+    if user_roles.first.name == "admin"
+      store = Store.where(id: params[:store_id]).first
+      @data = store.open_orders
+    elsif user_roles.first.name == "tailor"
+      store = Store.where(id: current_user.store.id).first
+      @data = store.open_orders
+    elsif user_roles.first.name == "retailer"
+      store = Store.where(id: current_user.store.id).first
+      @data = store.retailer_orders
     end
 
-    render :json => store.open_orders.as_json(include: [:customer], methods: [:alterations_count])
+    if @data
+      render :json => @data.includes(*sql_includes).as_json(
+                        include: sql_includes, methods: [ :alterations_count ]
+                      )
+    else
+      render :json => {errors: @data.errors}
+    end
   end
 
   def show
-    data = @order.as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
-    render :json => data
+    sql_includes = [
+      :tailor, :retailer, :customer,
+      shipments: [ :source, :destination ],
+      items: [ :item_type, :alterations ]
+    ]
+
+    data = @order_relation.includes(*sql_includes)
+    items = data.first.items.as_json(include: [ :item_type, :alterations ])
+
+    render :json => data.as_json(include: [
+        :tailor, :retailer, :customer,
+        shipments: { include: [ :source, :destination ]}
+      ]).first.merge("items" => items)
   end
 
   def new_orders
-    unassigned = TailorOrder.all.where(tailor: nil).as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
-    welcome_kits = WelcomeKit.all.where(fulfilled: false).as_json(include: [:incoming_shipment, :outgoing_shipment, :customer , :items => {include: [:item_type, :alterations]}])
-    data = {unassigned: unassigned, welcome_kits: welcome_kits}
-    render :json => data
+    sql_includes = [ :shipments, :customer, items: [ :item_type, :alterations ] ]
+    @data = {
+      unassigned: TailorOrder.where(tailor: nil).includes(*sql_includes).as_json(
+        include: [
+          :shipments, :customer, :items => { include: [ :item_type, :alterations ]}
+      ]),
+      welcome_kits: WelcomeKit.fulfilled(false).includes(*sql_includes).as_json(
+        include: [
+          :shipments, :customer, :items => { include: [ :item_type, :alterations ]}
+      ])
+    }
+
+    render :json => @data
   end
 
   def update
-    if @order.update(order_params)
-      render :json => @order.as_json(include: [:customer, :incoming_shipment, :outgoing_shipment, :items => {include: [:item_type, :alterations]}])
+
+    if @order_object
+      tailor_assigned = @order_object.tailor.present?
+    end
+
+    @order_object.assign_attributes(order_params)
+    @order_object.parse_order_lifecycle_stage
+
+    if @order_object.save
+      @order_object.queue_customer_for_delighted
+      if params[:order][:provider_id] && !tailor_assigned
+        @order_object.send_shipping_label_email_to_customer
+      end
+
+      sql_includes = [
+        :tailor, :retailer, :customer, :items, :item_types, :alterations,
+        shipments: [ :source, :destination ]
+      ]
+      data =  @order_relation.includes(*sql_includes)
+      items = data.first.items.as_json(include: [ :item_type, :alterations ])
+      render :json => data.as_json(
+                include: [
+                  :tailor, :retailer, :customer,
+                  shipments: { include: [ :source, :destination ]},
+                ]).first.merge('items' => items)
     else
       byebug
     end
@@ -35,14 +92,28 @@ class Api::OrdersController < ApplicationController
   def create
     begin
       @order = Order.new(order_params)
-      @order.init
+
+      @order.set_order_defaults
+      @order.parse_order_lifecycle_stage
+
       if @order.save
-        garments = params[:order][:garments]
-        Item.create_items_portal(@order, garments)
-        render :json => @order.as_json(include: [:customer, :retailer, :items => {include: [:item_type, :alterations]}])
+        Item.create_items_portal(@order, params[:order][:garments])
+        @order.send_order_confirmation_text
+
+        sql_includes = [
+          :tailor, :retailer, :customer,
+          shipments: [ :source, :destination ],
+          items: [ :item_type, :alterations ]
+        ]
+
+        data = Order.where(id: @order.id).includes(*sql_includes)
+        items = data.first.items.as_json(include: [ :item_type, :alterations ])
+
+        render :json => data.as_json(include: [
+            :tailor, :retailer, :customer
+          ]).first.merge("items" => items)
       else
-        errors = {errors: @order.errors.full_messages}
-        render :json => errors
+        render :json => {errors: @order.errors.full_messages}
       end
      rescue => e
        if e.message.include?("Invalid Phone Number")
@@ -51,43 +122,54 @@ class Api::OrdersController < ApplicationController
          render :json => {errors: e}
        end
     end
-
-    # if @order.errors, render that Here
-    # else, do your json
   end
 
   def search
     query = params[:query]
     store = current_user.store
-    results = Order.joins(:customer).advanced_search(
-      {
-        id: query,
-        customers: {
-          first_name: query,
-          last_name: query
+
+    results = Order.includes(:customer).joins(:customer).order(created_at: :desc)
+      .advanced_search(
+        {
+          id: query, customers: { first_name: query, last_name: query }
+        }, false).select { |order|
+          (order.retailer == store || order.tailor == store || current_user.admin?)
         }
-      }, false).select {|order| (order.retailer == store || order.tailor == store || current_user.admin?) }
-    render :json => results.sort_by {|h| h[:created_at]}.reverse.as_json(include: [:customer], methods: [:alterations_count])
+
+    render :json => results.as_json(include: [:customer], methods: [:alterations_count])
   end
 
   def archived
     if current_user.admin?
-      data = TailorOrder.all.archived.order(:fulfilled_date).reverse.first(100).as_json(include: [:tailor, :retailer, :customer])
+      data = TailorOrder.includes(:tailor, :retailer, :customer).fulfilled(true)
+              .order(fulfilled_date: :desc).first(100)
+              .as_json(include: [:tailor, :retailer, :customer])
     else
-      data = current_user.store.orders.archived.order(:fulfilled_date).reverse.as_json(include: [:customer], methods: [:alterations_count])
+      data = current_user.store.orders.includes(:customer).fulfilled(true)
+              .order(fulfilled_date: :desc).first(100)
+              .as_json(include: [:customer], methods: [:alterations_count])
     end
-    render :json => data
+
+    render :json => data.as_json(include: [:tailor, :retailer, :customer])
+  end
+
+  def alert_customers
+    orders = Order.where(id: params[:orders])
+    orders.map(&:alert_customer_order_ready_for_pickup)
+    orders.update_all(customer_alerted: true)
+    render :json => {status: 200}
   end
 
   private
 
   def set_order
-    @order = Order.find(params[:id])
+    @order_relation = Order.where(id: params[:id])
+    @order_object = @order_relation.first
   end
 
   def order_params
-    params.require(:order)
-      .permit(
+    params.require(:order).permit(
+        :id,
         :provider_notes,
         :requester_notes,
         :arrived,
@@ -99,8 +181,9 @@ class Api::OrdersController < ApplicationController
         :type,
         :customer_id,
         :source,
+        :items,
         :ship_to_store
-        )
+      )
   end
 
 end
