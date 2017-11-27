@@ -49,11 +49,7 @@ GEM
     airbrake (7.1.0)
       airbrake-ruby (~> 2.5)
     airbrake-ruby (2.6.0)
-<<<<<<< HEAD
-    arel (7.1.4)
-=======
     arel (8.0.0)
->>>>>>> postmates-implementation
     awesome_print (1.8.0)
     backports (3.10.3)
     bcrypt (3.1.11)
@@ -184,12 +180,9 @@ GEM
     orm_adapter (0.5.0)
     pdfkit (0.8.2)
     pg (0.21.0)
-<<<<<<< HEAD
-=======
     postmates (0.1.0)
       faraday (>= 0.7, < 0.10)
       faraday_middleware (>= 0.8, < 0.10)
->>>>>>> postmates-implementation
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
