@@ -26,8 +26,6 @@ class Shipment < ApplicationRecord
     @shipment_action
   end
 
-
-
   def handle_error(e)
     @error_obj = e
     error_class = e.class

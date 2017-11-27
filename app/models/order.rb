@@ -8,8 +8,7 @@ class Order < ApplicationRecord
   has_many :shipment_orders
   has_many :shipments, through: :shipment_orders, inverse_of: :orders
 
-  # belongs_to :customer, inverse_of: :orders, class_name: "Customer", foreign_key: "customer_id"
-  belongs_to :customer
+  belongs_to :customer, inverse_of: :orders, class_name: "Customer", foreign_key: "customer_id"
   belongs_to :retailer, inverse_of: :orders, class_name: "Retailer", foreign_key: "requester_id"
   belongs_to :tailor,   inverse_of: :orders, class_name: "Tailor",   foreign_key: "provider_id",
     optional: true
