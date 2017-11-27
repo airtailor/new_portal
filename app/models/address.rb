@@ -1,5 +1,4 @@
 class Address < ApplicationRecord
-  self.primary_key = 'id'
   include StreetAddress
   include AddressConstants
   include TypeConstants
