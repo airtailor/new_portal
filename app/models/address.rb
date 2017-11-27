@@ -22,12 +22,6 @@ class Address < ApplicationRecord
     self.extract_street_and_number(params)
 
     self.save
-
-    # begin
-    #   self.save
-    # rescue e
-    #   return e
-    # end
   end
 
   def set_address_type(string)

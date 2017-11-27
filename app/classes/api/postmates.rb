@@ -19,10 +19,6 @@ class Api::Postmates
       raise e
     end
 
-
-    # if this 400s, we're boned.
-    # not a big deal rn, but later it will be.
-
     params = {
       quote_id: quote.id,
       manifest: postmates_manifest_content,

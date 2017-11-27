@@ -14,9 +14,7 @@ class Api::ShipmentsController < ApplicationController
   def create
     # This is where we'd need to make a loop to include bulk shipping.
     @shipment = Shipment.new(shipment_params)
-    orders = Order.where(id: params[:shipment][:order_ids])
-    @shipment.orders << orders
-    @shipment.weight = orders.sum(:weight)
+    @shipment.weight = @shipment.orders.reduce(0) {|prev, curr| prev + curr.weight }
     @shipment.set_delivery_method(params[:shipment][:shipment_action])
 
     begin
