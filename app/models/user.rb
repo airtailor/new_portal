@@ -4,6 +4,7 @@ class User < ApplicationRecord
           :recoverable, :rememberable, :trackable, :validatable
           #:confirmable, :omniauthable
   include DeviseTokenAuth::Concerns::User
+  
   def confirmed_at
     Time.now.utc
   end
@@ -56,9 +57,9 @@ class User < ApplicationRecord
       self.update_attributes(password: password)
     end
   end
-  
+
   # includes user roles when sending out user after succesful sign in : )
-  def token_validation_response                                                                                                                                         
+  def token_validation_response
     self.as_json(include: :roles)
   end
 end
