@@ -27,6 +27,13 @@ class Order < ApplicationRecord
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
 
+  def self.current_report 
+    last_two_weeks   = (Date.today-13)..Date.today
+    sunday, last_sunday = last_two_weeks.select &:sunday?
+
+    where('fulfilled_date BETWEEN ? AND ?', sunday, last_sunday)
+  end
+
   def self.retailer_view
     where(dismissed: false).where(customer_alerted: false)
   end
