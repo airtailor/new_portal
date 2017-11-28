@@ -6,7 +6,7 @@ class Api::CompaniesController < ApplicationController
     if @company.save
       render :json => { status: 200 }
     else
-      render :json => { errors: 'Company creation failed. Check your inputs.'}
+      render :json => { errors: { message: 'Company creation failed. Check your inputs.'} }
     end
   end
 
