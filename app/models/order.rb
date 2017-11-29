@@ -27,6 +27,21 @@ class Order < ApplicationRecord
   scope :past_due, -> bool { where('due_date <= ?', Date.today) }
   scope :open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
+  scope :not_dismissed, -> { where(dismissed: false) } 
+  
+
+  def self.last_two_weeks 
+    (Date.today-13)..Date.today
+  end
+
+  def self.report_dates
+    last_two_weeks.select &:monday?
+  end
+
+  def self.current_report
+    monday, last_monday = report_dates
+    where('fulfilled_date BETWEEN ? AND ?', monday, last_monday)
+  end
 
   def self.retailer_view
     where(dismissed: false).where(customer_alerted: false)

@@ -48,5 +48,10 @@ Rails.application.routes.draw do
 
     put "/users/:id/update_password", to: "users#update_password"
 
+
+   get "/reports/current_report", to: "reports#current_report"
+
+
+
   end
 end
