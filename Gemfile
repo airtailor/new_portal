@@ -42,7 +42,7 @@ gem 'sidekiq'
 
 # Address parsing.
 # IT IS OLD AND LIABLE TO EXPLODE.
-gem 'street_address', '~> 2.0', git: 'git@github.com:nialbima/street-address.git'
+gem 'street_address', '~> 2.0', github: "nialbima/street-address"
 
 group :development, :test do
   gem 'byebug', platform: :mri
