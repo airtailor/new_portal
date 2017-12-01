@@ -4,12 +4,15 @@ class Retailer < Store
   has_many :alterations, through: :orders
 
   TAILOR_IDS = {
-    2 => 4, # Steven Alan - Tribeca => # Tailoring NYC
-    3 => 4,  # Frame Denim - SoHo => # Tailoring NYC
-    5 => 4,  # J.Crew - 5th Ave => # Tailoring NYC
-    11 => 4, # Wolf & Badger => # Tailoring NYC
-    12 => 4, # MOUSSY => # Tailoring NYC
-    13 => 4 # Opening Ceremony - Howard St. => # Tailoring NYC
+    2 => 17, # Steven Alan - Tribeca => # About the Stitch
+    3 => 17,  # Frame Denim - SoHo => # About the Stitch
+    5 => 17,  # J.Crew - 5th Ave => # About the Stitch
+    11 => 17, # Wolf & Badger => # About the Stitch
+    12 => 17, # MOUSSY => # About the Stitch
+    13 => 17, # Opening Ceremony - Howard St. => # About the Stitch
+    18 => 17, # Steven Alan - UWS => # About the Stitch
+    19 => 17, # Steven Alan - Chelsea => # About the Stitch
+    20 => 17 # Steven Alan - Brooklyn => # About the Stitch
   }
 
   def default_tailor
