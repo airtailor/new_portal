@@ -1,5 +1,5 @@
 class Api::UsersController < ApplicationController
-  #before_action :authenticate_user!#, except: [:new, :create, :edit, :update]
+  before_action :authenticate_user!
   before_action :set_user, only: [:update_password]
 
   def update_password
