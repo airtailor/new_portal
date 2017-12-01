@@ -1,18 +1,7 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for 'User', at: 'auth'
-  #devise_for :users
-
   root to: "home#index"
 
-  # namespace :admin  do
-  #   get "/users", to: "users#index", as: :users
-  #   get "/users/new", to: "users#new", as: :new_user
-  #   get "/users/:id", to: "users#show", as: :user
-  #   get "/users/:id/edit", to: "users#edit", as: :edit_user
-  #   post "/users", to: "users#create"
-  #   patch "/users/:id", to: "users#update"
-  #   delete "/users/:id", to: "users#destroy"
-  # end
+  mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks]
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
@@ -47,11 +36,7 @@ Rails.application.routes.draw do
     resources :tailors
 
     put "/users/:id/update_password", to: "users#update_password"
-
-
-   get "/reports/current_report", to: "reports#current_report"
-
-
-
+    get "/reports/current_report", to: "reports#current_report"
+    
   end
 end
