@@ -4,6 +4,9 @@ class Store < ApplicationRecord
   belongs_to :primary_contact, class_name: "User", foreign_key: "primary_contact_id", optional: true
   belongs_to :address
 
+  belongs_to :default_tailor
+  has_many   :retailers
+
   has_many :items, through: :orders
   has_many :alterations, through: :orders
 
