@@ -12,7 +12,8 @@ class Retailer < Store
     13 => 17, # Opening Ceremony - Howard St. => # About the Stitch
     18 => 17, # Steven Alan - UWS => # About the Stitch
     19 => 17, # Steven Alan - Chelsea => # About the Stitch
-    20 => 17 # Steven Alan - Brooklyn => # About the Stitch
+    20 => 17, # Steven Alan - Brooklyn => # About the Stitch
+    21 => 17 # JAB Goods - Soho West => # About the Stitch
   }
 
   def default_tailor
