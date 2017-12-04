@@ -2,6 +2,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
           :recoverable, :rememberable, :trackable, :validatable
 
+  include UserConstants
   include DeviseTokenAuth::Concerns::User
 
   rolify
@@ -12,14 +13,15 @@ class User < ApplicationRecord
     Time.now.utc
   end
 
-  def valid_roles=(action)
-    @valid_roles = action
+  def valid_roles=(role_hash)
+    @valid_roles = role_hash.select do |key, value|
+      VALID_ROLES.include?(key.to_s) && [ true, false ].include?(value)
+    end
   end
 
   def valid_roles
     @valid_roles
   end
-
 
   def admin?
     self.has_role? :admin
@@ -57,6 +59,10 @@ class User < ApplicationRecord
 
   # includes user roles when sending out user after succesful sign in : )
   def token_validation_response
-    self.as_json(include: :roles)
+    if self.valid_roles
+      super.merge('valid_roles' => self.valid_roles)
+    else
+      super
+    end
   end
 end

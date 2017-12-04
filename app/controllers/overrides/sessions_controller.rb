@@ -1,6 +1,6 @@
-class Overrides::TokenValidationsController < DeviseTokenAuth::TokenValidationsController
+class Overrides::SessionsController < DeviseTokenAuth::SessionsController
 
-  def validate_token
+  def create
     super do |user|
       user.valid_roles = user.roles.inject({}) do |permissions, role|
         permissions[role.name] = true
@@ -8,4 +8,5 @@ class Overrides::TokenValidationsController < DeviseTokenAuth::TokenValidationsC
       end
     end
   end
+
 end
