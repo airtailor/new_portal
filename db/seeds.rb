@@ -20,7 +20,7 @@ end
   } ].each do |data_hash|
       company = Company.find_or_create_by(name: data_hash[:name])
       unless company.stores.first
-        store = FactoryGirl.create(
+        store = FactoryBot.create(
           data_hash[:role],
           name: data_hash[:store_name],
           phone: data_hash[:phone],
@@ -40,34 +40,34 @@ end
     end
 
 #5.times do |n|
-#  order = FactoryGirl.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)
+#  order = FactoryBot.create(:shopify_tailor_order, tailor: tailoring, retailer: airtailor)
 #  #order.set_arrived unless n == 3
 #  #order.set_fulfilled if n == 4
 #  order.set_late && order.set_arrived if n == 5
 #
 #  15.times do
-#    item = FactoryGirl.create(:item, order: order)
-#    alteration = FactoryGirl.create(:alteration)
-#    FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
+#    item = FactoryBot.create(:item, order: order)
+#    alteration = FactoryBot.create(:alteration)
+#    FactoryBot.create(:alteration_item, item: item, alteration: alteration)
 #  end
 #end
 #
 #5.times do
-#  order = FactoryGirl.create(:retailer_tailor_order, tailor: nil, retailer: soho, source: soho.name, arrived: true)
+#  order = FactoryBot.create(:retailer_tailor_order, tailor: nil, retailer: soho, source: soho.name, arrived: true)
 #  15.times do
-#    item = FactoryGirl.create(:item, order: order)
-#    alteration = FactoryGirl.create(:alteration)
-#    FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
+#    item = FactoryBot.create(:item, order: order)
+#    alteration = FactoryBot.create(:alteration)
+#    FactoryBot.create(:alteration_item, item: item, alteration: alteration)
 #  end
 #end
 #
 #
 #5.times do
-#  order = FactoryGirl.create(:retailer_tailor_order, retailer: tribeca, tailor: nil, source: tribeca.name)
+#  order = FactoryBot.create(:retailer_tailor_order, retailer: tribeca, tailor: nil, source: tribeca.name)
 #  5.times do
-#    item = FactoryGirl.create(:item, order: order)
-#    alteration = FactoryGirl.create(:alteration)
-#    FactoryGirl.create(:alteration_item, item: item, alteration: alteration)
+#    item = FactoryBot.create(:item, order: order)
+#    alteration = FactoryBot.create(:alteration)
+#    FactoryBot.create(:alteration_item, item: item, alteration: alteration)
 #  end
 #end
 #
@@ -77,6 +77,6 @@ end
 #
 #20.times do
 #  # customer_id = rand(1..Customer.count)
-#  # FactoryGirl.create(:welcome_kit, customer_id: customer_id)
-#  FactoryGirl.create(:welcome_kit)
+#  # FactoryBot.create(:welcome_kit, customer_id: customer_id)
+#  FactoryBot.create(:welcome_kit)
 #end

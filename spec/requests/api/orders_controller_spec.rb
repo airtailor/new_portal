@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe Api::OrdersController, type: :controller do
   before :each do 
-    @airtailor_co = FactoryGirl.create(:company, name: "Air Tailor")
-    @airtailor_store = FactoryGirl.create(:retailer, name: "Air Tailor", company: @airtailor_co)
+    @airtailor_co = FactoryBot.create(:company, name: "Air Tailor")
+    @airtailor_store = FactoryBot.create(:retailer, name: "Air Tailor", company: @airtailor_co)
 
-    @retailer_co = FactoryGirl.create(:company, name: "J.Crew")
-    @retailer_store = FactoryGirl.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
+    @retailer_co = FactoryBot.create(:company, name: "J.Crew")
+    @retailer_store = FactoryBot.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
 
-    @admin_user = FactoryGirl.create(:user, store: @airtailor_store)
+    @admin_user = FactoryBot.create(:user, store: @airtailor_store)
     @admin_user.add_role "admin"
 
-    @retailer_user = FactoryGirl.create(:user, store: @retailer_store)
+    @retailer_user = FactoryBot.create(:user, store: @retailer_store)
     @retailer_user.add_role "retailer"
 
     @auth_headers = @admin_user.create_new_auth_token
@@ -19,22 +19,22 @@ RSpec.describe Api::OrdersController, type: :controller do
     # need to specify customer in this order so that we 
     # use a unique and valid phone number, and 
     # use the same first name so they both come up in the search
-    @customer_one = FactoryGirl.create(:customer, phone: 9045668701, first_name: "Jones")
-    @customer_two = FactoryGirl.create(:customer, phone: 6167804457, first_name: "Jones")
+    @customer_one = FactoryBot.create(:customer, phone: 9045668701, first_name: "Jones")
+    @customer_two = FactoryBot.create(:customer, phone: 6167804457, first_name: "Jones")
 
-    @order_one = FactoryGirl.create(
+    @order_one = FactoryBot.create(
       :retailer_tailor_order,
       retailer: @retailer_store,
       customer: @customer_one
     )
 
-    @order_two = FactoryGirl.create(
+    @order_two = FactoryBot.create(
       :retailer_tailor_order,
       retailer: @airtailor_store,
       customer: @customer_two
     )
 
-    @order_three = FactoryGirl.create(
+    @order_three = FactoryBot.create(
       :retailer_tailor_order,
       retailer: @airtailor_store,
       customer: @customer_two

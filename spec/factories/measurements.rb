@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :measurement do
     sleeve_length 1.5
     shoulder_to_waist 1.5
