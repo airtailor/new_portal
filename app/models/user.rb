@@ -23,6 +23,13 @@ class User < ApplicationRecord
     @valid_roles
   end
 
+  def add_valid_roles
+    self.valid_roles = self.roles.inject({}) do |permissions, role|
+      permissions[role.name] = true
+      permissions
+    end
+  end
+
   def admin?
     self.has_role? :admin
   end
