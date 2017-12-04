@@ -1,6 +1,10 @@
 class Api::UsersController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
   before_action :set_user, only: [:update_password]
+
+  def get_role
+    render :json => @user.roles
+  end
 
   def update_password
     if @user.update_password(password_params)

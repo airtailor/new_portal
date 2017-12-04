@@ -4,13 +4,22 @@ class User < ApplicationRecord
 
   include DeviseTokenAuth::Concerns::User
 
-  def confirmed_at
-    Time.now.utc
-  end
-  
   rolify
 
   belongs_to :store, optional: true
+
+  def confirmed_at
+    Time.now.utc
+  end
+
+  def valid_roles=(action)
+    @valid_roles = action
+  end
+
+  def valid_roles
+    @valid_roles
+  end
+
 
   def admin?
     self.has_role? :admin
