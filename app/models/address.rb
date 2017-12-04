@@ -1,5 +1,5 @@
 class Address < ApplicationRecord
-  include StreetAddress
+  #include StreetAddress
   include AddressConstants
   include TypeConstants
 
