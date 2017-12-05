@@ -50,7 +50,7 @@ task :daily_shopify_reconciliation => :environment do
 
         if !customer.id
           puts "\ncustomer errors: "
-          puts "#{customer.errors\n}"
+          puts "#{customer.errors}\n"
           bad_orders.push(needed_order)
         else
           order_type = needed_order["line_items"]
