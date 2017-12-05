@@ -42,6 +42,7 @@ task :daily_shopify_reconciliation => :environment do
 
         if !customer.id && phone.length == 11 && phone.split("").first == 1
           needed_order["customer"]["default_address"]["phone"] = phone.slice!(0)
+          puts "sliced phone #{needed_order["customer"]["default_address"]["phone"]}"
           customer = Customer.find_or_create_shopify(needed_order["customer"])
         elsif  !customer.id && phone.length == 10 && phone.split("").first != 1
           needed_order["customer"]["default_address"]["phone"] = "1#{phone}"
