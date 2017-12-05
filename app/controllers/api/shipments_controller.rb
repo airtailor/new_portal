@@ -27,6 +27,7 @@ class Api::ShipmentsController < ApplicationController
           :source, :destination, orders: [ :customer, items: [ :alterations ]]
         ]
         @shipment_relation = Shipment.where(id: @shipment.id).includes(*sql_includes)
+        
         render :json => @shipment_relation.map { |shipment|
                           orders = shipment.orders.as_json(include: [
                             :customer, items: { include: :alterations }

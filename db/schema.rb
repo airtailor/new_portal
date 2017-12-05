@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171128210922) do
+ActiveRecord::Schema.define(version: 20171201141132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,8 +227,10 @@ ActiveRecord::Schema.define(version: 20171128210922) do
     t.string "type"
     t.string "name", null: false
     t.integer "address_id"
+    t.integer "default_tailor_id"
     t.index ["address_id"], name: "index_stores_on_address_id"
     t.index ["company_id"], name: "index_stores_on_company_id"
+    t.index ["default_tailor_id"], name: "index_stores_on_default_tailor_id", where: "((type)::text = 'Retailer'::text)"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -273,5 +275,6 @@ ActiveRecord::Schema.define(version: 20171128210922) do
   add_foreign_key "messages", "orders"
   add_foreign_key "messages", "stores"
   add_foreign_key "stores", "addresses"
+  add_foreign_key "stores", "stores", column: "default_tailor_id"
   add_foreign_key "users", "stores"
 end
