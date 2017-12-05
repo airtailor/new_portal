@@ -123,5 +123,4 @@ class Address < ApplicationRecord
       :email => contact.try(:email)
     }
   end
-
 end

@@ -1,6 +1,7 @@
 class Api::Shippo
   def self.build_label(entity)
     Shippo::API.token, Shippo::API.version = Credentials.shippo_key, Credentials.shippo_api_version
+    
     shippo = Shippo::Shipment.create({
       object_purpose: "PURCHASE",
       address_from: entity.source.shippo_address,
