@@ -108,7 +108,11 @@ class Shipment < ApplicationRecord
   # retailer relate to the address table.
   def get_address(klass_symbol)
     record = self.orders.first.send(klass_symbol)
-    klass_symbol == :customer ? record.addresses.first : record.address
+    if klass_symbol == :customer
+      return customer_address_object = record.addresses.first || record
+    else
+      return record.address
+    end
   end
 
   def needs_label
