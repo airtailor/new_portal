@@ -31,7 +31,6 @@ class Order < ApplicationRecord
   scope :current_tailor_report, -> { not_dismissed.by_date(*tailor_payment_dates)}
 
 
-
   def self.tailor_payment_dates
    ((Date.today-13)..Date.today).select &:monday?
   end
@@ -155,7 +154,12 @@ class Order < ApplicationRecord
       order.subtotal = order_info["subtotal_price"]
       order.discount = order_info["total_discounts"]
       order.requester_notes = order_info["note"]
-      order.weight = order_info["total_weight"]
+
+      if order.type == "WelcomeKit"
+        order.weight = 28
+      else
+        order.weight = order_info["total_weight"]
+      end
 
       order.set_order_defaults
       order.parse_order_lifecycle_stage
@@ -185,5 +189,4 @@ class Order < ApplicationRecord
   def needs_delighted
     self.fulfilled && self.type == "TailorOrder"
   end
-
 end
