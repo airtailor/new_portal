@@ -16,9 +16,11 @@ class Api::StoresController < ApplicationController
 
   def update
     @store.assign_attributes(store_params)
-    @store.set_address(address_params)
+    unless @store.set_address(address_params)
+      @store.errors.add(:invalid_address, 'Invalid address params.')
+    end
 
-    if @store.save
+    if @store.address.present? && @store.save
       render :json => @store.as_json
     else
       render :json => {errors: @store.errors.full_messages}
@@ -27,12 +29,14 @@ class Api::StoresController < ApplicationController
 
   def create
     @store = Store.new(store_params)
-    @store.set_address(address_params)
+    unless @store.set_address(address_params)
+      @store.errors.add(:invalid_address, message: 'Invalid address params.')
+    end
 
-    if @store.save
-      render :json => store.as_json
+    if @store.address.present? && @store.save
+      render :json => @store.as_json
     else
-      byebug
+      render :json => {errors: @store.errors.messages}
     end
   end
 
@@ -61,7 +65,7 @@ class Api::StoresController < ApplicationController
   end
 
   def permitted_store_fields
-    [ :name, :phone, :company_id, :default_tailor_id ]
+    [ :name, :phone, :company_id, :default_tailor_id,  :type ]
   end
 
   def required_address_fields

@@ -121,7 +121,18 @@ class Customer < ApplicationRecord
 
   def shippo_address
     return address.for_shippo if address = addresses.first
-    return nil
+
+    return {
+      :name => self.name,
+      :street1 => self.street1,
+      :street2 => self.street2,
+      :city => self.city,
+      :country => self.country,
+      :state => self.state,
+      :zip => self.zip,
+      :phone => self.try(:phone),
+      :email => self.try(:email)
+    }
   end
 
 end
