@@ -20,6 +20,7 @@ class User < ApplicationRecord
   end
 
   def valid_roles
+    self.add_valid_roles if !@valid_roles
     @valid_roles
   end
 

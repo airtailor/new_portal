@@ -2,6 +2,10 @@ class Api::StoresController < ApplicationController
   before_action :authenticate_user!, except: [:create, :update]
   before_action :set_store, only: [:show, :update]
 
+  def index
+    render :json => Store.all.as_json
+  end
+
   def show
     render :json => @store_relation.includes(:address).as_json(
       include: [ :address ],
