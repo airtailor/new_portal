@@ -1,2 +1,0 @@
-class OutgoingShipment < Shipment
-end

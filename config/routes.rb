@@ -34,26 +34,24 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :users, only: [:index]
     resources :orders
-
     resources :shipments
     resources :companies
-    post "/customers/find_or_create", to: "customers#find_or_create"
-
-    post "/customers/create_or_validate_customer", to: "customers#create_or_validate_customer"
-    get "/customers/:customer_id/measurements/last", to: "measurements#show"
-    post "/customers/:customer_id/measurements", to: "measurements#create"
     resources :customers
-    # resources :addresses
-
     resources :item_types
-    post "/shopify_order", to: "shopify#receive"
-    resources :sessions, only: [:create, :destroy]
     resources :tailors
     resources :retailers
 
-    put "/users/:id/update_password", to: "users#update_password"
+    post "/customers/find_or_create", to: "customers#find_or_create"
+    post "/customers/create_or_validate_customer", to: "customers#create_or_validate_customer"
+
+    get "/customers/:customer_id/measurements/last", to: "measurements#show"
+    post "/customers/:customer_id/measurements", to: "measurements#create"
+
+    post "/shopify_order", to: "shopify#receive"
     get "/reports/current_report", to: "reports#current_report"
+
 
   end
 end
