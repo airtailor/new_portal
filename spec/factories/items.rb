@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :item do
-    order { FactoryGirl.create(:shopify_tailor_order) }
+    order { FactoryBot.create(:shopify_tailor_order) }
     item_type { ItemType.all.sample }
     name { Faker::Commerce.product_name }
   end

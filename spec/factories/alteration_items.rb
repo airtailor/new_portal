@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :alteration_item do
-    item { FactoryGirl.create(:item) }
-    alteration { FactoryGirl.create(:alteration) }
+    item { FactoryBot.create(:item) }
+    alteration { FactoryBot.create(:alteration) }
   end
 end

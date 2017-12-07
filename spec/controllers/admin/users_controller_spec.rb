@@ -65,10 +65,10 @@
 #     context "with valid attributes" do
 #       before :each do
 #         @params = {}
-#         @params[:user] = FactoryGirl.attributes_for(:user)
+#         @params[:user] = FactoryBot.attributes_for(:user)
 #         @params[:admin] = "1"
 #         @params[:tailor] = "0"
-#         @params[:user][:store_id] = FactoryGirl.create(:retailer).id
+#         @params[:user][:store_id] = FactoryBot.create(:retailer).id
 #       end
 
 #       it "creates a new user" do
@@ -92,7 +92,7 @@
 #     context "with invalid attributes" do
 #       before :each do
 #         @params = {}
-#         @params[:user] = FactoryGirl.attributes_for(:user, password: nil)
+#         @params[:user] = FactoryBot.attributes_for(:user, password: nil)
 #         @params[:admin] = "1"
 #         @params[:tailor] = "0"
 #       end
@@ -114,7 +114,7 @@
 #     context "with valid attributes"
 #       before :each do
 #         @user = valid_user
-#         @new_user_info = FactoryGirl.attributes_for(:user)
+#         @new_user_info = FactoryBot.attributes_for(:user)
 #         patch :update, id: @user, user: @new_user_info, admin: "1", tailor: "0"
 #       end
 
@@ -131,7 +131,7 @@
 #     context "with invalid attributes" do
 #       before :each do
 #         @user = valid_user
-#         @new_user_info = FactoryGirl.attributes_for(:user, email: nil)
+#         @new_user_info = FactoryBot.attributes_for(:user, email: nil)
 #         patch :update, id: @user, user: @new_user_info, admin: "1", tailor: "0"
 #       end
 

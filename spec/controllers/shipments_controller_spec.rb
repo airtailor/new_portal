@@ -3,9 +3,9 @@
 # RSpec.describe Api::ShipmentsController, type: :controller do
 #   context "when the shipment is for a welcome kit" do
 #     before :each do
-#       user = FactoryGirl.create(:user, store: FactoryGirl.create(:retailer))
+#       user = FactoryBot.create(:user, store: FactoryBot.create(:retailer))
 #       @user = sign_in_retailer user
-#       @order = FactoryGirl.create(:welcome_kit, retailer: @user.store)
+#       @order = FactoryBot.create(:welcome_kit, retailer: @user.store)
 #       params = {}
 #       params[:shipment] = {}
 #       params[:shipment][:order_id] = @order.id
@@ -30,9 +30,9 @@
 
 #   context "when it is an outgoing shipment for a tailor order" do
 #     before :each do
-#       user = FactoryGirl.create(:user, store: FactoryGirl.create(:retailer))
+#       user = FactoryBot.create(:user, store: FactoryBot.create(:retailer))
 #       @user = sign_in_retailer user
-#       @order = FactoryGirl.create(:shopify_tailor_order, retailer: @user.store)
+#       @order = FactoryBot.create(:shopify_tailor_order, retailer: @user.store)
 #       params = {}
 #       params[:shipment] = {}
 #       params[:shipment][:order_id] = @order.id
