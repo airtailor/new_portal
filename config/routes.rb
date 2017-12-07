@@ -17,7 +17,10 @@ Rails.application.routes.draw do
 
 
   mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks],
-    controllers: { token_validations: 'overrides/token_validations', sessions: 'overrides/sessions' }
+    controllers: {
+      token_validations: 'overrides/token_validations',
+      sessions: 'overrides/sessions'
+    }
 
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
@@ -52,7 +55,6 @@ Rails.application.routes.draw do
     resources :tailors
     resources :retailers
 
-    put "/users/:id/update_password", to: "users#update_password"
     get "/reports/current_report", to: "reports#current_report"
 
   end
