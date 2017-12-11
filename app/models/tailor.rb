@@ -1,18 +1,20 @@
 class Tailor < Store
-  has_many :orders, foreign_key: "provider_id"
-  has_many :items, through: :orders
-  has_many :alterations, through: :orders
-
+  has_many :orders, inverse_of: :tailor, foreign_key: "provider_id"
+  has_many :retailers
 
   def late_orders
-    self.orders.where(late: true)
+    self.orders.late(true)
   end
 
   def current_orders
-    self.orders.where(arrived: true).where(fulfilled: false)
+    self.orders.active
   end
 
   def new_orders
     self.orders.where(arrived: false)
+  end
+
+  def address_type_string
+    "tailor"
   end
 end

@@ -1,10 +1,13 @@
 class Customer < ApplicationRecord
-  validates :email, :phone, presence: true, uniqueness: true
+  validates :email, :phone, uniqueness: true
   validates :shopify_id, uniqueness: true, allow_blank: true
-  validates :first_name, :last_name, presence: true
 
-  has_many :measurements
-  has_many :orders
+  has_many :orders, inverse_of: :customer
+  has_many :shipments, through: :orders, inverse_of: :customer
+
+  has_many :measurements, inverse_of: :customer
+  has_many :customer_addresses
+  has_many :addresses, through: :customer_addresses
 
   def last_measurement
     self.measurements.last
@@ -17,8 +20,25 @@ class Customer < ApplicationRecord
     self.country ||= "United States"
   end
 
+  def set_address(address_params)
+    # NOTE: customers are locked into a single address, but can have more later
+    # without DB updates.
+      address = Address.new
+    if address.parse_and_save(address_params, "customer")
+      self.customer_addresses.destroy_all
+      self.addresses << address
+    end
+    # begin
+    #   address = Address.new
+    #   address.parse_and_save(address_params, "customer")
+    #   self.customer_addresses.destroy_all
+    #   self.addresses << address
+    # rescue => e
+    #   raise ActiveModel::Errors.new(e)
+    # end
+  end
+
   def create_blank_measurements
-    customer = self
     Measurement.create(
       sleeve_length: 0,
       chest_bust: 0,
@@ -34,7 +54,7 @@ class Customer < ApplicationRecord
       bicep: 0,
       inseam: 0,
       forearm: 0,
-      customer: customer
+      customer: self
     )
   end
 
@@ -47,36 +67,51 @@ class Customer < ApplicationRecord
       .gsub("–", "")
       .gsub("+", "")
 
+    made_new_customer = false
     customer = Customer.find_or_create_by(phone: phone) do |customer|
-      customer.email = shopify_customer["email"]
-      customer.shopify_id = shopify_customer["id"]
+      made_new_customer = true
 
       cust_details = shopify_customer["default_address"]
+
+      customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
+      customer.first_name = cust_details['first_name']
+      customer.last_name = cust_details['last_name']
+
+      address_params = {
+        'street' => cust_details['address1'],
+        'unit' => cust_details['address2'],
+        'city' => cust_details['city'],
+        'state_province' => cust_details['province'],
+        'zip_code' => cust_details['zip'],
+        'country' => cust_details['country_name'],
+        'country_code' => cust_details['country_code']
+      }
+
+      customer.set_address(address_params)
+    end
+    # update with most recent shopify attributes if customer already existed
+    if !made_new_customer
+      cust_details = shopify_customer["default_address"]
+      customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
       customer.first_name = cust_details["first_name"]
       customer.last_name = cust_details["last_name"]
       customer.company = cust_details["company"]
-      customer.street1 = cust_details["address1"]
-      customer.street2 = cust_details["address2"]
-      customer.city = cust_details["city"]
-      customer.state = cust_details["province"]
-      customer.zip = cust_details["zip"]
-      customer.country = cust_details["country_name"]
+
+      address_params = {
+        'street' => cust_details['address1'],
+        'unit' => cust_details['address2'],
+        'city' => cust_details['city'],
+        'state_province' => cust_details['province'],
+        'zip_code' => cust_details['zip'],
+        'country' => cust_details['country_name'],
+        'country_code' => cust_details['country_code']
+      }
+
+      customer.set_address(address_params)
     end
 
-    # update with most recent shopify attributes if customer already existed
-    customer.email = shopify_customer["email"]
-    customer.shopify_id = shopify_customer["id"]
-
-    cust_details = shopify_customer["default_address"]
-    customer.first_name = cust_details["first_name"]
-    customer.last_name = cust_details["last_name"]
-    customer.company = cust_details["company"]
-    customer.street1 = cust_details["address1"]
-    customer.street2 = cust_details["address2"]
-    customer.city = cust_details["city"]
-    customer.state = cust_details["province"]
-    customer.zip = cust_details["zip"]
-    customer.country = cust_details["country_name"]
     customer
   end
 
@@ -85,8 +120,9 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    {
-      #:object_purpose => "PURCHASE",
+    return address.for_shippo if address = addresses.first
+
+    return {
       :name => self.name,
       :street1 => self.street1,
       :street2 => self.street2,
@@ -94,8 +130,8 @@ class Customer < ApplicationRecord
       :country => self.country,
       :state => self.state,
       :zip => self.zip,
-      :phone => self.phone,
-      :email => self.email,
+      :phone => self.try(:phone),
+      :email => self.try(:email)
     }
   end
 

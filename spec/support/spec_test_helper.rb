@@ -1,6 +1,6 @@
 module SpecTestHelper   
   def valid_user 
-    FactoryGirl.create(:user)
+    FactoryBot.create(:user)
   end
 
   def current_user

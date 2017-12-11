@@ -13,8 +13,15 @@
 !/log/.keep
 !/tmp/.keep
 
+.env
+
+# Committing  makes the repo huge and exposes users.
+/lib/data/*
+
 # Ignore Byebug command history file.
 .byebug_history
 
 *.swo
 *.swp
+
+Untitled

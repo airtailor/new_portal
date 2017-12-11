@@ -123,7 +123,7 @@ alterations = [
   "Add Darts to Back of Shirt"
 ]
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :alteration do
     sequence(:name) {|n| "#{alterations.sample} ... #{n}"}
   end

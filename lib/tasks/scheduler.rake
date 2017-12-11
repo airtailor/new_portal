@@ -1,17 +1,17 @@
 desc "This task will mark orders late if it is passed their due date"
 task :mark_orders_late => :environment do
-  Order.mark_orders_late
+  Order.active.past_due.update_all(late: true)
 end
 
 desc "This task will make sure we have all orders from Shopify from the last 2 weeks"
 task :daily_shopify_reconciliation => :environment do
-  shopify_key = ENV["SHOPIFY_API_KEY"]
-  shopify_password = ENV["SHOPIFY_API_PASSWORD"]
-  base_url = "https://#{shopify_key}:#{shopify_password}@skinnyfatties.myshopify.com/admin/orders.json?created_at_min=#{2.weeks.ago}"
+  shopify_key = Credentials.shopify_api_key
+  shopify_password = Credentials.shopify_api_password
+  base_url = "https://#{shopify_key}:#{shopify_password}@skinnyfatties.myshopify.com/admin/orders.json?created_at_min=#{25.hours.ago}"
   response = HTTParty.get(base_url, format: :plain)
 
   shopify_orders = JSON.parse(response)["orders"]
-  db_orders = Order.where(source: "Shopify").where("created_at >= ?", 2.weeks.ago)
+  db_orders = Order.where(source: "Shopify").where("created_at >= ?", 25.hours.ago)
 
   needed_orders = shopify_orders.reject do |shopify_order|
     db_orders.where(source_order_id: shopify_order["name"].gsub("#", "")).length > 0
@@ -42,6 +42,7 @@ task :daily_shopify_reconciliation => :environment do
 
         if !customer.id && phone.length == 11 && phone.split("").first == 1
           needed_order["customer"]["default_address"]["phone"] = phone.slice!(0)
+          puts "sliced phone #{needed_order["customer"]["default_address"]["phone"]}"
           customer = Customer.find_or_create_shopify(needed_order["customer"])
         elsif  !customer.id && phone.length == 10 && phone.split("").first != 1
           needed_order["customer"]["default_address"]["phone"] = "1#{phone}"
@@ -49,6 +50,8 @@ task :daily_shopify_reconciliation => :environment do
         end
 
         if !customer.id
+          puts "\ncustomer errors: "
+          puts "#{customer.errors.full_messages}\n"
           bad_orders.push(needed_order)
         else
           order_type = needed_order["line_items"]

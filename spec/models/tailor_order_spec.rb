@@ -2,28 +2,28 @@ require 'rails_helper'
 
 RSpec.describe TailorOrder, type: :model do
   before :each do
-    co = FactoryGirl.create(:company, name: "Air Tailor")
-    FactoryGirl.create(:retailer, name: "Air Tailor", company: co)
+    co = FactoryBot.create(:company, name: "Air Tailor")
+    FactoryBot.create(:retailer, name: "Air Tailor", company: co)
   end
 
   it "is valid without a tailor" do
-    valid_retailer= FactoryGirl.create(:retailer)
-    invalid_shopify_tailor_order = FactoryGirl.build(:shopify_tailor_order, tailor: nil, retailer: valid_retailer)
+    valid_retailer= FactoryBot.create(:retailer)
+    invalid_shopify_tailor_order = FactoryBot.build(:shopify_tailor_order, tailor: nil, retailer: valid_retailer)
     expect(invalid_shopify_tailor_order).to be_valid
   end
 
   it "is valid with a tailor" do
-    valid_retailer= FactoryGirl.create(:retailer)
-    valid_tailor = FactoryGirl.create(:tailor)
-    invalid_shopify_tailor_order = FactoryGirl.build(:shopify_tailor_order, tailor: valid_tailor, retailer: valid_retailer)
+    valid_retailer= FactoryBot.create(:retailer)
+    valid_tailor = FactoryBot.create(:tailor)
+    invalid_shopify_tailor_order = FactoryBot.build(:shopify_tailor_order, tailor: valid_tailor, retailer: valid_retailer)
     expect(invalid_shopify_tailor_order).to be_valid
   end
 
   # describe "has relationships with tailor, items, alterations" do
   #   before :each do
-  #      valid_tailor_order = FactoryGirl.create(:shopify_tailor_order)
+  #      valid_tailor_order = FactoryBot.create(:shopify_tailor_order)
   #      5.times do
-  #       FactoryGirl.create(:item, order: valid_tailor_order)
+  #       FactoryBot.create(:item, order: valid_tailor_order)
   #     end
   #   end
 
@@ -37,8 +37,8 @@ RSpec.describe TailorOrder, type: :model do
 
   #   it "has a relationship with alterations" do
   #     Item.all.each do |item|
-  #       alt = FactoryGirl.create(:alteration)
-  #       FactoryGirl.create(:alteration_item, item: item, alteration: alt)
+  #       alt = FactoryBot.create(:alteration)
+  #       FactoryBot.create(:alteration_item, item: item, alteration: alt)
   #     end
   #     expect(TailorOrder.last.alterations).to eq(Alteration.all)
   #   end

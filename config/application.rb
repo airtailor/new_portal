@@ -8,8 +8,8 @@ Bundler.require(*Rails.groups)
 
 module NewAirtailorPortal
   class Application < Rails::Application
-    config.autoload_paths << Rails.root.join("app", "classes")
-    config.autoload_paths << Rails.root.join("app", "classes", "api")
+    config.autoload_paths << File.join(Rails.root, 'app', 'classes')
+    config.autoload_paths << File.join(Rails.root, 'app', 'classes', 'api')
 
     config.middleware.use Rack::Cors do
       allow do
@@ -20,8 +20,5 @@ module NewAirtailorPortal
           :methods => [:get, :post, :options, :delete, :put]
       end
     end
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
   end
 end

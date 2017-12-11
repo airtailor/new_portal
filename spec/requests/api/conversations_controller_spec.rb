@@ -2,29 +2,29 @@ require 'rails_helper'
 
 RSpec.describe Api::ConversationsController, type: :controller do
   before :each do 
-    @airtailor_co = FactoryGirl.create(:company, name: "Air Tailor")
-    @airtailor_store = FactoryGirl.create(:retailer, name: "Air Tailor", company: @airtailor_co)
+    @airtailor_co = FactoryBot.create(:company, name: "Air Tailor")
+    @airtailor_store = FactoryBot.create(:retailer, name: "Air Tailor", company: @airtailor_co)
 
-    @retailer_co = FactoryGirl.create(:company, name: "J.Crew")
-    @retailer_store = FactoryGirl.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
+    @retailer_co = FactoryBot.create(:company, name: "J.Crew")
+    @retailer_store = FactoryBot.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
 
-    @admin_user = FactoryGirl.create(:user, store: @airtailor_store)
+    @admin_user = FactoryBot.create(:user, store: @airtailor_store)
     @admin_user.add_role "admin"
 
-    @retailer_user = FactoryGirl.create(:user, store: @retailer_store)
+    @retailer_user = FactoryBot.create(:user, store: @retailer_store)
     @retailer_user.add_role "retailer"
 
     @auth_headers = @admin_user.create_new_auth_token
 
     @conversation = Conversation.find_by(recipient: @retailer_store)
 
-    @message_one = FactoryGirl.create(
+    @message_one = FactoryBot.create(
       :message,
       store: @retailer_store,
       conversation: @conversation
     )
 
-    @message_two = FactoryGirl.create(
+    @message_two = FactoryBot.create(
       :message,
       store: @airtailor_store,
       conversation: @conversation

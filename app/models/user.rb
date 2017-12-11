@@ -1,27 +1,35 @@
 class User < ApplicationRecord
-  # Include default devise modules.
   devise :database_authenticatable, :registerable,
           :recoverable, :rememberable, :trackable, :validatable
-          #:confirmable, :omniauthable
+
+  include UserConstants
   include DeviseTokenAuth::Concerns::User
+
+  rolify
+
+  belongs_to :store, optional: true
+
   def confirmed_at
     Time.now.utc
   end
-  rolify
-  #resourcify
 
-  # before_validation :set_provider
-  # before_validation :set_uid
+  def valid_roles=(role_hash)
+    @valid_roles = role_hash.select do |key, value|
+      VALID_ROLES.include?(key.to_s) && [ true, false ].include?(value)
+    end
+  end
 
-  # def set_provider
-  #   self.provider = "email" if self.provider.blank?
-  # end
+  def valid_roles
+    self.add_valid_roles if !@valid_roles
+    @valid_roles
+  end
 
-  # def set_uid
-  #   self.uid = self.email if self.uid.blank? && self.email.present?
-  # end
-
-  belongs_to :store, optional: true
+  def add_valid_roles
+    self.valid_roles = self.roles.inject({}) do |permissions, role|
+      permissions[role.name] = true
+      permissions
+    end
+  end
 
   def admin?
     self.has_role? :admin
@@ -56,9 +64,13 @@ class User < ApplicationRecord
       self.update_attributes(password: password)
     end
   end
-  
+
   # includes user roles when sending out user after succesful sign in : )
-  def token_validation_response                                                                                                                                         
-    self.as_json(include: :roles)
+  def token_validation_response
+    if self.valid_roles
+      super.merge('valid_roles' => self.valid_roles)
+    else
+      super
+    end
   end
 end

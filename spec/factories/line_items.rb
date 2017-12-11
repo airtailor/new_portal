@@ -141,7 +141,7 @@ alterations = [
   "Add Darts to Back of Shirt"
 ]
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :line_item, class: Hash do
      id { Faker::Number.number(10) }
      variant_id { Faker::Number.number(11) }

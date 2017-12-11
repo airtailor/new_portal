@@ -1,7 +1,8 @@
 class Item < ApplicationRecord
   has_many :alteration_items
   has_many :alterations, through: :alteration_items
-  belongs_to :item_type, class_name: "ItemType", foreign_key: "type_id"
+
+  belongs_to :item_type
   belongs_to :order
 
   validates :name, :order, :item_type, presence: true
@@ -40,15 +41,12 @@ class Item < ApplicationRecord
     airtailor_message = "Congrats :) An order with #{items.count} items" +
       " was just placed at #{order.retailer.name} for $#{order.total}!"
 
-    phone_list = ["9045668701", "6167804457", "6302352544"]
-    #phone_list = ["9045668701"]
+    phone_list = ["9045668701", "6167804457", "6302352544", "6179607490"]
     phone_list.each do |phone|
       SendSonar.message_customer(text: airtailor_message, to: phone)
     end
 
     items.each do |item|
-      #puts item
-      #binding.pry
       item_name = item["title"].tr('^A-Za-z', '') || item[:title].tr('^A-Za-z', '')
       item_type = grab_item_type_from_title(item_name)
       new_item = self.create(name: item_name, item_type: item_type, order: order)

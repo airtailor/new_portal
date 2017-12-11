@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :api_shopify_customer, class: Hash do
     skip_create
 
