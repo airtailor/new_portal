@@ -362,10 +362,9 @@ DEPENDENCIES
   shippo (~> 3.0.0)
   sidekiq
   spring
-  spring-watcher-listen (~> 2.0.0)
-  stripe
   spring-watcher-listen
   street_address (~> 2.0)!
+  stripe
   textacular (~> 5.0)
   turbolinks (~> 5)
   tzinfo-data

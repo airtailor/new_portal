@@ -2,17 +2,17 @@ require 'rails_helper'
 
 RSpec.describe Api::PaymentsController, type: :controller do
   before :each do 
-    @airtailor_co = FactoryGirl.create(:company, name: "Air Tailor")
-    @airtailor_store = FactoryGirl.create(:retailer, name: "Air Tailor", company: @airtailor_co)
+    @airtailor_co = FactoryBot.create(:company, name: "Air Tailor")
+    @airtailor_store = FactoryBot.create(:retailer, name: "Air Tailor", company: @airtailor_co)
 
-    @retailer_co = FactoryGirl.create(:company, name: "J.Crew")
-    @retailer_store = FactoryGirl.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
+    @retailer_co = FactoryBot.create(:company, name: "J.Crew")
+    @retailer_store = FactoryBot.create(:retailer, name: "J.Crew - 5th Ave", company: @retailer_co)
     @retailer_store.add_stripe_id 
 
-    @admin_user = FactoryGirl.create(:user, store: @airtailor_store)
+    @admin_user = FactoryBot.create(:user, store: @airtailor_store)
     @admin_user.add_role "admin"
 
-    @retailer_user = FactoryGirl.create(:user, store: @retailer_store)
+    @retailer_user = FactoryBot.create(:user, store: @retailer_store)
     @retailer_user.add_role "retailer"
 
     @auth_headers = @retailer_user.create_new_auth_token

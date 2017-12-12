@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Charge, type: :model do
   describe "#initiate_charge" do
     before :each do
-      @payable = FactoryGirl.create(:retailer)
+      @payable = FactoryBot.create(:retailer)
 
-      @chargable = FactoryGirl.create(
+      @chargable = FactoryBot.create(
         :retailer_tailor_order,
         retailer: @payable,
         source: "React-Portal"

@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe Store, type: :model do
   context "when the store is valid" do
     before :each do
-      @store = FactoryGirl.create(:store)
+      @store = FactoryBot.create(:store)
     end
 
     it "defaults country to United States if no country provided" do
-      valid_store = FactoryGirl.create(:store, country: nil)
+      valid_store = FactoryBot.create(:store, country: nil)
       expect(valid_store.country).to eq("United States")
     end
 
@@ -46,7 +46,7 @@ RSpec.describe Store, type: :model do
     end
 
     it "is invalid without a name" do
-      invalid_store = FactoryGirl.build(:store, name: nil)
+      invalid_store = FactoryBot.build(:store, name: nil)
       expect(invalid_store).to_not be_valid
     end
   end

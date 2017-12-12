@@ -39,7 +39,9 @@ class Order < ApplicationRecord
 
 
   def self.retailer_view
-    where(dismissed: false).where(customer_alerted: false)
+    where(dismissed: false)
+    .where(customer_alerted: false)
+    .where.not("fulfilled = ? AND ship_to_store = ?", true, false)
   end
 
   def set_order_defaults

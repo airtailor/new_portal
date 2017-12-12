@@ -57,7 +57,8 @@ Rails.application.routes.draw do
 
     resources :charges
     post "/update_payment_method", to: "payments#update_payment_method"
-
     put "/users/:id/update_password", to: "users#update_password"
+
+     get "/reports/current_report", to: "reports#current_report"
   end
 end

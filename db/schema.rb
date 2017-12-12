@@ -51,17 +51,17 @@ ActiveRecord::Schema.define(version: 20171201141132) do
     t.string "name"
   end
 
-  create_table "charges", force: :cascade do |t|
-    t.integer  "amount"
-    t.string   "stripe_id"
-    t.string   "chargable_type"
-    t.integer  "chargable_id"
-    t.string   "payable_type"
-    t.integer  "payable_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.index ["chargable_type", "chargable_id"], name: "index_charges_on_chargable_type_and_chargable_id", using: :btree
-    t.index ["payable_type", "payable_id"], name: "index_charges_on_payable_type_and_payable_id", using: :btree
+  create_table "charges", id: :serial, force: :cascade do |t|
+    t.integer "amount"
+    t.string "stripe_id"
+    t.string "chargable_type"
+    t.integer "chargable_id"
+    t.string "payable_type"
+    t.integer "payable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chargable_type", "chargable_id"], name: "index_charges_on_chargable_type_and_chargable_id"
+    t.index ["payable_type", "payable_id"], name: "index_charges_on_payable_type_and_payable_id"
   end
 
   create_table "companies", id: :serial, force: :cascade do |t|
