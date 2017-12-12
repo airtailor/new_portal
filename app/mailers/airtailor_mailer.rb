@@ -29,5 +29,4 @@ class AirtailorMailer < ApplicationMailer
 
     mail(to: @recipient.email, subject: "New Air Tailor Messages")
   end
-
 end
