@@ -36,11 +36,6 @@ class Store < ApplicationRecord
     self.orders.by_type("WelcomeKit")
   end
 
-  def shippo_address
-    return address.for_shippo if address
-    return nil
-  end
-
   def open_orders
     self.orders.open_orders
   end
