@@ -120,7 +120,7 @@ class Customer < ApplicationRecord
   end
 
   def shippo_address
-    return address.shippo_addres if address = addresses.first
+    return address.shippo_address if address = addresses.first
 
     return {
       :name => self.name,
