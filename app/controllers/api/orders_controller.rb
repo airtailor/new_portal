@@ -37,7 +37,7 @@ class Api::OrdersController < ApplicationController
     items = data.first.items.as_json(include: [ :item_type, :alterations ])
 
     render :json => data.as_json(include: [
-        :tailor, :retailer, :customer,
+        :tailor, :retailer, customer: { methods: [:address] },
         shipments: { include: [ :source, :destination ]}
       ]).first.merge("items" => items)
   end

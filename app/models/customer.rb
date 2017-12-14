@@ -119,6 +119,10 @@ class Customer < ApplicationRecord
     "#{self.first_name} #{self.last_name}"
   end
 
+  def address
+    self.addresses.first || self.shippo_address
+  end
+
   def shippo_address
     return address.shippo_address if address = addresses.first
 
