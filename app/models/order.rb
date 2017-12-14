@@ -104,6 +104,18 @@ class Order < ApplicationRecord
     end
   end
 
+  def text_customer_order_arrived_at_tailor
+    customer = self.customer
+    name = customer.first_name
+    phone = customer.phone
+    order_no = self.id
+
+    customer_message = "Hi #{name}, just a heads up that your Air Tailor " + 
+      "order (##{order_no}) has been received! We're going to get to work."
+
+    SendSonar.message_customer(text: customer_message, to: phone)
+  end
+
   # This method is overwritten so that the 'type' attribute will
   # be rendered in the json response
   def serializable_hash options=nil
