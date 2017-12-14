@@ -19,6 +19,9 @@ class Api::Postmates
       raise e
     end
 
+    pickup_notes = pickup.street_two.blank? ? "" : "Unit: #{pickup.street_two}"
+    dropoff_notes = dropoff.street_two.blank? ? "" : "Unit: #{dropoff.street_two}"
+
     params = {
       quote_id: quote.id,
       manifest: postmates_manifest_content,
@@ -27,12 +30,12 @@ class Api::Postmates
       pickup_address: pickup_address,
       pickup_phone_number: pickup_contact.phone,
       pickup_business_name: "",
-      pickup_notes: "",
+      pickup_notes: pickup_notes,
       dropoff_name: dropoff_contact.name,
       dropoff_address: dropoff_address,
       dropoff_phone_number: dropoff_contact.phone,
       dropoff_business_name: "",
-      dropoff_notes: ""
+      dropoff_notes: dropoff_notes
     }
 
     begin
@@ -43,6 +46,6 @@ class Api::Postmates
   end
 
   def self.postmates_manifest_content
-    "Some stuff to send to postmates about a delivery."
+    "If you have problems with the delivery and cannot reach anyone at the pickup or dropoff phone, please call Brian at (616) 780-4457"
   end
 end
