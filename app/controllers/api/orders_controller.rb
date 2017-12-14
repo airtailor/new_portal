@@ -62,6 +62,7 @@ class Api::OrdersController < ApplicationController
 
     if @order_object
       tailor_assigned = @order_object.tailor.present?
+      @already_arrived = @order_object.arrived
     end
 
     @order_object.assign_attributes(order_params)
@@ -72,6 +73,10 @@ class Api::OrdersController < ApplicationController
 
       if params[:order][:provider_id] && !tailor_assigned
         @order_object.send_shipping_label_email_to_customer
+      end
+
+      if customer_should_get_arrived_text?
+        @order_object.text_customer_order_arrived_at_tailor
       end
 
       sql_includes = [
@@ -162,6 +167,13 @@ class Api::OrdersController < ApplicationController
   end
 
   private
+
+  def customer_should_get_arrived_text?
+    params[:order][:arrived] && 
+      !@already_arrived && 
+      @order_object.type == "TailorOrder" && 
+      @order_object.retailer == Retailer.first
+  end
 
   def set_order
     @order_relation = Order.where(id: params[:id])
