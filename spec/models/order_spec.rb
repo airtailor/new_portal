@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Order, type: :model do
   before :each do
-    co = FactoryBot.create(:company, name: "Air Tailor")
-    FactoryBot.create(:retailer, name: "Air Tailor", company: co)
+    @co = FactoryBot.create(:company, name: "Air Tailor")
+    @airtailor= FactoryBot.create(:retailer, name: "Air Tailor", company: @co)
   end
 
   it "is invalid without a retailer" do
@@ -18,9 +18,7 @@ RSpec.describe Order, type: :model do
 
   describe "has relationships with retailer and customers" do
     before :each do
-      co = FactoryBot.create(:company, name: "Air Tailor")
-      airtailor = FactoryBot.create(:retailer, name: "Air Tailor", company: co)
-      FactoryBot.create(:order, retailer: airtailor)
+      FactoryBot.create(:order, retailer: @airtailor)
     end
 
     it "has a relationship with retailer" do
@@ -34,36 +32,18 @@ RSpec.describe Order, type: :model do
 
   describe "#init" do
     it "adds the source Shopify by default" do
-      co = FactoryBot.create(:company, name: "Air Tailor")
-      airtailor = FactoryBot.create(:retailer, name: "Air Tailor", company: co)
-      order = FactoryBot.create(:order, retailer: airtailor)
+      order = FactoryBot.build(:order, retailer: @airtailor, source: nil)
+      order.set_order_defaults
       expect(order.source).to eq("Shopify")
     end
 
     it "adds the retailer Air Tailor by default" do
-      order = FactoryBot.create(:order)
+      order = FactoryBot.build(:order, retailer: nil, source: "Shopify")
+      order.set_order_defaults
       expect(order.retailer.name).to eq("Air Tailor")
     end
   end
 
-  describe "#set_arrived" do
-    before :each do
-      valid_order = FactoryBot.create(:order)
-      valid_order.set_arrived
-    end
-
-    it "set arrived to true" do
-      expect(Order.last.arrived).to eq(true)
-    end
-
-    it "adds the arrival date when the order arrives" do
-      expect(Order.last.arrival_date.today?).to eq(true)
-    end
-
-    # it "adds the due date when the order arrives" do
-    #   expect(Order.last.due_date).to eq(5.days.from_now.at_midnight)
-    # end
-  end
 
   describe "#fulfilled" do
     before :each do

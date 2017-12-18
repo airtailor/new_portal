@@ -13,7 +13,7 @@ class Order < ApplicationRecord
   belongs_to :tailor,   inverse_of: :orders, class_name: "Tailor",   foreign_key: "provider_id",
     optional: true
 
-  validates :retailer, presence: true
+  validates :retailer, :customer, presence: true
 
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}

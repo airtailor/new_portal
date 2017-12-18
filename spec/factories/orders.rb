@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :order do
+    source { "ReactPortal" }
     subtotal { Faker::Number.decimal(2) }
     total { Faker::Number.decimal(3) }
     customer { FactoryBot.create(:shopify_customer) }
