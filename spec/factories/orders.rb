@@ -12,6 +12,7 @@ FactoryBot.define do
   end
 
   factory :shopify_tailor_order, class: TailorOrder, parent: :order do
+    source { "Shopify" }
     tailor { FactoryBot.create(:tailor) }
   end
 
