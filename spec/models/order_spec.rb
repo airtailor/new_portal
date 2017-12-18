@@ -45,29 +45,12 @@ RSpec.describe Order, type: :model do
   end
 
 
-  describe "#fulfilled" do
-    before :each do
-      valid_order = FactoryBot.create(:order)
-      valid_order.set_fulfilled
-    end
-
-    it "adds the fulfilled date" do
-      expect(Order.last.fulfilled_date.today?).to eq(true)
-    end
-
-    it "set fulfilled to true" do
-      expect(Order.last.fulfilled).to eq(true)
-    end
-  end
-
   describe "#find_or_create" do
     it "creates a new order if it does not exist" do
-      order = FactoryBot.build(:order)
-      co = FactoryBot.create(:company, name: "Air Tailor")
-      airtailor = FactoryBot.create(:retailer, name: "Air Tailor", company: co)
+      order = FactoryBot.build(:shopify_tailor_order)
       created_order = Order.find_or_create(
         {
-          "id" => order.source_order_id,
+          "name" => "##{order.source_order_id}",
           "subtotal_price" => 1234,
           "total_price" => 5432
         },
@@ -78,9 +61,9 @@ RSpec.describe Order, type: :model do
     end
 
     it "finds the order if the source order id already exists in an order" do
-      order = FactoryBot.create(:order)
+      order = FactoryBot.create(:shopify_tailor_order)
       second_call = Order.find_or_create(
-        {"id" => order.source_order_id},
+        {"name" => "##{order.source_order_id}"},
         order.customer,
         order.source
       )

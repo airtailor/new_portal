@@ -161,6 +161,7 @@ class Order < ApplicationRecord
   end
 
 
+  # This method is only used by the Shopify Webhook
   def self.find_or_create(order_info, customer, source = "Shopify")
     order = self.find_or_create_by(source_order_id: order_info["name"].gsub("#", "").to_i, source: source) do |order|
       order.customer = customer
