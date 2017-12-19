@@ -60,11 +60,11 @@ class Item < ApplicationRecord
     end
   end
 
-  private
-
   def self.remove_number_from_item_name(item_name_with_number)
     item_name_with_number.split(" ")[0..-2].join(" ")
   end
+
+  private
 
   def self.grab_item_type_from_title(title)
     ItemType.find_or_create_by(name: title)
