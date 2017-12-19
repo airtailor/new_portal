@@ -1,4 +1,4 @@
-class Api::Sonar
+class Api::Shippo
   def self.build_label(entity)
     Shippo::API.token, Shippo::API.version = Credentials.shippo_key, Credentials.shippo_api_version
 
@@ -8,7 +8,7 @@ class Api::Sonar
       address_to: entity.destination.shippo_address,
       parcels: entity.get_parcel,
       async: false
-    }).th_indifferent_access
+    }).with_indifferent_access
 
     rate  = shippo[:rates].find {|r| r[:attributes].include? "BESTVALUE"}
     rate  ||= shippo[:rates].min_by{|r| r[:amount_local].to_i}
