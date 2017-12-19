@@ -19,5 +19,8 @@ FactoryBot.define do
   factory :shopify_welcome_kit, class: Hash, parent: :shopify_tailor_order_request do
     line_items { FactoryBot.build_list(:line_item, 5, title: "Air Tailor Welcome Kit") }
   end
-end
 
+  factory :shopify_tailor_order_random_quantity, class: Hash, parent: :shopify_tailor_order_request do
+    line_items { FactoryBot.build_list(:line_item_with_random_quantity, 5) }
+  end
+end

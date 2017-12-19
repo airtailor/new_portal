@@ -151,10 +151,16 @@ FactoryBot.define do
       "#{item} ##{n}"
      end
 
-     quantity { Faker::Number.number(1) }
+     quantity { 1 } 
      price { Faker::Commerce.price }
      grams { Faker::Number.number(4) }
      variant_title { "#{title.split(" ")[0]} #{alterations.sample}" }
+     skip_create
+     initialize_with { attributes }
+  end
+
+  factory :line_item_with_random_quantity, class: Hash, parent: :line_item do
+     quantity { Faker::Number.number(1) }
      skip_create
      initialize_with { attributes }
   end

@@ -98,5 +98,16 @@ RSpec.describe Api::ShopifyController, type: :controller do
         expect(TailorOrder.count).to eq(0)
       end
     end
+
+    context 'when the same item has a quantity larger than one' do 
+      it 'adds that many items to the item list and creates them' do 
+        request = FactoryBot.build(:shopify_tailor_order_random_quantity).to_json
+        quantity_count = JSON.parse(request)["line_items"]
+          .inject(0) { |prev, curr| prev + curr["quantity"].to_i }
+
+        post :receive, body: request
+        expect(Order.last.items.count).to eq(quantity_count)
+      end
+    end
   end
 end
