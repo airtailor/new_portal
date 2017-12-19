@@ -37,6 +37,7 @@ class Api::ShopifyController < ApplicationController
     order_type = tailor_order_or_welcome_kit(data)
     order = order_type.find_or_create(data, customer)
 
+    byebug
     if !order.id
       puts "\n\n\nshopify controller order not able to be created"
       puts "\norder: #{order}"
