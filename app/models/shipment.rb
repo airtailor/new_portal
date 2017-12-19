@@ -54,6 +54,7 @@ class Shipment < ApplicationRecord
     when MAIL
       if is_mail_shipment? && needs_label
         delivery = create_label(self)
+
         self.shipping_label  = delivery.try(:label_url)
         self.tracking_number = delivery.try(:tracking_number)
       end
@@ -74,6 +75,7 @@ class Shipment < ApplicationRecord
   def set_delivery_method(action)
     orders = self.orders
     source_model, dest_model = parse_src_dest(action)
+
     if delivery_can_be_executed?(source_model, dest_model, orders)
       self.source = get_address(source_model)
       if orders.any?{|o| o.ship_to_store} && dest_model == :customer

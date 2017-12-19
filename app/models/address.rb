@@ -111,8 +111,8 @@ class Address < ApplicationRecord
 
   def shippo_address
     contact = self.get_contact
-
-    if contact.type == "Tailor"
+    
+    if contact.class.name == "Tailor"
       name = "Air Tailor"
     else
       name = contact.name
