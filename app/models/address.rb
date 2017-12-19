@@ -111,8 +111,15 @@ class Address < ApplicationRecord
 
   def shippo_address
     contact = self.get_contact
+
+    if contact.type == "Tailor"
+      name = "Air Tailor"
+    else
+      name = contact.name
+    end
+
     return {
-      :name => contact.name,
+      :name => name,
       :street1 => "#{self.number} #{self.street}",
       :street2 => "#{self.unit} #{self.floor} #{self.street_two}",
       :city => self.city,
