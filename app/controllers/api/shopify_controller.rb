@@ -42,6 +42,7 @@ class Api::ShopifyController < ApplicationController
       puts "\norder: #{order}"
       puts "\ncustomer: #{customer}"
       puts "\n\n\n shopify json #{data}"
+      order.alert_for_bad_shopify_order
     else
       order.send_order_confirmation_text
     end

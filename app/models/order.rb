@@ -1,5 +1,6 @@
 class Order < ApplicationRecord
   include OrderConstants
+  include TextHelper
 
   has_many :items
   has_many :alterations, through: :items

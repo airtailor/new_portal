@@ -109,5 +109,22 @@ RSpec.describe Api::ShopifyController, type: :controller do
         expect(Order.last.items.count).to eq(quantity_count)
       end
     end
+
+    # this is hard to test
+    ##context 'when the order is unable to be completed' do 
+    #  it "sends a text alert notifying us of the failed order" do 
+    #    customer = FactoryBot.create(:customer, phone: "9045668701", email: "jaredcmurphy@gmail.com")
+    #    new_customer = FactoryBot.build(:api_shopify_customer, phone: "1231231234", email: "jaredcmurphy@gmail.com")
+    #    request = FactoryBot.build(:shopify_tailor_order_request, customer: new_customer)
+    #    order_count = Order.count
+
+    #    byebug
+    #    post :receive, body: request.to_json
+    #    byebug
+    #    expect(Order.count).to eq(order_count)
+    #    expect(order.alert_for_bad_shopify_order.include?(request_body["name"].gsub("#", ""))).to be(true)
+    #  end
+
+    #end
   end
 end
