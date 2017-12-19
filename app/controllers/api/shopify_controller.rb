@@ -14,7 +14,6 @@ class Api::ShopifyController < ApplicationController
   # make shipping thing
 
   def receive
-
     data = JSON.parse(request.body.read)
 
     phone = data["customer"]["default_address"]["phone"]
@@ -44,11 +43,8 @@ class Api::ShopifyController < ApplicationController
       puts "\ncustomer: #{customer}"
       puts "\n\n\n shopify json #{data}"
     else
-      byebug
       order.send_order_confirmation_text
     end
-
-    byebug
 
     Item.create_items_shopify(order, data["line_items"]) if order_type == TailorOrder
     render json: {}, status: 200

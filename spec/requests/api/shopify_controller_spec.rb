@@ -17,19 +17,19 @@ RSpec.describe Api::ShopifyController, type: :controller do
     it "creates items" do
       item_count = Item.count
       request_body = FactoryBot.build(:shopify_tailor_order_request)
-      post :receive, request_body.to_json
+      post :receive, body: request_body.to_json
       expect(Item.count > item_count).to be(true)
     end
 
     it "ties items to their alterations" do
        request_body = FactoryBot.build(:shopify_tailor_order_request)
-       post :receive, request_body.to_json
+       post :receive, body: request_body.to_json
        expect(Item.first.alterations.first).to eq(Alteration.first)
     end
 
     it "makes Air Tailor the Retailer" do
       request_body = FactoryBot.build(:shopify_tailor_order_request)
-      post :receive, request_body.to_json
+      post :receive, body: request_body.to_json
       expect(TailorOrder.first.retailer.name).to eq("Air Tailor")
       expect(TailorOrder.first.retailer.company.name).to eq("Air Tailor")
     end
@@ -43,7 +43,7 @@ RSpec.describe Api::ShopifyController, type: :controller do
             id: existing_customer[:shopify_id]
           )
         )
-        2.times { post :receive, request_body.to_json }
+        2.times { post :receive, body: request_body.to_json }
         expect(Customer.all.count == cust_count).to be(true)
       end
     end
@@ -52,7 +52,7 @@ RSpec.describe Api::ShopifyController, type: :controller do
       it "creates a new customer" do
         cust_count = Customer.all.count
         request_body = FactoryBot.build(:shopify_tailor_order_request)
-        post :receive, request_body.to_json
+        post :receive, body: request_body.to_json
         expect(Customer.all.count > cust_count).to be(true)
       end
     end
@@ -61,16 +61,16 @@ RSpec.describe Api::ShopifyController, type: :controller do
       it "creates only one tailor order" do
         request_one = FactoryBot.build(:shopify_tailor_order_request).to_json
         request_two = request_one
-        post :receive, request_one
-        post :receive, request_two
+        post :receive, body: request_one
+        post :receive, body: request_two
         expect(TailorOrder.count).to eq(1)
       end
 
       it "creates only one welcome kit" do
         request_one = FactoryBot.build(:shopify_welcome_kit).to_json
         request_two = request_one
-        post :receive, request_one
-        post :receive, request_two
+        post :receive, body: request_one
+        post :receive, body: request_two
         
         expect(WelcomeKit.count).to eq(1)
       end
@@ -78,9 +78,9 @@ RSpec.describe Api::ShopifyController, type: :controller do
       it "does not create duplicate items on the same order" do
         request_one = FactoryBot.build(:shopify_tailor_order_request).to_json
         request_two = request_one
-        post :receive, request_one
+        post :receive, body: request_one
         item_count = Item.count
-        post :receive, request_two
+        post :receive, body: request_two
         expect(Item.count == item_count).to be(true)
       end
     end
@@ -88,13 +88,13 @@ RSpec.describe Api::ShopifyController, type: :controller do
     context "when the order is a welcome kit" do
       it "creates a welcome kit", :focus => true do
         request_body = FactoryBot.build(:shopify_welcome_kit).to_json
-        post :receive, request_body
+        post :receive, body: request_body
         expect(WelcomeKit.count).to eq(1)
       end
 
       it "does not create a tailor order" do 
         request_body = FactoryBot.build(:shopify_welcome_kit).to_json
-        post :receive, request_body
+        post :receive, body: request_body
         expect(TailorOrder.count).to eq(0)
       end
     end

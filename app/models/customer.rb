@@ -59,7 +59,6 @@ class Customer < ApplicationRecord
   end
 
   def self.find_or_create_shopify(shopify_customer)
-    byebug
     phone = shopify_customer["default_address"]["phone"]
       .gsub("(", "")
       .gsub(")", "")

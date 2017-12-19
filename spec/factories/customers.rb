@@ -3,7 +3,7 @@ FactoryBot.define do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     email { Faker::Internet.email }
-    phone { 9045668701 }
+    phone { "9045668701" }
     #street1 { Faker::Address.street_address }
     #street2 { Faker::Address.secondary_address }
     #city { Faker::Address.city }
@@ -22,4 +22,3 @@ FactoryBot.define do
     shopify_id { Faker::Number.number(8) }
   end
 end
-

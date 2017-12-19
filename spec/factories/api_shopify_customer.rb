@@ -16,7 +16,7 @@ FactoryBot.define do
       zip { Faker::Address.zip }
       country_name { "United States" }
       country_code { "US" }
-      phone { Faker::Number.number(10) }
+      phone { "9045668701" }
     end
 
     default_address do
