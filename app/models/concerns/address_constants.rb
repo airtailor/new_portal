@@ -696,6 +696,7 @@ module AddressConstants
     DIRECTION_CODES, DIRECTIONAL
   ].each do |constant|
     def constant.get(code)
+      byebug if !code
       self[code.upcase.gsub(".", "")]
     end
   end

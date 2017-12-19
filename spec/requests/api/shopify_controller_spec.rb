@@ -10,7 +10,7 @@ RSpec.describe Api::ShopifyController, type: :controller do
     it "creates a new order" do
       order_count = TailorOrder.count
       request_body = FactoryBot.build(:shopify_tailor_order_request)
-      post :receive, request_body.to_json
+      post :receive, body: request_body.to_json
       expect(TailorOrder.count > order_count).to be(true)
     end
 
