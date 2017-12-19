@@ -64,40 +64,40 @@ class Api::ShopifyController < ApplicationController
 
   def update_line_items_with_quantity(line_items)
     total_quantity = line_items.inject(0) { |prev, curr| prev + curr["quantity"].to_i }
-    if total_quantity > 5
 
-      items = []
-      line_items.each do |x|
-        x["quantity"].to_i.times { items.push(x) }
-      end
-
-      numberless_items = items.map do |item|
-        if item["title"].count("0-9") > 0
-          item["title"] = item["title"].split(" ")[0..-2].join(" ")
-        end
-        item
-      end
-
-      item_tracker = {}
-      numbered_items = numberless_items.map do |item|
-
-        if !item_tracker[item["title"]]
-          item_tracker[item["title"]] = 1
-        else
-          item_tracker[item["title"]] = item_tracker[item["title"]] + 1
-        end
-
-        new_title = "#{item["title"]} ##{item_tracker[item["title"]]}"
-
-        # need to make sure we dont modify the original object in memeory
-        new_item = item.dup
-
-        new_item["title"] = new_title
-        new_item
-      end
-      return numbered_items
+    items = []
+    line_items.each do |x|
+      x["quantity"].to_i.times { items.push(x) }
     end
 
-    return line_items
+    numberless_items = items.map do |item|
+      if item["title"].count("0-9") > 0
+        item["title"] = item["title"].split(" ")[0..-2].join(" ")
+      end
+      item
+    end
+
+    filtered_items = numberless_items.reject do |item|
+      item["title"] == item["variant_title"]
+    end
+
+    item_tracker = {}
+    numbered_items = filtered_items.map do |item|
+
+      if !item_tracker[item["title"]]
+        item_tracker[item["title"]] = 1
+      else
+        item_tracker[item["title"]] = item_tracker[item["title"]] + 1
+      end
+
+      new_title = "#{item["title"]} ##{item_tracker[item["title"]]}"
+
+      # need to make sure we dont modify the original object in memeory
+      new_item = item.dup
+
+      new_item["title"] = new_title
+      new_item
+    end
+    return numbered_items
   end
 end

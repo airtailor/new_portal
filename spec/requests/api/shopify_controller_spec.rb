@@ -100,7 +100,7 @@ RSpec.describe Api::ShopifyController, type: :controller do
     end
 
     context 'when the same item has a quantity larger than one' do 
-      it 'adds that many items to the item list and creates them' do 
+      it 'creates the correct number of items' do 
         request = FactoryBot.build(:shopify_tailor_order_random_quantity).to_json
         quantity_count = JSON.parse(request)["line_items"]
           .inject(0) { |prev, curr| prev + curr["quantity"].to_i }
