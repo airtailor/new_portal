@@ -54,6 +54,8 @@ Rails.application.routes.draw do
     post "/customers/:customer_id/measurements", to: "measurements#create"
 
     post "/shopify_order", to: "shopify#receive"
+    post "/postmates_messenger", to: "postmates#receive"
+    post "/shippo_hook", to: "shippo#receive"
 
     get "/reports/current_report", to: "reports#current_report"
   end
