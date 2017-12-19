@@ -12,10 +12,11 @@ FactoryBot.define do
       address1 { Faker::Address.street_address }
       address2 { Faker::Address.secondary_address }
       city { Faker::Address.city }
-      state { Faker::Address.state }
+      province { Faker::Address.state }
       zip { Faker::Address.zip }
-      country_name { Faker::Address.country }
-      phone { Faker::Number.number(10) }
+      country_name { "United States" }
+      country_code { "US" }
+      phone { "9045668701" }
     end
 
     default_address do
@@ -26,9 +27,10 @@ FactoryBot.define do
         address1: address1,
         address2: address2,
         city: city,
-        state: state,
+        province: province,
         zip: zip,
-        country_name: country_name,
+        country_name: "United States",
+        country_code: "US",
         phone: phone
       }
     end
