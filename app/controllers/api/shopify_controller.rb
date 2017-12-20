@@ -35,21 +35,27 @@ class Api::ShopifyController < ApplicationController
     end
 
     order_type = tailor_order_or_welcome_kit(data)
-    order = order_type.find_or_create(data, customer)
-
-    if !order.id
-      puts "\n\n\nshopify controller order not able to be created"
-      puts "\norder: #{order}"
-      puts "\ncustomer: #{customer}"
-      puts "\n\n\n shopify json #{data}"
-      order.alert_for_bad_shopify_order
-    else
-      order.send_order_confirmation_text
+    begin
+      order = order_type.find_or_create(data, customer)
+    rescue => e
+      if !order
+        order = Order.new({source_order_id: data["name"], source: "Shopify", retailer: Retailer.first})
+        customer = Customer.find_or_create_shopify(data["customer"])
+        order.customer = customer
+        puts "\n\n\nshopify controller order not able to be created"
+        puts "\norder: #{order} #{order.source_order_id} #{data["name"]}"
+        puts "\ncustomer: #{customer}"
+        puts "\n\n\n shopify json #{data}"
+        order.alert_for_bad_shopify_order
+      end
     end
 
-    items = update_line_items_with_quantity(data["line_items"]) || data["line_items"]
+    if order.id
+      order.send_order_confirmation_text
+      items = update_line_items_with_quantity(data["line_items"]) || data["line_items"]
+      Item.create_items_shopify(order, items) if order_type == TailorOrder
+    end
 
-    Item.create_items_shopify(order, items) if order_type == TailorOrder
     render json: {}, status: 200
   end
 
