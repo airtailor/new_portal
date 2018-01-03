@@ -41,7 +41,7 @@ class Item < ApplicationRecord
     airtailor_message = "Congrats :) An order with #{items.count} items" +
       " was just placed at #{order.retailer.name} for $#{order.total}!"
 
-    phone_list = ["9045668701", "6167804457", "6302352544", "6179607490"]
+    phone_list = ["9045668701", "6167804457", "6302352544", "6179607490", "9283008567"]
     phone_list.each do |phone|
       SendSonar.message_customer(text: airtailor_message, to: phone)
     end
@@ -60,11 +60,11 @@ class Item < ApplicationRecord
     end
   end
 
-  private
-
   def self.remove_number_from_item_name(item_name_with_number)
     item_name_with_number.split(" ")[0..-2].join(" ")
   end
+
+  private
 
   def self.grab_item_type_from_title(title)
     ItemType.find_or_create_by(name: title)

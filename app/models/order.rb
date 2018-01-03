@@ -1,5 +1,6 @@
 class Order < ApplicationRecord
   include OrderConstants
+  include TextHelper
 
   has_many :items
   has_many :alterations, through: :items
@@ -110,7 +111,7 @@ class Order < ApplicationRecord
     phone = customer.phone
     order_no = self.id
 
-    customer_message = "Hi #{name}, just a heads up that your Air Tailor " + 
+    customer_message = "Hi #{name}, just a heads up that your Air Tailor " +
       "order (##{order_no}) has been received! We're going to get to work."
 
     SendSonar.message_customer(text: customer_message, to: phone)

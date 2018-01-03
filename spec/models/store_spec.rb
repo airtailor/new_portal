@@ -6,9 +6,10 @@ RSpec.describe Store, type: :model do
     expect(invalid_store).to_not be_valid
   end
 
-  it "defaults country to United States if no country provided" do 
-    valid_store = FactoryBot.create(:store, country: nil)
-    puts "COUNTRY #{valid_store.country}"
-    expect(valid_store.country).to eq("United States")
-  end
+  # this test should really be on address
+  #it "defaults country to United States if no country provided" do 
+  #  valid_store = FactoryBot.create(:store, country: nil)
+  #  puts "COUNTRY #{valid_store.country}"
+  #  expect(valid_store.country).to eq("United States")
+  #end
 end

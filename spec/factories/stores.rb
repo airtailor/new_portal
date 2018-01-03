@@ -25,5 +25,6 @@ FactoryBot.define do
   end
 
   factory :tailor, class: Tailor, parent: :store do
+    address { FactoryBot.create(:tailor_address) }
   end
 end
