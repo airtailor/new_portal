@@ -52,4 +52,13 @@ module DeliveryHelper
     end
   end
 
+  def self.update_messenger_status(data)
+    delivery_id = data["delivery_id"]
+    delivery_status = data["status"]
+    shipment = Shipment.find_by(postmates_delivery_id: delivery_id)
+
+    if delivery_status != shipment.status
+      shipment.update_attributes(status: delivery_status)
+    end
+  end
 end
