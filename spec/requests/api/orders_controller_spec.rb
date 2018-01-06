@@ -63,6 +63,27 @@ RSpec.describe Api::OrdersController, type: :controller do
         expect(data.count).to eq(1)
       end
     end
+
+    #it "allows the user to search by customer's first name" do 
+    #    @auth_headers = @retailer_user.create_new_auth_token
+    #    get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
+    #    data = JSON.parse(response.body)
+    #    expect(data.count).to eq(1)
+    #end
+
+    #it "allows the user to search by customer's last name" do 
+    #    @auth_headers = @retailer_user.create_new_auth_token
+    #    get :search, {query: "#{@order_one.customer.last_name}"}.merge(@auth_headers)
+    #    data = JSON.parse(response.body)
+    #    expect(data.count).to eq(1)
+    #end
+
+    #it "allows the user to search by order id" do 
+    #    @auth_headers = @retailer_user.create_new_auth_token
+    #    get :search, {query: "#{@order_one.id}"}.merge(@auth_headers)
+    #    data = JSON.parse(response.body)
+    #    expect(data.count).to eq(1)
+    #end
   end
 
   describe "GET #archived" do
