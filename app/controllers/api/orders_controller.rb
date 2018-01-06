@@ -137,7 +137,7 @@ class Api::OrdersController < ApplicationController
     results = Order.includes(:customer).joins(:customer).order(created_at: :desc)
       .advanced_search(
         {
-          id: query, customers: { first_name: query, last_name: query }
+          id: query, customers: { first_name: query, last_name: query, first_name: query.split.first, last_name: query.split.last }
         }, false).select { |order|
           (order.retailer == store || order.tailor == store || current_user.admin?)
         }
