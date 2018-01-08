@@ -37,6 +37,8 @@ gem 'httparty'
 gem 'hashie'
 gem 'textacular', '~> 5.0'
 
+gem "pgbackups-archive"
+
 # Background job processing + asymc
 gem 'sidekiq'
 
