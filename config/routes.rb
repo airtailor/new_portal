@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     }
 
   namespace :api, defaults: {format: 'json'} do
-    get '/stores/:id/orders_and_messages_count', to: "stores#orders_and_messages_count"
+    get '/stores/:id/orders_count', to: "stores#orders_count"
     put "/stores/:id/orders/alert_customers", to: "orders#alert_customers"
 
     get "/orders/search/:query", to: "orders#search"
@@ -33,9 +33,6 @@ Rails.application.routes.draw do
 
     resources :stores do
       resources :orders
-      resources :conversations do
-        resources :messages
-      end
     end
 
     resources :users, only: [:index]

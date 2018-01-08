@@ -11,7 +11,6 @@ class Api::StoresController < ApplicationController
       include: [ :address ],
       methods: [
         :active_orders_count,
-        :unread_messages_count,
         :late_orders_count,
         :transit_to_tailor_count
       ]
@@ -44,10 +43,9 @@ class Api::StoresController < ApplicationController
     end
   end
 
-  def orders_and_messages_count
+  def orders_count
     @store = current_user.store
     render :json =>  {
-      unread_messages_count: @store.unread_messages_count,
       active_orders_count: @store.active_orders_count,
       late_orders_count: @store.late_orders_count
     }
