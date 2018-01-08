@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201141132) do
+ActiveRecord::Schema.define(version: 20180108150246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,15 +58,6 @@ ActiveRecord::Schema.define(version: 20171201141132) do
     t.integer "hq_store_id"
     t.index ["hq_store_id"], name: "index_companies_on_hq_store_id"
     t.index ["name"], name: "index_companies_on_name", unique: true
-  end
-
-  create_table "conversations", id: :serial, force: :cascade do |t|
-    t.integer "recipient_id"
-    t.integer "sender_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
-    t.index ["sender_id"], name: "index_conversations_on_sender_id"
   end
 
   create_table "customer_addresses", id: :serial, force: :cascade do |t|
@@ -134,20 +125,6 @@ ActiveRecord::Schema.define(version: 20171201141132) do
     t.float "elbow"
     t.float "shoulder_to_waist"
     t.index ["customer_id"], name: "index_measurements_on_customer_id"
-  end
-
-  create_table "messages", id: :serial, force: :cascade do |t|
-    t.text "body"
-    t.integer "store_id"
-    t.integer "conversation_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "sender_read"
-    t.boolean "recipient_read"
-    t.integer "order_id"
-    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
-    t.index ["order_id"], name: "index_messages_on_order_id"
-    t.index ["store_id"], name: "index_messages_on_store_id"
   end
 
   create_table "orders", id: :serial, force: :cascade do |t|
@@ -271,9 +248,6 @@ ActiveRecord::Schema.define(version: 20171201141132) do
   end
 
   add_foreign_key "measurements", "customers"
-  add_foreign_key "messages", "conversations"
-  add_foreign_key "messages", "orders"
-  add_foreign_key "messages", "stores"
   add_foreign_key "stores", "addresses"
   add_foreign_key "stores", "stores", column: "default_tailor_id"
   add_foreign_key "users", "stores"
