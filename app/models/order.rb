@@ -1,4 +1,4 @@
-class Order < ApplicationRecord
+class order < applicationrecord
   include OrderConstants
   include TextHelper
 
@@ -58,7 +58,11 @@ class Order < ApplicationRecord
       date = DateTime.now.in_time_zone.midnight
 
       self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
-      self.update_attributes(due_date: date + 6.days) if !self.due_date
+      # add the due date if the order has been marked as arrived 
+      # but does not have a due date yet
+      self.update_attributes(due_date: date + 6.days) if self.arrived && !self.due_date
+      #self.update_attributes(due_date: date + 6.days) if !self.due_date
+
       self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
       self.update_attributes(late: true) if self.due_date && self.due_date < date
   end
