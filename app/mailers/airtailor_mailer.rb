@@ -19,7 +19,7 @@ class AirtailorMailer < ApplicationMailer
     attachments["logo-white.png"] = File.read("#{Rails.root}/app/assets/images/logo-white.png")
     attachments["balloon-white.png"] = File.read("#{Rails.root}/app/assets/images/balloon-white.png")
 
-    mail(to: @customer.email, subject: "Ship Your Clothes To Air Tailor! (#{@order.id}")
+    mail(to: @customer.email, subject: "Ship Your Clothes To Air Tailor! (#{@order.id})")
   end
 
   def message_email(sender, recipient, message)
