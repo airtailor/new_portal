@@ -1,4 +1,4 @@
-class order < applicationrecord
+class Order < ApplicationRecord
   include OrderConstants
   include TextHelper
 
