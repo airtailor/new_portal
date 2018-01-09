@@ -54,7 +54,7 @@ module DeliveryHelper
 
   def self.update_messenger_status(data)
     delivery_id = data["delivery_id"]
-    delivery_status = data["status"]
+    delivery_status = data["data"]["status"]
     shipment = Shipment.find_by(postmates_delivery_id: delivery_id)
 
     if delivery_status != shipment.status
