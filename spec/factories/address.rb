@@ -11,4 +11,8 @@ FactoryBot.define do
   factory :tailor_address, class: Address, parent: :address do
     address_type { "tailor" }
   end
+
+  factory :retailer_address, class: Address, parent: :address do 
+    address_type { "retailer" }
+  end
 end
