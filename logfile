@@ -6,3 +6,8 @@
 2017-11-22 23:58:21.498 EST [11044] ERROR:  null value in column "customer_id" violates not-null constraint
 2017-11-22 23:58:21.498 EST [11044] DETAIL:  Failing row contains (4311, React-Portal, null, null, TailorOrder, f, 2017-11-23 04:58:21.496966, 2017-11-23 04:58:21.496966, f, f, , null, null, 15.5, null, 4, 2, 2017-11-29 00:00:00, null, null, 230, f, f, f).
 2017-11-22 23:58:21.498 EST [11044] STATEMENT:  INSERT INTO "orders" ("source", "type", "created_at", "updated_at", "requester_notes", "total", "provider_id", "requester_id", "due_date", "weight", "ship_to_store") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING "id"
+2018-01-10 11:50:46.101 EST [3670] LOG:  listening on IPv6 address "::1", port 5432
+2018-01-10 11:50:46.101 EST [3670] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2018-01-10 11:50:46.102 EST [3670] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2018-01-10 11:50:46.135 EST [3671] LOG:  database system was shut down at 2018-01-09 18:18:53 EST
+2018-01-10 11:50:46.139 EST [3670] LOG:  database system is ready to accept connections
