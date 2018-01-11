@@ -67,7 +67,7 @@ class Api::StoresController < ApplicationController
   end
 
   def permitted_store_fields
-    [ :name, :phone, :company_id, :default_tailor_id, :type ]
+    [ :name, :phone, :company_id, :default_tailor_id, :type, :agrees_to_terms ]
   end
 
   def required_address_fields

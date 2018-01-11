@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180108150246) do
+ActiveRecord::Schema.define(version: 20180110165054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,6 +205,7 @@ ActiveRecord::Schema.define(version: 20180108150246) do
     t.string "name", null: false
     t.integer "address_id"
     t.integer "default_tailor_id"
+    t.boolean "agrees_to_terms", default: false
     t.index ["address_id"], name: "index_stores_on_address_id"
     t.index ["company_id"], name: "index_stores_on_company_id"
     t.index ["default_tailor_id"], name: "index_stores_on_default_tailor_id", where: "((type)::text = 'Retailer'::text)"
