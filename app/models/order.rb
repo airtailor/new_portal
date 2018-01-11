@@ -58,7 +58,7 @@ class Order < ApplicationRecord
       date = DateTime.now.in_time_zone.midnight
 
       self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
-      # add the due date if the order has been marked as arrived 
+      # add the due date if the order has been marked as arrived
       # but does not have a due date yet
       self.update_attributes(due_date: date + 6.days) if self.arrived && !self.due_date
       #self.update_attributes(due_date: date + 6.days) if !self.due_date
@@ -134,6 +134,11 @@ class Order < ApplicationRecord
       customer_message = "Good news, #{customer.first_name.capitalize} -- your " +
         "Air Tailor order (# #{self.id}) is finished and is on its way to you! " +
         "Here's your USPS tracking number: #{tracking_number}"
+      SendSonar.message_customer(text: customer_message, to: customer.phone)
+    elsif self.fulfilled && self.ship_to_store && (self.type != "WelcomeKit")
+      customer = self.customer
+      customer_message = "Good news, #{customer.first_name.capitalize}! Your " +
+        "Air Tailor order (##{self.id}) is finished and is on its way back to #{self.retailer.name}. You'll receive a text when it's ready for you : )"
       SendSonar.message_customer(text: customer_message, to: customer.phone)
     end
   end
