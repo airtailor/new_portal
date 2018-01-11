@@ -19,6 +19,12 @@ class Api::StoresController < ApplicationController
 
   def update
     @store.assign_attributes(store_params)
+
+    puts "\n\n\n\n\n\n"
+    puts "#{@store}"
+    puts "\n\n\n\n"
+    puts "#{store_params}"
+    
     unless @store.set_address(address_params)
       @store.errors.add(:invalid_address, 'Invalid address params.')
     end
@@ -32,6 +38,7 @@ class Api::StoresController < ApplicationController
 
   def create
     @store = Store.new(store_params)
+
     unless @store.set_address(address_params)
       @store.errors.add(:invalid_address, message: 'Invalid address params.')
     end
