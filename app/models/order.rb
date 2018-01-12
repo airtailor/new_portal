@@ -158,8 +158,9 @@ class Order < ApplicationRecord
 
     if self.retailer.name != "Air Tailor"
       customer_message = "Hey #{first_name.capitalize}, your Air " +
-        "Tailor order (##{self.id}) has been placed and we are SO excited to " +
-        "get to work. We'll text you updates along the way. Thank you!"
+        "Tailor order (##{self.id}) has been placed. We're SO excited to " +
+        "get to work! We'll text you updates along the way. Questions? Text us " +
+        ": ) Thank you!"
 
         m_url = "https://cdn.shopify.com/s/files/1/0184/1540/files/dancing_kid.gif?9975520961070565248"
         SendSonar.message_customer(
