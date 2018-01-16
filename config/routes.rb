@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     get '/stores/:id/orders_count', to: "stores#orders_count"
     put "/stores/:id/orders/alert_customers", to: "orders#alert_customers"
+    put "/stores/:id/orders/customer_pickup", to: "orders#customer_pickup"
 
     get "/orders/search/:query", to: "orders#search"
     get "/orders/archived", to: "orders#archived"
