@@ -61,4 +61,7 @@ module DeliveryHelper
       shipment.update_attributes(status: delivery_status)
     end
   end
+
+  def self.update_mail_status(data)
+  end
 end

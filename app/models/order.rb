@@ -36,10 +36,9 @@ class Order < ApplicationRecord
    ((Date.today-13)..Date.today).select &:monday?
   end
 
-
   def self.retailer_view
     where(dismissed: false)
-    .where(customer_alerted: false)
+    .where(customer_picked_up: false)
     .where.not("fulfilled = ? AND ship_to_store = ?", true, false)
   end
 
