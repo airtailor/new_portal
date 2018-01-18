@@ -54,12 +54,13 @@ class Order < ApplicationRecord
   end
 
   def parse_order_lifecycle_stage
-      date = DateTime.now.in_time_zone.midnight
+      due_date = DateTime.now.in_time_zone.midnight
+      date = DateTime.now
 
       self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
       # add the due date if the order has been marked as arrived
       # but does not have a due date yet
-      self.update_attributes(due_date: date + 6.days) if self.arrived && !self.due_date
+      self.update_attributes(due_date: due_date + 6.days) if self.arrived && !self.due_date
       #self.update_attributes(due_date: date + 6.days) if !self.due_date
 
       self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
