@@ -1,5 +1,5 @@
 class Api::OrdersController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :alert_customers]
+  before_action :authenticate_user!, except: [:new, :create, :edit, :update, :alert_customers, :customer_pickup]
   before_action :set_order, only: [:show, :update]
 
   def index
@@ -91,7 +91,7 @@ class Api::OrdersController < ApplicationController
                   shipments: { include: [ :source, :destination ]},
                 ]).first.merge('items' => items)
     else
-      byebug
+      render :json => {errors: @order_object.errors}
     end
   end
 
@@ -166,12 +166,18 @@ class Api::OrdersController < ApplicationController
     render :json => {status: 200}
   end
 
+  def customer_pickup
+    orders = Order.where(id: params[:orders])
+    orders.update_all(customer_picked_up: true)
+    render :json => {status: 200}
+  end
+
   private
 
   def customer_should_get_arrived_text?
-    params[:order][:arrived] && 
-      !@already_arrived && 
-      @order_object.type == "TailorOrder" && 
+    params[:order][:arrived] &&
+      !@already_arrived &&
+      @order_object.type == "TailorOrder" &&
       @order_object.retailer == Retailer.first
   end
 

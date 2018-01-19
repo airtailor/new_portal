@@ -31,7 +31,11 @@ class Store < ApplicationRecord
   end
 
   def open_orders
-    self.orders.open_orders
+    if self.type == "Tailor"
+      self.orders.tailor_open_orders
+    elsif self.type == "Retailer"
+      self.orders.open_orders
+    end
   end
 
   def retailer_orders

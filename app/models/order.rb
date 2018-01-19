@@ -18,6 +18,7 @@ class Order < ApplicationRecord
 
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
+  scope :customer_picked_up, -> bool { where(customer_picked_up: bool)}
   scope :assigned, -> bool { where(provider_id: nil) }
   scope :unassigned, -> bool { where.not(provider_id: nil) }
 
@@ -25,7 +26,8 @@ class Order < ApplicationRecord
   scope :late, -> bool { where(late: bool) }
 
   scope :past_due, -> bool { where('due_date <= ?', Date.today) }
-  scope :open_orders, -> { order(:due_date).fulfilled(false) }
+  scope :open_orders, -> { order(:due_date).customer_picked_up(false) }
+  scope :tailor_open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :not_dismissed, -> { where(dismissed: false) }
   scope :by_date, -> (start, stop) { where('fulfilled_date BETWEEN ? AND ?', start, stop) }
@@ -36,10 +38,9 @@ class Order < ApplicationRecord
    ((Date.today-13)..Date.today).select &:monday?
   end
 
-
   def self.retailer_view
     where(dismissed: false)
-    .where(customer_alerted: false)
+    .where(customer_picked_up: false)
     .where.not("fulfilled = ? AND ship_to_store = ?", true, false)
   end
 
@@ -55,12 +56,13 @@ class Order < ApplicationRecord
   end
 
   def parse_order_lifecycle_stage
-      date = DateTime.now.in_time_zone.midnight
+      due_date = DateTime.now.in_time_zone.midnight
+      date = DateTime.now
 
       self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
       # add the due date if the order has been marked as arrived
       # but does not have a due date yet
-      self.update_attributes(due_date: date + 6.days) if self.arrived && !self.due_date
+      self.update_attributes(due_date: due_date + 6.days) if self.arrived && !self.due_date
       #self.update_attributes(due_date: date + 6.days) if !self.due_date
 
       self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
