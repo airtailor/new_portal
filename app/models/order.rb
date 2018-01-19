@@ -27,6 +27,7 @@ class Order < ApplicationRecord
 
   scope :past_due, -> bool { where('due_date <= ?', Date.today) }
   scope :open_orders, -> { order(:due_date).customer_picked_up(false) }
+  scope :tailor_open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :not_dismissed, -> { where(dismissed: false) }
   scope :by_date, -> (start, stop) { where('fulfilled_date BETWEEN ? AND ?', start, stop) }
