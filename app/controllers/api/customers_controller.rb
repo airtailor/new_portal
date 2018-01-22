@@ -68,7 +68,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def permitted_customer_fields
-    [ :first_name, :last_name, :phone, :email, :agrees_to_terms, :customer ]
+    [ :first_name, :last_name, :phone, :email, :agrees_to_01_10_2018, :customer ]
   end
 
   def required_address_fields
