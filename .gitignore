@@ -21,6 +21,8 @@
 # Ignore Byebug command history file.
 .byebug_history
 
+latest.dump
+
 *.swo
 *.swp
 
