@@ -2,14 +2,14 @@ class CreateOrders < ActiveRecord::Migration[5.0]
   def change
     create_table :orders do |t|
       t.string :source, null: false
-      t.integer :source_order_id 
+      t.integer :source_order_id
       t.integer :customer_id, null: false
       t.string :type
       t.boolean :fulfilled, default: false
-      t.timestamps :fullfilled_date
+      t.datetime :fullfilled_date
       t.boolean :arrived, default: false
-      t.timestamps :arrived_date
-      t.timestamps :due_date
+      t.datetime :arrived_date
+      t.datetime :due_date
       t.boolean :late, default: false
       t.text :requester_notes
       t.text :provider_notes
