@@ -6,10 +6,10 @@ class CreateOrders < ActiveRecord::Migration[5.0]
       t.integer :customer_id, null: false
       t.string :type
       t.boolean :fulfilled, default: false
-      t.datetime :fullfilled_date
+      t.timestamps :fullfilled_date
       t.boolean :arrived, default: false
-      t.datetime :arrived_date
-      t.datetime :due_date
+      t.timestamps :arrived_date
+      t.timestamps :due_date
       t.boolean :late, default: false
       t.text :requester_notes
       t.text :provider_notes
