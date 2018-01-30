@@ -19,6 +19,7 @@ class Order < ApplicationRecord
   scope :by_type, -> type { where(type: type) }
   scope :fulfilled, -> bool { where(fulfilled: bool)}
   scope :customer_picked_up, -> bool { where(customer_picked_up: bool)}
+  scope :ship_to_store, -> bool { where(ship_to_store: bool)}
   scope :assigned, -> bool { where(provider_id: nil) }
   scope :unassigned, -> bool { where.not(provider_id: nil) }
 
@@ -26,7 +27,7 @@ class Order < ApplicationRecord
   scope :late, -> bool { where(late: bool) }
 
   scope :past_due, -> bool { where('due_date <= ?', Date.today) }
-  scope :open_orders, -> { order(:due_date).customer_picked_up(false) }
+  scope :open_orders, -> { order(:due_date).customer_picked_up(false).ship_to_store(true) }
   scope :tailor_open_orders, -> { order(:due_date).fulfilled(false) }
   scope :active, -> { arrived(true).fulfilled(false) }
   scope :not_dismissed, -> { where(dismissed: false) }
