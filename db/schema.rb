@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180122204859) do
+ActiveRecord::Schema.define(version: 20180131214151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,25 +18,18 @@ ActiveRecord::Schema.define(version: 20180122204859) do
   create_table "addresses", id: :serial, force: :cascade do |t|
     t.string "street", null: false
     t.string "street_two"
-    t.string "number", null: false
     t.string "city", null: false
     t.string "zip_code", null: false
     t.string "state_province", null: false
     t.string "country", default: "United States", null: false
     t.string "country_code", default: "US", null: false
-    t.string "floor"
-    t.string "unit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address_type"
     t.index ["city"], name: "index_addresses_on_city"
-    t.index ["country", "state_province", "zip_code", "city", "street", "number", "floor", "unit"], name: "by_compound_location"
-    t.index ["floor"], name: "index_addresses_on_floor"
-    t.index ["number"], name: "index_addresses_on_number"
     t.index ["state_province"], name: "index_addresses_on_state_province"
     t.index ["street"], name: "index_addresses_on_street"
     t.index ["street_two"], name: "index_addresses_on_street_two"
-    t.index ["unit"], name: "index_addresses_on_unit"
     t.index ["zip_code"], name: "index_addresses_on_zip_code"
   end
 
