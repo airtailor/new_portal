@@ -3,7 +3,7 @@ class Address < ApplicationRecord
   include AddressConstants
   include TypeConstants
 
-  validates_presence_of :number, :street, :city, :state_province,
+  validates_presence_of :street, :city, :state_province,
     :zip_code, :country, :country_code
 
   has_many :shipments, inverse_of: :address, as: :source
@@ -19,7 +19,6 @@ class Address < ApplicationRecord
     self.set_address_type(model)
     self.set_country_and_country_code
     self.set_state_abbreviation
-    self.extract_street_and_number(params)
 
     self.save
   end
@@ -59,41 +58,8 @@ class Address < ApplicationRecord
     self.country = country
   end
 
-  def parse_street_name(street, country_code)
-    return nil unless country_code.to_sym == :US
-    StreetAddress::US.parse(street)
-  end
-
-  # NOTE: street_two does not get touched by this method. Ask nialbima.
-  def extract_street_and_number(unparsed_params)
-    addy_string = "#{unparsed_params['street']} #{unparsed_params['city']}, #{unparsed_params['state_province']} #{unparsed_params['zip_code']}"
-    if parsed_street = parse_street_name(addy_string, self.country_code)
-      if parsed_street.street && parsed_street.street_type
-        self.street = [
-          parsed_street.prefix,
-          parsed_street.street,
-          parsed_street.street_type,
-          parsed_street.suffix
-        ].compact.join(" ")
-      end
-
-      self.number   = parsed_street.number
-      self.city     = parsed_street.city
-      self.zip_code = parsed_street.postal_code
-      self.unit     = parsed_street.unit
-    else
-      self.number = street.scan(/^\d+/)[0] || nil
-      if self.number
-        self.street = street.split(/^\d+\W+/).reject{|elem| elem == ""}.join("")
-      end
-      self.zip_code = unparsed_params.zip_code
-      self.city = unparsed_params.city
-      self.unit = unparsed_params.unit
-    end
-  end
-
   def postmates_address
-    "#{number} #{street}, #{city}, #{state_province}"
+    "#{street}, #{city}, #{state_province}"
   end
 
   def get_contact
@@ -111,7 +77,7 @@ class Address < ApplicationRecord
 
   def shippo_address
     contact = self.get_contact
-    
+
     if contact.class.name == "Tailor"
       name = "Air Tailor"
     else
@@ -120,8 +86,8 @@ class Address < ApplicationRecord
 
     return {
       :name => name,
-      :street1 => "#{self.number} #{self.street}",
-      :street2 => "#{self.unit} #{self.floor} #{self.street_two}",
+      :street1 => "#{self.street}",
+      :street2 => "#{self.street_two}",
       :city => self.city,
       :country => self.country,
       :state => self.state_province,

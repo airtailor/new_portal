@@ -76,7 +76,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def permitted_address_fields
-    fields = [ :street_two, :number, :country, :country_code, :unit, :floor ]
+    fields = [ :street_two, :country, :country_code ]
     return fields + required_address_fields
   end
 end

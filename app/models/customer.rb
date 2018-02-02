@@ -12,13 +12,8 @@ class Customer < ApplicationRecord
   def last_measurement
     self.measurements.last
   end
-
-  before_validation :add_country
+  
   after_create :create_blank_measurements
-
-  def add_country
-    self.country ||= "United States"
-  end
 
   def set_address(address_params)
     # NOTE: customers are locked into a single address, but can have more later
