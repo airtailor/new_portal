@@ -37,4 +37,5 @@ RSpec.describe Customer, type: :model do
     invalid_customer = FactoryBot.build(:customer, email: valid_customer.email)
     expect(invalid_customer).to be_invalid
   end
+
 end
