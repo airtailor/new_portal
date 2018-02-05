@@ -23,45 +23,6 @@ class Address < ApplicationRecord
     self.save
   end
 
-  def set_address_type(string)
-    self.address_type = string
-  end
-
-  def set_state_abbreviation
-    state = self.state_province
-    return if state.in?(STATE_CODES.values)
-
-    current_state = state
-    state = STATE_CODES.get(current_state)
-    state ||= current_state
-
-    self.state_province = state
-  end
-
-  def set_country_and_country_code
-    country_code, country = self.country_code, self.country
-    return if country_code.in?(COUNTRY_CODES.values) && country.in?(COUNTRIES.values)
-
-    if country.in?(COUNTRIES.values)
-      country = country
-      country_code = COUNTRY_CODES.get(country)
-    elsif country.in?(COUNTRY_CODES.values)
-      country_code = country
-      country = COUNTRIES.get(country)
-    else
-      # leave country alone if not found.
-      country_code = COUNTRY_CODES.get(country)
-      country_code ||= country
-    end
-
-    self.country_code = country_code
-    self.country = country
-  end
-
-  def postmates_address
-    "#{street}, #{city}, #{state_province}"
-  end
-
   def get_contact
     case self.address_type
     when CUSTOMER
@@ -73,6 +34,10 @@ class Address < ApplicationRecord
     when RETAILER
       return self.stores.where(type: "Retailer").first
     end
+  end
+
+  def postmates_address
+    "#{street}, #{city}, #{state_province}"
   end
 
   def shippo_address
@@ -95,5 +60,42 @@ class Address < ApplicationRecord
       :phone => contact.try(:phone),
       :email => contact.try(:email)
     }
+  end
+
+  private
+
+  def set_address_type(string)
+    self.address_type = string
+  end
+
+  def set_country_and_country_code
+    country_code, country = self.country_code, self.country
+    return if country_code.in?(COUNTRY_CODES.values) && country.in?(COUNTRIES.values)
+
+    if country.in?(COUNTRIES.values)
+      country = country
+      country_code = COUNTRY_CODES.get(country)
+    elsif country.in?(COUNTRY_CODES.values)
+      country_code = country
+      country = COUNTRIES.get(country)
+    else
+      # leave country alone if not found.
+      country_code = COUNTRY_CODES.get(country)
+      country_code ||= country
+    end
+
+    self.country_code = country_code
+    self.country = country
+  end
+
+  def set_state_abbreviation
+    state = self.state_province
+    return if state.in?(STATE_CODES.values)
+
+    current_state = state
+    state = STATE_CODES.get(current_state)
+    state ||= current_state
+
+    self.state_province = state
   end
 end
