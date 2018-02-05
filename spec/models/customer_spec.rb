@@ -38,4 +38,22 @@ RSpec.describe Customer, type: :model do
     expect(invalid_customer).to be_invalid
   end
 
+  describe "#address" do 
+    context "when the customer has an address relation" do 
+      it "returns that address" do 
+        valid_customer = FactoryBot.create(:customer)
+        valid_address = FactoryBot.create(:customer_address)
+        valid_customer.addresses.push valid_address
+        expect(valid_customer.address.street).to eq(valid_address.street)
+      end
+    end
+
+    context "when the customer does not have an address relation" do 
+      it "returns the address data from the customer table" do 
+        valid_customer = FactoryBot.create(:customer)
+        expect(valid_customer.address[:street1]).to eq(valid_customer.street1)
+      end
+    end
+  end
+
 end
