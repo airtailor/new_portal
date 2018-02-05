@@ -41,10 +41,6 @@ class Item < ApplicationRecord
   end
 
   def self.get_alteration_name(variant_title, item_name)
-    puts "\n]n\n\n\n\n\n\n\n ###################################################"
-    puts "variant_title ##{variant_title}"
-    puts "\n]n\n\n\n\n\n\n\n ###################################################"
-
     variant_title.split("#{item_name.split(" ")[0]} ").second
   end
 

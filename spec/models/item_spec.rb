@@ -21,23 +21,4 @@ RSpec.describe Item, type: :model do
     expect(invalid_item).to be_invalid
   end
 
-  # describe "#create_items_for" do
-  # 	it "adds items to the correct order" do
-  #     order = FactoryBot.create(:shopify_tailor_order)
-  #     item_list = (0..2).map do
-  #       FactoryBot.create(:item, order: order)
-  #     end
-  #     expect(Order.last.items).to eq(item_list)
-  #   end
-
-
-  # 	it "adds the correct alterations for an item" do
-  #     order = FactoryBot.create(:shopify_tailor_order)
-  #     item_list = (0..2).map do
-  #       FactoryBot.create(:item, order: order)
-  #     end
-  #     expect(Order.last.items.first.alterations).to eq(item_list.first.alterations)
-  #   end
-  # end
-
 end

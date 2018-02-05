@@ -2,18 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Shipment, type: :model do
   it "is invalid without any orders" do
-    shipment = FactoryBot.build(:shipment, order: nil)
-    expect(shipment).to be_invalid
+    invalid_shipment = FactoryBot.build(:shipment, orders: [])
+    expect(invalid_shipment).to be_invalid
   end
 
-  it "is invalid without a type" do
-    shipment = FactoryBot.build(:shipment, type: nil)
-    expect(shipment).to be_invalid
-  end
-
-  it "is invalid without a shipping label" do
-    shipment = FactoryBot.build(:shipment, shipping_label: nil)
-    expect(shipment).to be_invalid
+  it "is invalid without a delivery_type" do
+    invalid_shipment = FactoryBot.build(:shipment, delivery_type: nil)
+    expect(invalid_shipment).to be_invalid
   end
 
   it "is invalid without a weight" do
@@ -21,13 +16,27 @@ RSpec.describe Shipment, type: :model do
     expect(shipment).to be_invalid
   end
 
-  it "is invalid without a tracking number" do
-    shipment = FactoryBot.build(:shipment, tracking_number: nil)
-    expect(shipment).to be_invalid
+  context "when delivery_type is mail_delivery" do 
+    it "is invalid without a shipping label" do
+      invalid_shipment = FactoryBot.build(:mail_delivery, shipping_label: nil)
+      expect(invalid_shipment).to be_invalid
+    end
+
+    it "is invalid without a tracking number" do
+      invalid_shipment = FactoryBot.build(:mail_delivery, tracking_number: nil)
+      expect(invalid_shipment).to be_invalid
+    end
   end
 
-  it "is valid with valid attributes" do
-    shipment = FactoryBot.build(:shipment)
-    expect(shipment).to be_valid
+  context "when delivery_type is messenger_delivery" do 
+    it "is invalid without a postmates_delivery_id" do
+      invalid_shipment = FactoryBot.build(:messenger_delivery, postmates_delivery_id: nil)
+      expect(invalid_shipment).to be_invalid
+    end
+
+    it "is invalid without a status" do
+      invalid_shipment = FactoryBot.build(:messenger_delivery, status: nil)
+      expect(invalid_shipment).to be_invalid
+    end
   end
 end
