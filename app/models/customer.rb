@@ -1,6 +1,7 @@
 class Customer < ApplicationRecord
-  validates :email, :phone, uniqueness: true
+  validates :email, :phone, uniqueness: true, presence: true
   validates :shopify_id, uniqueness: true, allow_blank: true
+  validates :first_name, :last_name, presence: true
 
   has_many :orders, inverse_of: :customer
   has_many :shipments, through: :orders, inverse_of: :customer
@@ -133,5 +134,4 @@ class Customer < ApplicationRecord
       :email => self.try(:email)
     }
   end
-
 end
