@@ -13,7 +13,8 @@ class Store < ApplicationRecord
   has_many :orders
   has_many :users
 
-  validates :name, :phone, presence: true
+  validates :name, :phone, :company, presence: true
+  validates :default_tailor, presence: true, if: :is_retailer?
 
   def set_address(params)
     address = Address.new
@@ -60,5 +61,11 @@ class Store < ApplicationRecord
 
   def transit_to_tailor_count
     self.orders.where(arrived: false).count
+  end
+
+  private
+
+  def is_retailer?
+    self.type == "Retailer"
   end
 end

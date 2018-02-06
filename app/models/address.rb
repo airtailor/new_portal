@@ -26,8 +26,6 @@ class Address < ApplicationRecord
   def get_contact
     case self.address_type
     when CUSTOMER
-      # NOTE: without the UI, this will always work.
-      # When we implement the UI for multi-customer shipping, this'll break immediately.
       return self.customers.first
     when TAILOR
       return self.stores.where(type: "Tailor").first
