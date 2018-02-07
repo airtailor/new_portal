@@ -20,3 +20,330 @@
 2018-01-10 17:04:25.945 EST [6416] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2018-01-10 17:04:25.984 EST [6417] LOG:  database system was shut down at 2018-01-10 15:13:48 EST
 2018-01-10 17:04:25.990 EST [6416] LOG:  database system is ready to accept connections
+2018-02-06 13:15:23.959 EST [5466] LOG:  listening on IPv6 address "::1", port 5432
+2018-02-06 13:15:23.959 EST [5466] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2018-02-06 13:15:23.960 EST [5466] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2018-02-06 13:15:23.984 EST [5467] LOG:  database system was interrupted; last known up at 2018-02-06 12:23:55 EST
+2018-02-06 13:15:24.336 EST [5467] LOG:  database system was not properly shut down; automatic recovery in progress
+2018-02-06 13:15:24.339 EST [5467] LOG:  redo starts at 0/21029A08
+2018-02-06 13:15:24.339 EST [5467] LOG:  invalid record length at 0/21029AE8: wanted 24, got 0
+2018-02-06 13:15:24.339 EST [5467] LOG:  redo done at 0/21029AB0
+2018-02-06 13:15:24.346 EST [5466] LOG:  database system is ready to accept connections
+2018-02-06 19:08:27.867 EST [5795] ERROR:  null value in column "country" violates not-null constraint
+2018-02-06 19:08:27.867 EST [5795] DETAIL:  Failing row contains (465, null, jared, murphy, jaredcmurphy@gmail.colm, 9045668701, null, null, null, null, null, null, 2018-02-07 00:08:27.86276, 2018-02-07 00:08:27.86276, null, null, t).
+2018-02-06 19:08:27.867 EST [5795] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "created_at", "updated_at", "agrees_to_01_10_2018") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id"
+2018-02-06 19:18:05.455 EST [12773] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-02-06 19:18:05.455 EST [12773] DETAIL:  Key (id)=(466) already exists.
+2018-02-06 19:18:05.455 EST [12773] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_01_10_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-02-06 19:18:20.128 EST [13424] ERROR:  update or delete on table "customers" violates foreign key constraint "fk_rails_ad4669e82b" on table "measurements"
+2018-02-06 19:18:20.128 EST [13424] DETAIL:  Key (id)=(4436) is still referenced from table "measurements".
+2018-02-06 19:18:20.128 EST [13424] STATEMENT:  DELETE FROM "customers" WHERE "customers"."id" = $1
+2018-02-06 19:18:34.573 EST [13424] ERROR:  update or delete on table "customers" violates foreign key constraint "fk_rails_ad4669e82b" on table "measurements"
+2018-02-06 19:18:34.573 EST [13424] DETAIL:  Key (id)=(4436) is still referenced from table "measurements".
+2018-02-06 19:18:34.573 EST [13424] STATEMENT:  DELETE FROM "customers" WHERE "customers"."id" = $1
+2018-02-06 19:19:32.745 EST [12773] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-02-06 19:19:32.745 EST [12773] DETAIL:  Key (id)=(467) already exists.
+2018-02-06 19:19:32.745 EST [12773] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_01_10_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-02-06 19:19:55.198 EST [12772] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-02-06 19:19:55.198 EST [12772] DETAIL:  Key (id)=(468) already exists.
+2018-02-06 19:19:55.198 EST [12772] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_01_10_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-02-06 19:20:08.625 EST [12772] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-02-06 19:20:08.625 EST [12772] DETAIL:  Key (id)=(469) already exists.
+2018-02-06 19:20:08.625 EST [12772] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_01_10_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-02-06 19:21:52.967 EST [13761] ERROR:  database "airtailor_development" is being accessed by other users
+2018-02-06 19:21:52.967 EST [13761] DETAIL:  There is 1 other session using the database.
+2018-02-06 19:21:52.967 EST [13761] STATEMENT:  DROP DATABASE IF EXISTS "airtailor_development"
+2018-02-06 19:22:22.688 EST [14069] ERROR:  relation "public.users" does not exist
+2018-02-06 19:22:22.688 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."users" DROP CONSTRAINT "fk_rails_c6f326481e";
+	
+2018-02-06 19:22:22.688 EST [14069] ERROR:  relation "public.measurements" does not exist
+2018-02-06 19:22:22.688 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."measurements" DROP CONSTRAINT "fk_rails_ad4669e82b";
+	
+2018-02-06 19:22:22.691 EST [14069] ERROR:  relation "public.stores" does not exist
+2018-02-06 19:22:22.691 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "fk_rails_470bdf4a73";
+	
+2018-02-06 19:22:22.692 EST [14069] ERROR:  relation "public.stores" does not exist
+2018-02-06 19:22:22.692 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "fk_rails_00cb1050af";
+	
+2018-02-06 19:22:22.693 EST [14069] ERROR:  index "index_users_roles_on_user_id_and_role_id" does not exist
+2018-02-06 19:22:22.693 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_roles_on_user_id_and_role_id";
+	
+2018-02-06 19:22:22.693 EST [14069] ERROR:  index "index_users_on_uid_and_provider" does not exist
+2018-02-06 19:22:22.693 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_on_uid_and_provider";
+	
+2018-02-06 19:22:22.693 EST [14069] ERROR:  index "index_users_on_store_id" does not exist
+2018-02-06 19:22:22.693 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_on_store_id";
+	
+2018-02-06 19:22:22.695 EST [14069] ERROR:  index "index_users_on_reset_password_token" does not exist
+2018-02-06 19:22:22.695 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_on_reset_password_token";
+	
+2018-02-06 19:22:22.695 EST [14069] ERROR:  index "index_users_on_email" does not exist
+2018-02-06 19:22:22.695 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_on_email";
+	
+2018-02-06 19:22:22.695 EST [14069] ERROR:  index "index_users_on_confirmation_token" does not exist
+2018-02-06 19:22:22.695 EST [14069] STATEMENT:  DROP INDEX "public"."index_users_on_confirmation_token";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_stores_on_default_tailor_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_stores_on_default_tailor_id";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_stores_on_company_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_stores_on_company_id";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_stores_on_address_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_stores_on_address_id";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_shipments_on_source_type_and_source_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_shipments_on_source_type_and_source_id";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_shipments_on_destination_type_and_destination_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_shipments_on_destination_type_and_destination_id";
+	
+2018-02-06 19:22:22.696 EST [14069] ERROR:  index "index_shipment_orders_on_shipment_id" does not exist
+2018-02-06 19:22:22.696 EST [14069] STATEMENT:  DROP INDEX "public"."index_shipment_orders_on_shipment_id";
+	
+2018-02-06 19:22:22.697 EST [14069] ERROR:  index "index_shipment_orders_on_order_id" does not exist
+2018-02-06 19:22:22.697 EST [14069] STATEMENT:  DROP INDEX "public"."index_shipment_orders_on_order_id";
+	
+2018-02-06 19:22:22.697 EST [14069] ERROR:  index "index_roles_on_name_and_resource_type_and_resource_id" does not exist
+2018-02-06 19:22:22.697 EST [14069] STATEMENT:  DROP INDEX "public"."index_roles_on_name_and_resource_type_and_resource_id";
+	
+2018-02-06 19:22:22.697 EST [14069] ERROR:  index "index_roles_on_name" does not exist
+2018-02-06 19:22:22.697 EST [14069] STATEMENT:  DROP INDEX "public"."index_roles_on_name";
+	
+2018-02-06 19:22:22.697 EST [14069] ERROR:  index "index_orders_on_requester_id" does not exist
+2018-02-06 19:22:22.697 EST [14069] STATEMENT:  DROP INDEX "public"."index_orders_on_requester_id";
+	
+2018-02-06 19:22:22.697 EST [14069] ERROR:  index "index_orders_on_provider_id" does not exist
+2018-02-06 19:22:22.697 EST [14069] STATEMENT:  DROP INDEX "public"."index_orders_on_provider_id";
+	
+2018-02-06 19:22:22.698 EST [14069] ERROR:  index "index_measurements_on_customer_id" does not exist
+2018-02-06 19:22:22.698 EST [14069] STATEMENT:  DROP INDEX "public"."index_measurements_on_customer_id";
+	
+2018-02-06 19:22:22.698 EST [14069] ERROR:  index "index_items_on_order_id" does not exist
+2018-02-06 19:22:22.698 EST [14069] STATEMENT:  DROP INDEX "public"."index_items_on_order_id";
+	
+2018-02-06 19:22:22.698 EST [14069] ERROR:  index "index_customers_on_phone" does not exist
+2018-02-06 19:22:22.698 EST [14069] STATEMENT:  DROP INDEX "public"."index_customers_on_phone";
+	
+2018-02-06 19:22:22.698 EST [14069] ERROR:  index "index_customers_on_first_name_and_last_name" does not exist
+2018-02-06 19:22:22.698 EST [14069] STATEMENT:  DROP INDEX "public"."index_customers_on_first_name_and_last_name";
+	
+2018-02-06 19:22:22.698 EST [14069] ERROR:  index "index_customers_on_email" does not exist
+2018-02-06 19:22:22.698 EST [14069] STATEMENT:  DROP INDEX "public"."index_customers_on_email";
+	
+2018-02-06 19:22:22.699 EST [14069] ERROR:  index "index_customer_addresses_on_customer_id" does not exist
+2018-02-06 19:22:22.699 EST [14069] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_customer_id";
+	
+2018-02-06 19:22:22.699 EST [14069] ERROR:  index "index_customer_addresses_on_address_id_and_customer_id" does not exist
+2018-02-06 19:22:22.699 EST [14069] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_address_id_and_customer_id";
+	
+2018-02-06 19:22:22.699 EST [14069] ERROR:  index "index_customer_addresses_on_address_id" does not exist
+2018-02-06 19:22:22.699 EST [14069] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_address_id";
+	
+2018-02-06 19:22:22.699 EST [14069] ERROR:  index "index_companies_on_name" does not exist
+2018-02-06 19:22:22.699 EST [14069] STATEMENT:  DROP INDEX "public"."index_companies_on_name";
+	
+2018-02-06 19:22:22.699 EST [14069] ERROR:  index "index_companies_on_hq_store_id" does not exist
+2018-02-06 19:22:22.699 EST [14069] STATEMENT:  DROP INDEX "public"."index_companies_on_hq_store_id";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  index "index_addresses_on_zip_code" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  DROP INDEX "public"."index_addresses_on_zip_code";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  index "index_addresses_on_street_two" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  DROP INDEX "public"."index_addresses_on_street_two";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  index "index_addresses_on_street" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  DROP INDEX "public"."index_addresses_on_street";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  index "index_addresses_on_state_province" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  DROP INDEX "public"."index_addresses_on_state_province";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  index "index_addresses_on_city" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  DROP INDEX "public"."index_addresses_on_city";
+	
+2018-02-06 19:22:22.700 EST [14069] ERROR:  relation "public.users" does not exist
+2018-02-06 19:22:22.700 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."users" DROP CONSTRAINT "users_pkey";
+	
+2018-02-06 19:22:22.701 EST [14069] ERROR:  relation "public.stores" does not exist
+2018-02-06 19:22:22.701 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "stores_pkey";
+	
+2018-02-06 19:22:22.701 EST [14069] ERROR:  relation "public.shipments" does not exist
+2018-02-06 19:22:22.701 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."shipments" DROP CONSTRAINT "shipments_pkey";
+	
+2018-02-06 19:22:22.701 EST [14069] ERROR:  relation "public.shipment_orders" does not exist
+2018-02-06 19:22:22.701 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."shipment_orders" DROP CONSTRAINT "shipment_orders_pkey";
+	
+2018-02-06 19:22:22.701 EST [14069] ERROR:  relation "public.schema_migrations" does not exist
+2018-02-06 19:22:22.701 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."schema_migrations" DROP CONSTRAINT "schema_migrations_pkey";
+	
+2018-02-06 19:22:22.701 EST [14069] ERROR:  relation "public.roles" does not exist
+2018-02-06 19:22:22.701 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."roles" DROP CONSTRAINT "roles_pkey";
+	
+2018-02-06 19:22:22.702 EST [14069] ERROR:  relation "public.orders" does not exist
+2018-02-06 19:22:22.702 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."orders" DROP CONSTRAINT "orders_pkey";
+	
+2018-02-06 19:22:22.702 EST [14069] ERROR:  relation "public.measurements" does not exist
+2018-02-06 19:22:22.702 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."measurements" DROP CONSTRAINT "measurements_pkey";
+	
+2018-02-06 19:22:22.702 EST [14069] ERROR:  relation "public.items" does not exist
+2018-02-06 19:22:22.702 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."items" DROP CONSTRAINT "items_pkey";
+	
+2018-02-06 19:22:22.702 EST [14069] ERROR:  relation "public.item_types" does not exist
+2018-02-06 19:22:22.702 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."item_types" DROP CONSTRAINT "item_types_pkey";
+	
+2018-02-06 19:22:22.702 EST [14069] ERROR:  relation "public.customers" does not exist
+2018-02-06 19:22:22.702 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."customers" DROP CONSTRAINT "customers_pkey";
+	
+2018-02-06 19:22:22.703 EST [14069] ERROR:  relation "public.customer_addresses" does not exist
+2018-02-06 19:22:22.703 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."customer_addresses" DROP CONSTRAINT "customer_addresses_pkey";
+	
+2018-02-06 19:22:22.703 EST [14069] ERROR:  relation "public.companies" does not exist
+2018-02-06 19:22:22.703 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."companies" DROP CONSTRAINT "companies_pkey";
+	
+2018-02-06 19:22:22.703 EST [14069] ERROR:  relation "public.ar_internal_metadata" does not exist
+2018-02-06 19:22:22.703 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."ar_internal_metadata" DROP CONSTRAINT "ar_internal_metadata_pkey";
+	
+2018-02-06 19:22:22.703 EST [14069] ERROR:  relation "public.alterations" does not exist
+2018-02-06 19:22:22.703 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."alterations" DROP CONSTRAINT "alterations_pkey";
+	
+2018-02-06 19:22:22.703 EST [14069] ERROR:  relation "public.addresses" does not exist
+2018-02-06 19:22:22.703 EST [14069] STATEMENT:  ALTER TABLE ONLY "public"."addresses" DROP CONSTRAINT "addresses_pkey";
+	
+2018-02-06 19:22:22.724 EST [14069] ERROR:  relation "public.users" does not exist
+2018-02-06 19:22:22.724 EST [14069] STATEMENT:  ALTER TABLE "public"."users" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.724 EST [14069] ERROR:  relation "public.stores" does not exist
+2018-02-06 19:22:22.724 EST [14069] STATEMENT:  ALTER TABLE "public"."stores" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.724 EST [14069] ERROR:  relation "public.shipments" does not exist
+2018-02-06 19:22:22.724 EST [14069] STATEMENT:  ALTER TABLE "public"."shipments" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.725 EST [14069] ERROR:  relation "public.shipment_orders" does not exist
+2018-02-06 19:22:22.725 EST [14069] STATEMENT:  ALTER TABLE "public"."shipment_orders" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.725 EST [14069] ERROR:  relation "public.roles" does not exist
+2018-02-06 19:22:22.725 EST [14069] STATEMENT:  ALTER TABLE "public"."roles" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.725 EST [14069] ERROR:  relation "public.orders" does not exist
+2018-02-06 19:22:22.725 EST [14069] STATEMENT:  ALTER TABLE "public"."orders" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.725 EST [14069] ERROR:  relation "public.measurements" does not exist
+2018-02-06 19:22:22.725 EST [14069] STATEMENT:  ALTER TABLE "public"."measurements" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.726 EST [14069] ERROR:  relation "public.items" does not exist
+2018-02-06 19:22:22.726 EST [14069] STATEMENT:  ALTER TABLE "public"."items" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.726 EST [14069] ERROR:  relation "public.item_types" does not exist
+2018-02-06 19:22:22.726 EST [14069] STATEMENT:  ALTER TABLE "public"."item_types" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.726 EST [14069] ERROR:  relation "public.customers" does not exist
+2018-02-06 19:22:22.726 EST [14069] STATEMENT:  ALTER TABLE "public"."customers" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.726 EST [14069] ERROR:  relation "public.customer_addresses" does not exist
+2018-02-06 19:22:22.726 EST [14069] STATEMENT:  ALTER TABLE "public"."customer_addresses" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.726 EST [14069] ERROR:  relation "public.companies" does not exist
+2018-02-06 19:22:22.726 EST [14069] STATEMENT:  ALTER TABLE "public"."companies" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.727 EST [14069] ERROR:  relation "public.alterations" does not exist
+2018-02-06 19:22:22.727 EST [14069] STATEMENT:  ALTER TABLE "public"."alterations" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.727 EST [14069] ERROR:  relation "public.addresses" does not exist
+2018-02-06 19:22:22.727 EST [14069] STATEMENT:  ALTER TABLE "public"."addresses" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-02-06 19:22:22.727 EST [14069] ERROR:  table "users_roles" does not exist
+2018-02-06 19:22:22.727 EST [14069] STATEMENT:  DROP TABLE "public"."users_roles";
+	
+2018-02-06 19:22:22.727 EST [14069] ERROR:  sequence "users_id_seq" does not exist
+2018-02-06 19:22:22.727 EST [14069] STATEMENT:  DROP SEQUENCE "public"."users_id_seq";
+	
+2018-02-06 19:22:22.728 EST [14069] ERROR:  table "users" does not exist
+2018-02-06 19:22:22.728 EST [14069] STATEMENT:  DROP TABLE "public"."users";
+	
+2018-02-06 19:22:22.728 EST [14069] ERROR:  sequence "stores_id_seq" does not exist
+2018-02-06 19:22:22.728 EST [14069] STATEMENT:  DROP SEQUENCE "public"."stores_id_seq";
+	
+2018-02-06 19:22:22.728 EST [14069] ERROR:  table "stores" does not exist
+2018-02-06 19:22:22.728 EST [14069] STATEMENT:  DROP TABLE "public"."stores";
+	
+2018-02-06 19:22:22.728 EST [14069] ERROR:  sequence "shipments_id_seq" does not exist
+2018-02-06 19:22:22.728 EST [14069] STATEMENT:  DROP SEQUENCE "public"."shipments_id_seq";
+	
+2018-02-06 19:22:22.728 EST [14069] ERROR:  table "shipments" does not exist
+2018-02-06 19:22:22.728 EST [14069] STATEMENT:  DROP TABLE "public"."shipments";
+	
+2018-02-06 19:22:22.729 EST [14069] ERROR:  sequence "shipment_orders_id_seq" does not exist
+2018-02-06 19:22:22.729 EST [14069] STATEMENT:  DROP SEQUENCE "public"."shipment_orders_id_seq";
+	
+2018-02-06 19:22:22.729 EST [14069] ERROR:  table "shipment_orders" does not exist
+2018-02-06 19:22:22.729 EST [14069] STATEMENT:  DROP TABLE "public"."shipment_orders";
+	
+2018-02-06 19:22:22.729 EST [14069] ERROR:  table "schema_migrations" does not exist
+2018-02-06 19:22:22.729 EST [14069] STATEMENT:  DROP TABLE "public"."schema_migrations";
+	
+2018-02-06 19:22:22.729 EST [14069] ERROR:  sequence "roles_id_seq" does not exist
+2018-02-06 19:22:22.729 EST [14069] STATEMENT:  DROP SEQUENCE "public"."roles_id_seq";
+	
+2018-02-06 19:22:22.729 EST [14069] ERROR:  table "roles" does not exist
+2018-02-06 19:22:22.729 EST [14069] STATEMENT:  DROP TABLE "public"."roles";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  sequence "orders_id_seq" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP SEQUENCE "public"."orders_id_seq";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  table "orders" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP TABLE "public"."orders";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  sequence "measurements_id_seq" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP SEQUENCE "public"."measurements_id_seq";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  table "measurements" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP TABLE "public"."measurements";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  sequence "items_id_seq" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP SEQUENCE "public"."items_id_seq";
+	
+2018-02-06 19:22:22.730 EST [14069] ERROR:  table "items" does not exist
+2018-02-06 19:22:22.730 EST [14069] STATEMENT:  DROP TABLE "public"."items";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  sequence "item_types_id_seq" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP SEQUENCE "public"."item_types_id_seq";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  table "item_types" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP TABLE "public"."item_types";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  sequence "customers_id_seq" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP SEQUENCE "public"."customers_id_seq";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  table "customers" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP TABLE "public"."customers";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  sequence "customer_addresses_id_seq" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP SEQUENCE "public"."customer_addresses_id_seq";
+	
+2018-02-06 19:22:22.731 EST [14069] ERROR:  table "customer_addresses" does not exist
+2018-02-06 19:22:22.731 EST [14069] STATEMENT:  DROP TABLE "public"."customer_addresses";
+	
+2018-02-06 19:22:22.732 EST [14069] ERROR:  sequence "companies_id_seq" does not exist
+2018-02-06 19:22:22.732 EST [14069] STATEMENT:  DROP SEQUENCE "public"."companies_id_seq";
+	
+2018-02-06 19:22:22.732 EST [14069] ERROR:  table "companies" does not exist
+2018-02-06 19:22:22.732 EST [14069] STATEMENT:  DROP TABLE "public"."companies";
+	
+2018-02-06 19:22:22.732 EST [14069] ERROR:  table "ar_internal_metadata" does not exist
+2018-02-06 19:22:22.732 EST [14069] STATEMENT:  DROP TABLE "public"."ar_internal_metadata";
+	
+2018-02-06 19:22:22.732 EST [14069] ERROR:  sequence "alterations_id_seq" does not exist
+2018-02-06 19:22:22.732 EST [14069] STATEMENT:  DROP SEQUENCE "public"."alterations_id_seq";
+	
+2018-02-06 19:22:22.732 EST [14069] ERROR:  table "alterations" does not exist
+2018-02-06 19:22:22.732 EST [14069] STATEMENT:  DROP TABLE "public"."alterations";
+	
+2018-02-06 19:22:22.733 EST [14069] ERROR:  table "alteration_items" does not exist
+2018-02-06 19:22:22.733 EST [14069] STATEMENT:  DROP TABLE "public"."alteration_items";
+	
+2018-02-06 19:22:22.733 EST [14069] ERROR:  sequence "addresses_id_seq" does not exist
+2018-02-06 19:22:22.733 EST [14069] STATEMENT:  DROP SEQUENCE "public"."addresses_id_seq";
+	
+2018-02-06 19:22:22.733 EST [14069] ERROR:  table "addresses" does not exist
+2018-02-06 19:22:22.733 EST [14069] STATEMENT:  DROP TABLE "public"."addresses";
+	

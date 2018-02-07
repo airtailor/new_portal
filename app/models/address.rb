@@ -60,8 +60,6 @@ class Address < ApplicationRecord
     }
   end
 
-  private
-
   def set_address_type(string)
     self.address_type = string
   end

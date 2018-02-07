@@ -13,7 +13,8 @@ class Customer < ApplicationRecord
   def last_measurement
     self.measurements.last
   end
-  
+
+  before_validation :add_country
   after_create :create_blank_measurements
 
   def set_address(address_params)
@@ -76,5 +77,11 @@ class Customer < ApplicationRecord
       :phone => self.try(:phone),
       :email => self.try(:email)
     }
+  end
+
+  private
+
+  def add_country
+    self.country ||= "United States"
   end
 end
