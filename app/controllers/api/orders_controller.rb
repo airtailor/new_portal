@@ -28,7 +28,7 @@ class Api::OrdersController < ApplicationController
 
   def show
     sql_includes = [
-      :tailor, :retailer, :customer,
+      :tailor, :retailer, customer: [:addresses],
       shipments: [ :source, :destination ],
       items: [ :item_type, :alterations ]
     ]
@@ -37,8 +37,8 @@ class Api::OrdersController < ApplicationController
     items = data.first.items.as_json(include: [ :item_type, :alterations ])
 
     render :json => data.as_json(include: [
-      :tailor, :retailer, :customer,
-      shipments: { include: [ :source, :destination ]}
+      :tailor, :retailer, customer: { include: [:addresses] },
+      shipments: { include: [:source, :destination ]}
     ]).first.merge("items" => items)
   end
 
