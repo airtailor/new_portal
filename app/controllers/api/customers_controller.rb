@@ -58,7 +58,7 @@ class Api::CustomersController < ApplicationController
       orders = customer.orders
     end
 
-    render :json => orders
+    render :json => orders.order(created_at: :desc)
   end
 
   private
