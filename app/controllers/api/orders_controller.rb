@@ -28,7 +28,7 @@ class Api::OrdersController < ApplicationController
 
   def show
     sql_includes = [
-      :tailor, :retailer, customer: [:addresses],
+      :tailor, retailer: [ :address ], customer: [ :addresses ],
       shipments: [ :source, :destination ],
       items: [ :item_type, :alterations ]
     ]
@@ -36,10 +36,17 @@ class Api::OrdersController < ApplicationController
     data = @order_relation.includes(*sql_includes)
     items = data.first.items.as_json(include: [ :item_type, :alterations ])
 
-    render :json => data.as_json(include: [
-      :tailor, :retailer, customer: { include: [:addresses] },
-      shipments: { include: [:source, :destination ]}
-    ]).first.merge("items" => items)
+    if data.first.ship_to_store
+      render :json => data.as_json(include: [
+        :tailor, :customer, retailer: { include: [ :address ] },
+        shipments: { include: [:source, :destination ]}
+      ]).first.merge("items" => items)
+    else 
+      render :json => data.as_json(include: [
+        :tailor, :retailer, customer: { include: [ :addresses ] }, 
+        shipments: { include: [:source, :destination ]}
+      ]).first.merge("items" => items)
+    end
   end
 
   def new_orders
