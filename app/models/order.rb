@@ -1,5 +1,7 @@
 class Order < ApplicationRecord
   include OrderConstants
+  include ActivityConstants
+  include ActivityHelper
   include TextHelper
 
   has_many :items
@@ -59,14 +61,22 @@ class Order < ApplicationRecord
       due_date = DateTime.now.in_time_zone.midnight
       date = DateTime.now
 
-      self.update_attributes(arrival_date: date) if self.arrived && !self.arrival_date
-      # add the due date if the order has been marked as arrived
-      # but does not have a due date yet
-      self.update_attributes(due_date: due_date + 6.days) if self.arrived && !self.due_date
-      #self.update_attributes(due_date: date + 6.days) if !self.due_date
+      if self.arrived && !self.arrival_date
+        create_activity(ORDER_CHECKED_IN)
+        self.update_attributes(arrival_date: date)
+      end
 
-      self.update_attributes(fulfilled_date: date) if self.fulfilled && !self.fulfilled_date
-      self.update_attributes(late: true) if self.due_date && self.due_date < date
+      self.update_attributes(due_date: due_date + 6.days) if self.arrived && !self.due_date
+
+      if self.fulfilled && !self.fulfilled_date
+        create_activity(ORDER_COMPLETED)
+        self.update_attributes(fulfilled_date: date)
+      end
+
+      if self.due_date && self.due_date < date
+        create_activity(ORDER_LATE)
+        self.update_attributes(late: true)
+      end
   end
 
   # This method assumes that only 1 order will be on this shipment always.

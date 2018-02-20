@@ -8,5 +8,5 @@ module ActivityConstants
   ORDER_COMPLETED     = 'order_completed'
   CUSTOMER_NOTIFIED   = 'customer_notified'
   CUSTOMER_PICKED_UP  = 'customer_picked_up'
-  ORDER_NOTES_UPDATED = 'order_notes_updated'
+  ORDER_LATE          = 'order_lated'
 end
