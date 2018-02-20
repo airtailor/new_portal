@@ -45,6 +45,8 @@ Rails.application.routes.draw do
     resources :tailors
     resources :retailers
 
+    get "/customers/:id/customer_orders", to: "customers#customer_orders"
+
     post "/customers/find_or_create", to: "customers#find_or_create"
     post "/customers/create_or_validate_customer", to: "customers#create_or_validate_customer"
 

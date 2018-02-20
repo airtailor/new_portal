@@ -50,6 +50,17 @@ class Api::CustomersController < ApplicationController
     end
   end
 
+  def customer_orders
+    customer = Customer.where(id: params[:id]).first
+    if @current_user.roles.first.name == "retailer"
+      orders = customer.orders.where(retailer: @current_user.store)
+    else 
+      orders = customer.orders
+    end
+
+    render :json => orders
+  end
+
   private
 
   def set_customer
