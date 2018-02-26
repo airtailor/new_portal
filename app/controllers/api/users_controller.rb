@@ -3,7 +3,7 @@ class Api::UsersController < ApplicationController
 
   def index
     render :json => User.includes(:store, :roles).as_json(
-      include: [ :store ], methods: [ :valid_roles ]
+      include: [ :store ], methods: [ :valid_roles ], exclude: [ :api_key ]
     )
   end
 
