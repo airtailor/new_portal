@@ -5,9 +5,14 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order = Order.new(order_params)
     set_order_defaults
     @order.parse_order_lifecycle_stage
-    @order.save
-    set_order_items
-    render :json => @order
+
+    if @order.save
+      set_order_items
+      @order.send_shipping_label_email_to_customer
+      render :json => @order
+    else
+      render :json => { error: 'Bad Request' }, status: :bad_request
+    end
   end
 
   private
@@ -57,10 +62,11 @@ class Api::V1::OrdersController < Api::V1::ApiController
   def set_order_defaults
     @order.customer_id = @customer.id
     @order.requester_id = @store.id
-    @order.source = "#{@store.company.name} Ecommerce"
+    @order.source = "#{@store.company.name} E-commerce"
     @order.total = 0
     @order.weight = 0
     @order.type = TailorOrder
+    @order.tailor = @store.default_tailor
   end
 
   def set_order_items
