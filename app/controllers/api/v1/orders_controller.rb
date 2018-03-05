@@ -2,7 +2,12 @@ class Api::V1::OrdersController < Api::V1::ApiController
   before_action :api_authenticate, :set_store, :set_customer
 
   def create
-    byebug
+    @order = Order.new(order_params)
+    set_order_defaults
+    @order.parse_order_lifecycle_stage
+    @order.save
+    set_order_items
+    render :json => @order
   end
 
   private
@@ -44,21 +49,22 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def order_params
-    params.require(:order).permit(
-        :requester_notes,
-        :weight,
-        :total,
-        :customer_id => @customer.id,
-        :requester_id => @store.id,
-        :source => "#{@store.company.name}-ecomm",
-        :items => [
-          {
-            :alterations => [
-              { :alteration_id => 1 }
-            ]
-          }
-        ],
-        :customer => @customer
-      )
+    params.require(:order).permit(:requester_notes)
+  end
+
+  # update order data
+
+  def set_order_defaults
+    @order.customer_id = @customer.id
+    @order.requester_id = @store.id
+    @order.source = "#{@store.company.name} Ecommerce"
+    @order.total = 0
+    @order.type = TailorOrder
+  end
+
+  def set_order_items
+    items = params.require(:order).require(:items)
+    # the order's total is created in the below method
+    Item.create_items_ecomm(@order, items)
   end
 end

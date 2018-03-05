@@ -1,4 +1,6 @@
 class Item < ApplicationRecord
+  include AlterationPrices
+
   has_many :alteration_items
   has_many :alterations, through: :alteration_items
 
@@ -32,6 +34,22 @@ class Item < ApplicationRecord
 
   def self.remove_number_from_item_name(item_name_with_number)
     item_name_with_number.split(" ")[0..-2].join(" ")
+  end
+
+  def self.create_items_ecomm(order, items)
+    items.each do |item|
+      item_type = ItemType.find(item["item_type_id"])
+      new_item = self.create(name: item_type.name, item_type: item_type, order: order)
+
+      # this loop adds to the total cost of the alterations while creating
+      # the alteration_items at the same time
+      order.total += item["alterations"].inject(0) do |prev, alt|
+        alt_id = alt["alteration_id"]
+        alteration = Alteration.find(alt_id)
+        find_or_create_alteration_item(alteration, new_item)
+        prev + AlterationPrices.get_price_from_alt_id(alt_id)
+      end
+    end
   end
 
   private
