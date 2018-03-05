@@ -59,12 +59,13 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.requester_id = @store.id
     @order.source = "#{@store.company.name} Ecommerce"
     @order.total = 0
+    @order.weight = 0
     @order.type = TailorOrder
   end
 
   def set_order_items
     items = params.require(:order).require(:items)
-    # the order's total is created in the below method
+    # the order's total and weight is added in the below method
     Item.create_items_ecomm(@order, items)
   end
 end

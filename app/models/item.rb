@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   include AlterationPrices
+  include ItemWeights
 
   has_many :alteration_items
   has_many :alterations, through: :alteration_items
@@ -38,17 +39,22 @@ class Item < ApplicationRecord
 
   def self.create_items_ecomm(order, items)
     items.each do |item|
-      item_type = ItemType.find(item["item_type_id"])
+      item_type_id = item["item_type_id"]
+      item_type = ItemType.find(item_type_id)
       new_item = self.create(name: item_type.name, item_type: item_type, order: order)
 
-      # this loop adds to the total cost of the alterations while creating
-      # the alteration_items at the same time
-      order.total += item["alterations"].inject(0) do |prev, alt|
+      # this loop adds to the total cost of the alterations and the total weight
+      # of the items while creating the alteration_items at the same time
+      weight_and_total = item["alterations"].inject({weight: 0, total: 0}) do |prev, alt|
         alt_id = alt["alteration_id"]
         alteration = Alteration.find(alt_id)
         find_or_create_alteration_item(alteration, new_item)
-        prev + AlterationPrices.get_price_from_alt_id(alt_id)
+        prev[:total] += AlterationPrices.get_price_from_alt_id(alt_id)
+        prev[:weight] += ItemWeights.get_weight_from_item_type_id(item_type_id)
+        prev
       end
+      order.weight += weight_and_total[:weight]
+      order.total += weight_and_total[:total]
     end
   end
 
