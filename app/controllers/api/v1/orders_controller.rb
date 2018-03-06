@@ -54,7 +54,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def order_params
-    params.require(:order).permit(:requester_notes)
+    params.require(:order).permit(:requester_notes, :agrees_to_01_10_2018)
   end
 
   # update order data
