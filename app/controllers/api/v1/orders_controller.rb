@@ -23,15 +23,13 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def set_customer
-    @customer = Customer.find_or_create_by(email: customer_params[:email])
-    @customer.update_attributes(customer_params)
+    @customer = Customer.find_or_create_ecomm(customer_params)
 
     if !@customer.save
       render :json => { errors: @customer.errors }, status: :unprocessable_entity
+    else
+      @customer.set_address(address_params)
     end
-
-    @customer.update_attributes(customer_params)
-    @customer.set_address(address_params)
   end
 
   # strong params
@@ -47,7 +45,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def permitted_customer_fields
-    [ :first_name, :last_name, :phone, :email, :agrees_to_01_10_2018, :customer ]
+    [ :first_name, :last_name, :phone, :email,]
   end
 
   def required_address_fields

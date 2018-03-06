@@ -79,6 +79,13 @@ class Customer < ApplicationRecord
     }
   end
 
+  def self.find_or_create_ecomm(customer_params)
+    customer = self.find_or_create_by(email: customer_params[:email])
+    customer.agrees_to_01_10_2018 = true
+    customer.update_attributes(customer_params)
+    customer
+  end
+
   private
 
   def add_country
