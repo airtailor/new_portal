@@ -11,7 +11,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
       @order.send_shipping_label_email_to_customer
       render :json => @order
     else
-      render :json => { error: 'Bad Request' }, status: :bad_request
+      render :json => { errors: @order.errors }, status: :unprocessable_entity
     end
   end
 
@@ -24,6 +24,12 @@ class Api::V1::OrdersController < Api::V1::ApiController
 
   def set_customer
     @customer = Customer.find_or_create_by(email: customer_params[:email])
+    @customer.update_attributes(customer_params)
+
+    if !@customer.save
+      render :json => { errors: @customer.errors }, status: :unprocessable_entity
+    end
+
     @customer.update_attributes(customer_params)
     @customer.set_address(address_params)
   end
@@ -54,7 +60,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def order_params
-    params.require(:order).permit(:requester_notes, :agrees_to_01_10_2018)
+    params.require(:order).permit(:requester_notes)
   end
 
   # update order data
