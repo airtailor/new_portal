@@ -8,6 +8,11 @@ FactoryBot.define do
   end
 
   factory :tailor_address, class: Address, parent: :address do
+    street { "505 W 162 St" }
+    street_two { "Apt 2C" } 
+    city { "New York" } 
+    state_province { "NY" } 
+    zip_code { "10031" } 
     address_type { "tailor" }
   end
 
