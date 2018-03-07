@@ -39,6 +39,15 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       expect(response).to be_success
     end
 
+    context "when it has no data" do 
+      it "responds with an error" do 
+        request.headers.merge!(@auth_headers)
+        data = {}
+        post :create, params: data
+        expect(response.body).to eq("param is missing or the value is empty: order")
+      end
+    end
+
     context "when it has an invalid api key" do 
       it "responds with an error" do 
         @auth_headers = {"X-Api-Key": "", "Content-Type": "application/json"}
@@ -85,6 +94,24 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
       post :create, params: data
       expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
+    end
+  end
+
+  context "when it has no customer data" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: @items,
+          customer: {}
+        )
+      }
+
+      post :create, params: data
+      expect(response.body).to eq("param is missing or the value is empty: customer")
     end
   end
 
