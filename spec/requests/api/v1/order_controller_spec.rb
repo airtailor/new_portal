@@ -20,30 +20,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
     @auth_headers = {"X-Api-Key": "#{@retailer_user.api_key}", "Content-Type": "application/json"}
 
-    # need to specify customer in this order so that we
-    # use a unique and valid phone number, and
-    # use the same first name so they both come up in the search
-    #@customer_one = FactoryBot.create(:customer, phone: 9045668701, first_name: "Jones")
-    #@customer_two = FactoryBot.create(:customer, phone: 6167804457, first_name: "Jones")
-
-    #@order_one = FactoryBot.create(
-    #  :retailer_tailor_order,
-    #  retailer: @retailer_store,
-     # customer: @customer_one
-    #)
-
-    #@order_two = FactoryBot.create(
-    #  :retailer_tailor_order,
-    #  retailer: @airtailor_store,
-    #  customer: @customer_two
-    #)
-
-    #@order_three = FactoryBot.create(
-    #  :retailer_tailor_order,
-    #  retailer: @airtailor_store,
-    #  customer: @customer_two
-    #)
-   
     @items = [    
       {
         "item_type_id": FactoryBot.create(:item_type, id: 7, name: "Pants").id,
@@ -66,78 +42,56 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       request.headers.merge!(@auth_headers)
       data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
       post :create, params: data
-      byebug
       expect(response).to be_success
+    end
+
+    context "when it has an invalid api key" do 
+      it "responds with an error" do 
+        @auth_headers = {"X-Api-Key": "", "Content-Type": "application/json"}
+        request.headers.merge!(@auth_headers)
+        data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
+        post :create, params: data
+        expect(JSON.parse(response.body)["error"]).to eq("Access Denied")
+      end
+    end
+
+    context "when it has an invalid item_type_id" do 
+      it "responds with an error" do 
+        @items.first["item_type_id"] = 9000
+        request.headers.merge!(@auth_headers)
+        data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
+        post :create, params: data
+        expect(JSON.parse(response.body)["error"]).to eq("Couldn't find ItemType with 'id'=9000")
+      end
+    end
+
+    context "when it has an invalid alteration_id" do 
+      it "responds with an error" do 
+        @items.first[:alterations].first[:alteration_id] = 9000
+        request.headers.merge!(@auth_headers)
+        data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
+        post :create, params: data
+        expect(JSON.parse(response.body)["error"]).to eq("Couldn't find Alteration with 'id'=9000")
+      end
     end
   end
 
-  # describe "GET #search" do
-  #   it "returns a 200 ok" do
-  #     get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
-  #     expect(response).to be_success
-  #   end
-  #
-  #   context "when the user is an admin" do
-  #     it "allows them to search for other store's orders" do
-  #       get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
-  #       data = JSON.parse(response.body)
-  #       expect(data.count).to eq(Order.count)
-  #     end
-  #   end
-  #
-  #   context "when the user is not an admin" do
-  #     it "allows them to search for only their store's orders" do
-  #       @auth_headers = @retailer_user.create_new_auth_token
-  #       get :search, {query: "#{@order_one.customer.first_name}"}.merge(@auth_headers)
-  #       data = JSON.parse(response.body)
-  #       expect(data.count).to eq(1)
-  #     end
-  #   end
-  # end
-  #
-  # describe "GET #archived" do
-  #   before :each do
-  #     @order_one.set_fulfilled
-  #     @order_two.set_fulfilled
-  #     @order_three.set_fulfilled
-  #   end
-  #
-  #   it "returns a 200 ok" do
-  #     get :archived, {}.merge(@auth_headers)
-  #     expect(response).to be_success
-  #   end
-  #
-  #   it "returns fulfilled orders" do
-  #     get :archived, {}.merge(@auth_headers)
-  #     data = JSON.parse(response.body)
-  #     fulfilled = data.first["fulfilled"]
-  #     expect(fulfilled).to be(true)
-  #   end
-  #
-  #   it "is ordered by recent fulfilled date" do
-  #     get :archived, {}.merge(@auth_headers)
-  #     data = JSON.parse(response.body)
-  #     first_date = data.first["fulfilled_date"]
-  #     second_date = data.second["fulfilled_date"]
-  #     expect(first_date > second_date).to be(true)
-  #   end
-  #
-  #   context "when the user is not an admin" do
-  #     it "returns only their store's fulfilled orders" do
-  #       @auth_headers = @retailer_user.create_new_auth_token
-  #       get :archived, {}.merge(@auth_headers)
-  #       data = JSON.parse(response.body)
-  #       expect(data.count).to eq(1)
-  #     end
-  #   end
-  #
-  #   context "when the user is an admin" do
-  #     it "returns all fulfilled orders" do
-  #       fulfill_count = Order.where(fulfilled: true).count
-  #       get :archived, {}.merge(@auth_headers)
-  #       data = JSON.parse(response.body)
-  #       expect(data.count).to eq(fulfill_count)
-  #     end
-  #   end
-  # end
-end
+    context "when it has invalid customer data" do 
+      it "responds with an error" do 
+        request.headers.merge!(@auth_headers)
+
+        data = {
+          order: FactoryBot.build(
+            :ecommerce_order_request, 
+            retailer: @retailer_store, 
+            items: @items,
+            customer: FactoryBot.build(:ecommerce_customer, first_name: "")
+          )
+        }
+
+        post :create, params: data
+        expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
+      end
+    end
+  end
+

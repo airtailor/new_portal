@@ -13,7 +13,6 @@ module AlterationPrices
       215 => 15.0,
       216 => 15.0
     }
-    puts "price #{prices[alt_id]} #{alt_id}"
     return prices[alt_id]
   end
 end
