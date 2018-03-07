@@ -29,6 +29,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         ]
       }
     ]
+
   end
 
   describe "POST #create" do
@@ -37,15 +38,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
       post :create, params: data
       expect(response).to be_success
-    end
-
-    context "when it has no data" do 
-      it "responds with an error" do 
-        request.headers.merge!(@auth_headers)
-        data = {}
-        post :create, params: data
-        expect(response.body).to eq("param is missing or the value is empty: order")
-      end
     end
 
     context "when it has an invalid api key" do 
@@ -82,7 +74,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
   context "when it has invalid customer data" do 
     it "responds with an error" do 
       request.headers.merge!(@auth_headers)
-
       data = {
         order: FactoryBot.build(
           :ecommerce_order_request, 
@@ -91,16 +82,39 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
           customer: FactoryBot.build(:ecommerce_customer, first_name: "")
         )
       }
-
       post :create, params: data
       expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
+    end
+  end
+
+  context "when it has no data" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+      data = {}
+      post :create, params: data
+      expect(response.body).to eq("param is missing or the value is empty: order")
+    end
+  end
+
+  context "when it has no items" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: [],
+          customer: FactoryBot.build(:ecommerce_customer)
+        )
+      }
+      post :create, params: data
+      expect(response.body).to eq("param is missing or the value is empty: items")
     end
   end
 
   context "when it has no customer data" do 
     it "responds with an error" do 
       request.headers.merge!(@auth_headers)
-
       data = {
         order: FactoryBot.build(
           :ecommerce_order_request, 
@@ -109,7 +123,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
           customer: {}
         )
       }
-
       post :create, params: data
       expect(response.body).to eq("param is missing or the value is empty: customer")
     end
@@ -127,7 +140,6 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
           customer: FactoryBot.build(:ecommerce_customer, street: "")
         )
       }
-
       post :create, params: data
       expect(JSON.parse(response.body)["errors"]).to eq("Invalid Address")
     end
