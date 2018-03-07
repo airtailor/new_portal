@@ -27,7 +27,9 @@ class Api::V1::OrdersController < Api::V1::ApiController
     if !@customer.save
       render :json => { errors: @customer.errors }, status: :unprocessable_entity
     else
-      @customer.set_address(address_params)
+      unless @customer.set_address(address_params)
+        render :json => { errors: "Invalid Address" }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -44,7 +46,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
   end
 
   def permitted_customer_fields
-    [ :first_name, :last_name, :phone, :email,]
+    [ :first_name, :last_name, :phone, :email ]
   end
 
   def required_address_fields

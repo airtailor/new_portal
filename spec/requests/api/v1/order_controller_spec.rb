@@ -5,14 +5,8 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     @tailor = FactoryBot.create(:tailor)
     @tailor.set_address(street: "626 W 139th St", city: "New York", state_province: "NY", zip_code: "10031")
 
-    @airtailor_co = FactoryBot.create(:company, name: "Air Tailor")
-    @airtailor_store = FactoryBot.create(:retailer, name: "Air Tailor", company: @airtailor_co, default_tailor: @tailor)
-
     @retailer_co = FactoryBot.create(:company, name: "J.Crew")
     @retailer_store = FactoryBot.create(:retailer, name: "J.Crew - E-commerce", company: @retailer_co, default_tailor: @tailor)
-
-    @admin_user = FactoryBot.create(:user, store: @airtailor_store)
-    @admin_user.add_role "admin"
 
     @retailer_user = FactoryBot.create(:user, store: @retailer_store)
     @retailer_user.add_role "retailer"
@@ -76,22 +70,40 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     end
   end
 
-    context "when it has invalid customer data" do 
-      it "responds with an error" do 
-        request.headers.merge!(@auth_headers)
+  context "when it has invalid customer data" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
 
-        data = {
-          order: FactoryBot.build(
-            :ecommerce_order_request, 
-            retailer: @retailer_store, 
-            items: @items,
-            customer: FactoryBot.build(:ecommerce_customer, first_name: "")
-          )
-        }
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: @items,
+          customer: FactoryBot.build(:ecommerce_customer, first_name: "")
+        )
+      }
 
-        post :create, params: data
-        expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
-      end
+      post :create, params: data
+      expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
     end
   end
+
+  context "when it has invalid customer address" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: @items,
+          customer: FactoryBot.build(:ecommerce_customer, street: "")
+        )
+      }
+
+      post :create, params: data
+      expect(JSON.parse(response.body)["errors"]).to eq("Invalid Address")
+    end
+  end
+end
 
