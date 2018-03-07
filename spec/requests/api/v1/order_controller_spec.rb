@@ -46,7 +46,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         request.headers.merge!(@auth_headers)
         data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
         post :create, params: data
-        expect(JSON.parse(response.body)["error"]).to eq("Access Denied")
+        expect(JSON.parse(response.body)["errors"].first).to eq("Access Denied")
       end
     end
 
@@ -56,7 +56,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         request.headers.merge!(@auth_headers)
         data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
         post :create, params: data
-        expect(JSON.parse(response.body)["error"]).to eq("Couldn't find ItemType with 'id'=9000")
+        expect(JSON.parse(response.body)["errors"].first).to eq("Couldn't find ItemType with 'id'=9000")
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         request.headers.merge!(@auth_headers)
         data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
         post :create, params: data
-        expect(JSON.parse(response.body)["error"]).to eq("Couldn't find Alteration with 'id'=9000")
+        expect(JSON.parse(response.body)["errors"].first).to eq("Couldn't find Alteration with 'id'=9000")
       end
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       request.headers.merge!(@auth_headers)
       data = {}
       post :create, params: data
-      expect(response.body).to eq("param is missing or the value is empty: order")
+      expect(JSON.parse(response.body)["errors"].first).to eq("param is missing or the value is empty: order")
     end
   end
 
@@ -108,7 +108,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         )
       }
       post :create, params: data
-      expect(response.body).to eq("param is missing or the value is empty: items")
+      expect(JSON.parse(response.body)["errors"].first).to eq("param is missing or the value is empty: items")
     end
   end
 
@@ -124,7 +124,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         )
       }
       post :create, params: data
-      expect(response.body).to eq("param is missing or the value is empty: customer")
+      expect(JSON.parse(response.body)["errors"].first).to eq("param is missing or the value is empty: customer")
     end
   end
 
@@ -141,7 +141,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         )
       }
       post :create, params: data
-      expect(JSON.parse(response.body)["errors"]).to eq("Invalid Address")
+      expect(JSON.parse(response.body)["errors"].first).to eq("Invalid Address")
     end
   end
 end

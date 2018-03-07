@@ -28,7 +28,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
       render :json => { errors: @customer.errors }, status: :unprocessable_entity
     else
       unless @customer.set_address(address_params)
-        render :json => { errors: "Invalid Address" }, status: :unprocessable_entity
+        render :json => { errors: ["Invalid Address"] }, status: :unprocessable_entity
       end
     end
   end
