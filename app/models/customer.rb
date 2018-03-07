@@ -10,12 +10,12 @@ class Customer < ApplicationRecord
   has_many :customer_addresses
   has_many :addresses, through: :customer_addresses
 
+  before_validation :add_country
+  after_create :create_blank_measurements
+
   def last_measurement
     self.measurements.last
   end
-
-  before_validation :add_country
-  after_create :create_blank_measurements
 
   def set_address(address_params)
     # NOTE: customers are locked into a single address, but can have more later

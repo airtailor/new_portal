@@ -24,7 +24,6 @@ class Api::V1::OrdersController < Api::V1::ApiController
 
   def set_customer
     @customer = Customer.find_or_create_ecomm(customer_params)
-
     if !@customer.save
       render :json => { errors: @customer.errors }, status: :unprocessable_entity
     else
