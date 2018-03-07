@@ -59,6 +59,7 @@ group :development, :test do
   gem 'faker'
   gem 'capybara'
   gem 'launchy'
+  gem 'rb-readline'
 end
 
 group :development do

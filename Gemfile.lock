@@ -258,6 +258,7 @@ GEM
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    rb-readline (0.5.5)
     redis (4.0.1)
     render_anywhere (0.0.12)
       rails (>= 3.0.7)
@@ -387,6 +388,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 5.0)
   rails-controller-testing
+  rb-readline
   render_anywhere
   rolify
   rspec-rails
