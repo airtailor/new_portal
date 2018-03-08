@@ -83,7 +83,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
         )
       }
       post :create, params: data
-      expect(JSON.parse(response.body)["errors"]["first_name"].first).to eq("can't be blank")
+      expect(JSON.parse(response.body)["errors"].first).to eq("First name can't be blank")
     end
   end
 

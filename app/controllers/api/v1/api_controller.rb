@@ -16,6 +16,10 @@ class Api::V1::ApiController < ApplicationController
     render json: { errors: [exception.message] }, status: :unprocessable_entity
   end
 
+  def full_messages_error(resource)
+    render :json => { errors: resource.errors.full_messages }, status: :unprocessable_entity
+  end
+
   private
 
   def api_authenticate

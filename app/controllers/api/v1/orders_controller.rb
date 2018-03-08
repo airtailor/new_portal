@@ -11,7 +11,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
       @order.send_shipping_label_email_to_customer
       render :json => @order
     else
-      render :json => { errors: @order.errors }, status: :unprocessable_entity
+      full_messages_error(@order)
     end
   end
 
@@ -25,7 +25,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
   def set_customer
     @customer = Customer.find_or_create_ecomm(customer_params)
     if !@customer.save
-      render :json => { errors: @customer.errors }, status: :unprocessable_entity
+      full_messages_error(@customer)
     else
       unless @customer.set_address(address_params)
         render :json => { errors: ["Invalid Address"] }, status: :unprocessable_entity
