@@ -1,5 +1,5 @@
 class Api::V1::OrdersController < Api::V1::ApiController
-  before_action :api_authenticate, :set_store, :set_customer
+  before_action :api_authenticate, :set_store, :set_customer, :set_items
 
   def create
     @order = Order.new(order_params)
@@ -7,7 +7,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.parse_order_lifecycle_stage
 
     if @order.save
-      set_order_items
+      create_order_items
       @order.send_shipping_label_email_to_customer
       render :json => @order
     else
@@ -74,9 +74,20 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.tailor = @store.default_tailor
   end
 
-  def set_order_items
-    items = params.require(:order).require(:items)
+  def create_order_items
     # the order's total and weight is added in the below method
-    Item.create_items_ecomm(@order, items)
+    Item.create_items_ecomm(@order, @items)
   end
+
+  def set_items
+    @items = params.require(:order).require(:items)
+    if empty_alts?
+      render_params_missing_response("param is missing or the value is empty: alterations")
+    end
+  end
+
+  def empty_alts?
+    @items.select  {|i| i["alterations"].nil? || i["alterations"].empty? }.count > 0
+  end
+
 end

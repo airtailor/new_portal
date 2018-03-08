@@ -13,7 +13,8 @@ class Api::V1::ApiController < ApplicationController
   end
 
   def render_params_missing_response(exception)
-    render json: { errors: [exception.message] }, status: :unprocessable_entity
+    message = exception.try(:message) || exception
+    render json: { errors: [message] }, status: :unprocessable_entity
   end
 
   def full_messages_error(resource)

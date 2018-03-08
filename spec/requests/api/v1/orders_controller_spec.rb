@@ -112,6 +112,42 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     end
   end
 
+  context "when alterations are empty" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+      @items.first[:alterations] = []
+
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: @items,
+          customer: FactoryBot.build(:ecommerce_customer)
+        )
+      }
+      post :create, params: data
+      expect(JSON.parse(response.body)["errors"].first).to eq("param is missing or the value is empty: alterations")
+    end
+  end
+
+  context "when alterations are nil" do 
+    it "responds with an error" do 
+      request.headers.merge!(@auth_headers)
+      @items.first[:alterations] = nil
+
+      data = {
+        order: FactoryBot.build(
+          :ecommerce_order_request, 
+          retailer: @retailer_store, 
+          items: @items,
+          customer: FactoryBot.build(:ecommerce_customer)
+        )
+      }
+      post :create, params: data
+      expect(JSON.parse(response.body)["errors"].first).to eq("param is missing or the value is empty: alterations")
+    end
+  end
+
   context "when it has no customer data" do 
     it "responds with an error" do 
       request.headers.merge!(@auth_headers)
