@@ -66,7 +66,7 @@
           <% if (@provider.street2 && @provider.street2.length > 0) || @provider.address.street_two.length > 0 %>
             <%= @provider.street2 %><br>
           <% end %>
-          <%= @provider.city || @provider.address.city %>, <%= @provider.state || @provider.address.state_province %> <%= @provider.zip ||i @provider.address.zip_code %>
+          <%= @provider.city || @provider.address.city %>, <%= @provider.state || @provider.address.state_province %> <%= @provider.zip || @provider.address.zip_code %>
           <br>
           Phone: (888) 983-1683
         </small>
