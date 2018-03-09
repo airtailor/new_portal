@@ -33,11 +33,24 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
   end
 
   describe "POST #create" do
-    it "returns a 200 ok" do
-      request.headers.merge!(@auth_headers)
-      data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
-      post :create, params: data
-      expect(response).to be_success
+    context "when the request is successful" do 
+      before(:each) do 
+        request.headers.merge!(@auth_headers)
+        data = {order: FactoryBot.build(:ecommerce_order_request, retailer: @retailer_store, items: @items)}
+        post :create, params: data
+      end
+
+      it "returns a 200 ok" do
+        expect(response).to be_success
+      end
+
+      it "has a correct total" do
+        expect(JSON.parse(response.body)["total"]).to eq(63.5)
+      end
+
+      it "has a correct weight" do
+        expect(JSON.parse(response.body)["weight"]).to eq(1130)
+      end
     end
 
     context "when it has an invalid api key" do 
