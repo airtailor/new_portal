@@ -347,3 +347,338 @@
 2018-02-06 19:22:22.733 EST [14069] ERROR:  table "addresses" does not exist
 2018-02-06 19:22:22.733 EST [14069] STATEMENT:  DROP TABLE "public"."addresses";
 	
+2018-03-23 18:29:50.366 EDT [58302] LOG:  listening on IPv6 address "::1", port 5432
+2018-03-23 18:29:50.366 EDT [58302] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2018-03-23 18:29:50.367 EDT [58302] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2018-03-23 18:29:50.375 EDT [58303] LOG:  database system was shut down at 2018-03-23 18:29:43 EDT
+2018-03-23 18:29:50.377 EDT [58302] LOG:  database system is ready to accept connections
+2018-03-23 18:29:54.840 EDT [58328] FATAL:  database "brianflynn" does not exist
+2018-03-23 18:30:14.195 EDT [58436] FATAL:  database "airtailor_development" does not exist
+2018-03-23 18:30:31.086 EDT [58503] ERROR:  relation "stores" does not exist at character 566
+2018-03-23 18:30:31.086 EDT [58503] STATEMENT:                SELECT a.attname, format_type(a.atttypid, a.atttypmod),
+	                     pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod,
+	                     c.collname, col_description(a.attrelid, a.attnum) AS comment
+	                FROM pg_attribute a
+	                LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+	                LEFT JOIN pg_type t ON a.atttypid = t.oid
+	                LEFT JOIN pg_collation c ON a.attcollation = c.oid AND a.attcollation <> t.typcollation
+	               WHERE a.attrelid = '"stores"'::regclass
+	                 AND a.attnum > 0 AND NOT a.attisdropped
+	               ORDER BY a.attnum
+	
+2018-03-23 18:30:57.734 EDT [58554] ERROR:  database "airtailor_development" already exists
+2018-03-23 18:30:57.734 EDT [58554] STATEMENT:  CREATE DATABASE "airtailor_development" ENCODING = 'utf8'
+2018-03-23 18:30:57.742 EDT [58555] ERROR:  database "airtailor_test" already exists
+2018-03-23 18:30:57.742 EDT [58555] STATEMENT:  CREATE DATABASE "airtailor_test" ENCODING = 'utf8'
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  relation "public.users" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."users" DROP CONSTRAINT "fk_rails_c6f326481e";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  relation "public.measurements" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."measurements" DROP CONSTRAINT "fk_rails_ad4669e82b";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  relation "public.stores" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "fk_rails_470bdf4a73";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  relation "public.stores" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "fk_rails_00cb1050af";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  index "index_users_roles_on_user_id_and_role_id" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_roles_on_user_id_and_role_id";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  index "index_users_on_uid_and_provider" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_on_uid_and_provider";
+	
+2018-03-23 18:31:33.092 EDT [58595] ERROR:  index "index_users_on_store_id" does not exist
+2018-03-23 18:31:33.092 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_on_store_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_users_on_reset_password_token" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_on_reset_password_token";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_users_on_email" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_on_email";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_users_on_confirmation_token" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_users_on_confirmation_token";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_stores_on_default_tailor_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_stores_on_default_tailor_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_stores_on_company_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_stores_on_company_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_stores_on_address_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_stores_on_address_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_shipments_on_source_type_and_source_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_shipments_on_source_type_and_source_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_shipments_on_destination_type_and_destination_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_shipments_on_destination_type_and_destination_id";
+	
+2018-03-23 18:31:33.093 EDT [58595] ERROR:  index "index_shipment_orders_on_shipment_id" does not exist
+2018-03-23 18:31:33.093 EDT [58595] STATEMENT:  DROP INDEX "public"."index_shipment_orders_on_shipment_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_shipment_orders_on_order_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_shipment_orders_on_order_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_roles_on_name_and_resource_type_and_resource_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_roles_on_name_and_resource_type_and_resource_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_roles_on_name" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_roles_on_name";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_orders_on_requester_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_orders_on_requester_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_orders_on_provider_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_orders_on_provider_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_measurements_on_customer_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_measurements_on_customer_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_items_on_order_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_items_on_order_id";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_customers_on_phone" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customers_on_phone";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_customers_on_first_name_and_last_name" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customers_on_first_name_and_last_name";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_customers_on_email" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customers_on_email";
+	
+2018-03-23 18:31:33.094 EDT [58595] ERROR:  index "index_customer_addresses_on_customer_id" does not exist
+2018-03-23 18:31:33.094 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_customer_id";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_customer_addresses_on_address_id_and_customer_id" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_address_id_and_customer_id";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_customer_addresses_on_address_id" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_customer_addresses_on_address_id";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_companies_on_name" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_companies_on_name";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_companies_on_hq_store_id" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_companies_on_hq_store_id";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_addresses_on_zip_code" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_addresses_on_zip_code";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_addresses_on_street_two" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_addresses_on_street_two";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_addresses_on_street" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_addresses_on_street";
+	
+2018-03-23 18:31:33.095 EDT [58595] ERROR:  index "index_addresses_on_state_province" does not exist
+2018-03-23 18:31:33.095 EDT [58595] STATEMENT:  DROP INDEX "public"."index_addresses_on_state_province";
+	
+2018-03-23 18:31:33.096 EDT [58595] ERROR:  index "index_addresses_on_city" does not exist
+2018-03-23 18:31:33.096 EDT [58595] STATEMENT:  DROP INDEX "public"."index_addresses_on_city";
+	
+2018-03-23 18:31:33.096 EDT [58595] ERROR:  relation "public.users" does not exist
+2018-03-23 18:31:33.096 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."users" DROP CONSTRAINT "users_pkey";
+	
+2018-03-23 18:31:33.096 EDT [58595] ERROR:  relation "public.stores" does not exist
+2018-03-23 18:31:33.096 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."stores" DROP CONSTRAINT "stores_pkey";
+	
+2018-03-23 18:31:33.096 EDT [58595] ERROR:  relation "public.shipments" does not exist
+2018-03-23 18:31:33.096 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."shipments" DROP CONSTRAINT "shipments_pkey";
+	
+2018-03-23 18:31:33.096 EDT [58595] ERROR:  relation "public.shipment_orders" does not exist
+2018-03-23 18:31:33.096 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."shipment_orders" DROP CONSTRAINT "shipment_orders_pkey";
+	
+2018-03-23 18:31:33.097 EDT [58595] ERROR:  relation "public.schema_migrations" does not exist
+2018-03-23 18:31:33.097 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."schema_migrations" DROP CONSTRAINT "schema_migrations_pkey";
+	
+2018-03-23 18:31:33.097 EDT [58595] ERROR:  relation "public.roles" does not exist
+2018-03-23 18:31:33.097 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."roles" DROP CONSTRAINT "roles_pkey";
+	
+2018-03-23 18:31:33.097 EDT [58595] ERROR:  relation "public.orders" does not exist
+2018-03-23 18:31:33.097 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."orders" DROP CONSTRAINT "orders_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.measurements" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."measurements" DROP CONSTRAINT "measurements_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.items" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."items" DROP CONSTRAINT "items_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.item_types" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."item_types" DROP CONSTRAINT "item_types_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.customers" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."customers" DROP CONSTRAINT "customers_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.customer_addresses" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."customer_addresses" DROP CONSTRAINT "customer_addresses_pkey";
+	
+2018-03-23 18:31:33.098 EDT [58595] ERROR:  relation "public.companies" does not exist
+2018-03-23 18:31:33.098 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."companies" DROP CONSTRAINT "companies_pkey";
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.ar_internal_metadata" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."ar_internal_metadata" DROP CONSTRAINT "ar_internal_metadata_pkey";
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.alterations" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."alterations" DROP CONSTRAINT "alterations_pkey";
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.addresses" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE ONLY "public"."addresses" DROP CONSTRAINT "addresses_pkey";
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.users" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE "public"."users" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.stores" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE "public"."stores" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.shipments" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE "public"."shipments" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.099 EDT [58595] ERROR:  relation "public.shipment_orders" does not exist
+2018-03-23 18:31:33.099 EDT [58595] STATEMENT:  ALTER TABLE "public"."shipment_orders" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.roles" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."roles" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.orders" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."orders" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.measurements" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."measurements" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.items" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."items" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.item_types" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."item_types" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.customers" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."customers" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.customer_addresses" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."customer_addresses" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.companies" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."companies" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.100 EDT [58595] ERROR:  relation "public.alterations" does not exist
+2018-03-23 18:31:33.100 EDT [58595] STATEMENT:  ALTER TABLE "public"."alterations" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  relation "public.addresses" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  ALTER TABLE "public"."addresses" ALTER COLUMN "id" DROP DEFAULT;
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "users_roles" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."users_roles";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  sequence "users_id_seq" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."users_id_seq";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "users" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."users";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  sequence "stores_id_seq" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."stores_id_seq";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "stores" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."stores";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  sequence "shipments_id_seq" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."shipments_id_seq";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "shipments" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."shipments";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  sequence "shipment_orders_id_seq" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."shipment_orders_id_seq";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "shipment_orders" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."shipment_orders";
+	
+2018-03-23 18:31:33.101 EDT [58595] ERROR:  table "schema_migrations" does not exist
+2018-03-23 18:31:33.101 EDT [58595] STATEMENT:  DROP TABLE "public"."schema_migrations";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "roles_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."roles_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "roles" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."roles";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "orders_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."orders_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "orders" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."orders";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "measurements_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."measurements_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "measurements" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."measurements";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "items_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."items_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "items" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."items";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "item_types_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."item_types_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "item_types" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."item_types";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  sequence "customers_id_seq" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."customers_id_seq";
+	
+2018-03-23 18:31:33.102 EDT [58595] ERROR:  table "customers" does not exist
+2018-03-23 18:31:33.102 EDT [58595] STATEMENT:  DROP TABLE "public"."customers";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  sequence "customer_addresses_id_seq" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."customer_addresses_id_seq";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "customer_addresses" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."customer_addresses";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  sequence "companies_id_seq" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."companies_id_seq";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "companies" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."companies";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "ar_internal_metadata" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."ar_internal_metadata";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  sequence "alterations_id_seq" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."alterations_id_seq";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "alterations" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."alterations";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "alteration_items" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."alteration_items";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  sequence "addresses_id_seq" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP SEQUENCE "public"."addresses_id_seq";
+	
+2018-03-23 18:31:33.103 EDT [58595] ERROR:  table "addresses" does not exist
+2018-03-23 18:31:33.103 EDT [58595] STATEMENT:  DROP TABLE "public"."addresses";
+	
+2018-03-23 18:31:40.227 EDT [58643] ERROR:  database "airtailor_development" already exists
+2018-03-23 18:31:40.227 EDT [58643] STATEMENT:  CREATE DATABASE "airtailor_development" ENCODING = 'utf8'
+2018-03-23 18:31:40.235 EDT [58644] ERROR:  database "airtailor_test" already exists
+2018-03-23 18:31:40.235 EDT [58644] STATEMENT:  CREATE DATABASE "airtailor_test" ENCODING = 'utf8'
+2018-03-23 18:32:19.487 EDT [58710] ERROR:  database "airtailor_development" already exists
+2018-03-23 18:32:19.487 EDT [58710] STATEMENT:  CREATE DATABASE "airtailor_development" ENCODING = 'utf8'
+2018-03-23 18:32:19.495 EDT [58711] ERROR:  database "airtailor_test" already exists
+2018-03-23 18:32:19.495 EDT [58711] STATEMENT:  CREATE DATABASE "airtailor_test" ENCODING = 'utf8'
+2018-03-23 18:35:19.261 EDT [60398] ERROR:  database "airtailor_development" already exists
+2018-03-23 18:35:19.261 EDT [60398] STATEMENT:  CREATE DATABASE "airtailor_development" ENCODING = 'utf8'
+2018-03-23 18:35:19.270 EDT [60399] ERROR:  database "airtailor_test" already exists
+2018-03-23 18:35:19.270 EDT [60399] STATEMENT:  CREATE DATABASE "airtailor_test" ENCODING = 'utf8'
+2018-03-27 10:43:23.842 EDT [94410] ERROR:  cached plan must not change result type
+2018-03-27 10:43:23.842 EDT [94410] STATEMENT:  SELECT  "measurements".* FROM "measurements" WHERE "measurements"."id" = $1 LIMIT $2
+2018-03-27 17:35:14.913 EDT [23081] ERROR:  cached plan must not change result type
+2018-03-27 17:35:14.913 EDT [23081] STATEMENT:  SELECT  "garments".* FROM "garments" WHERE "garments"."id" = $1 LIMIT $2
+2018-03-27 17:35:24.937 EDT [23088] ERROR:  cached plan must not change result type
+2018-03-27 17:35:24.937 EDT [23088] STATEMENT:  SELECT  "garments".* FROM "garments" WHERE "garments"."id" = $1 LIMIT $2
