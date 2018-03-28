@@ -10,12 +10,12 @@ class Customer < ApplicationRecord
   has_many :customer_addresses
   has_many :addresses, through: :customer_addresses
 
+  before_validation :add_country
+  after_create :create_blank_measurements
+
   def last_measurement
     self.measurements.last
   end
-
-  before_validation :add_country
-  after_create :create_blank_measurements
 
   def set_address(address_params)
     # NOTE: customers are locked into a single address, but can have more later
@@ -77,6 +77,13 @@ class Customer < ApplicationRecord
       :phone => self.try(:phone),
       :email => self.try(:email)
     }
+  end
+
+  def self.find_or_create_ecomm(customer_params)
+    customer = self.find_or_create_by(email: customer_params[:email])
+    customer.agrees_to_03_09_2018 = true
+    customer.update_attributes(customer_params)
+    customer
   end
 
   private

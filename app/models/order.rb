@@ -83,7 +83,6 @@ class Order < ApplicationRecord
         shipment.weight = self.weight
         shipment.deliver
         shipment.save
-
         self.shipments << shipment
       end
 
@@ -211,7 +210,7 @@ class Order < ApplicationRecord
   private
 
   def is_customer_direct_tailor_order
-    self.type != WELCOME_KIT && self.retailer.name == "Air Tailor"
+    self.type != WELCOME_KIT && (self.retailer.name == "Air Tailor" || self.source.split(" ").last == "E-commerce")
   end
 
   def needs_delighted

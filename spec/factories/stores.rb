@@ -17,7 +17,6 @@ FactoryBot.define do
 
   factory :retailer, class: Retailer, parent: :store do
     address { FactoryBot.create(:retailer_address) }
-    default_tailor Tailor.first
   end
 
   factory :tailor, class: Tailor, parent: :store do

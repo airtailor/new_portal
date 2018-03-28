@@ -92,4 +92,22 @@ RSpec.describe User, type: :model do
       expect(@user.has_role? :tailor).to be(false)
     end
   end
+
+  describe "add_api_key" do 
+    before :each do 
+      @user = FactoryBot.create(:user)
+      @user_two = FactoryBot.create(:user)
+    end
+
+    it "adds an api key to the User it is called on" do 
+      @user.add_api_key
+      expect(@user.api_key).to_not be(nil)
+    end
+
+    it "adds unique api keys for individual users" do 
+      @user.add_api_key
+      @user_two.add_api_key
+      expect(@user.api_key).to_not eq(@user_two.api_key)
+    end
+  end
 end

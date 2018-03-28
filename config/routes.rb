@@ -58,5 +58,9 @@ Rails.application.routes.draw do
     post "/shippo_hook", to: "shippo#receive"
 
     get "/reports/current_report", to: "reports#current_report"
+
+    namespace :v1 do 
+      post "/orders", to: "orders#create"
+    end
   end
 end
