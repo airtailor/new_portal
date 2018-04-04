@@ -54,6 +54,7 @@ class Api::ShopifyController < ApplicationController
 
     if order.id
       order.send_order_confirmation_text
+      order.update_attributes(:provider_id => nil)
       items = update_line_items_with_quantity(data["line_items"]) || data["line_items"]
       Item.create_items_shopify(order, items) if order_type == TailorOrder
     end
