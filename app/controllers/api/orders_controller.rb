@@ -112,6 +112,10 @@ class Api::OrdersController < ApplicationController
         Item.create_items_portal(@order, params[:order][:garments])
         @order.send_order_confirmation_text
 
+        if @order.source == "Shopify"
+          @rder.update_attributes(:provider_id => nil)
+        end
+
         sql_includes = [
           :tailor, :retailer, :customer,
           shipments: [ :source, :destination ],
