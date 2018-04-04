@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180310192229) do
+ActiveRecord::Schema.define(version: 20180404201020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20180310192229) do
     t.boolean "agrees_to_terms"
     t.boolean "agrees_to_01_10_2018", default: false
     t.boolean "agrees_to_03_09_2018", default: false
+    t.string "accepts_marketing"
     t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["first_name", "last_name"], name: "index_customers_on_first_name_and_last_name"
     t.index ["phone"], name: "index_customers_on_phone", unique: true
