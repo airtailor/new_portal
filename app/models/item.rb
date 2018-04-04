@@ -58,6 +58,36 @@ class Item < ApplicationRecord
     end
   end
 
+  def self.create_items_shopify(order, line_items)
+    line_items.each do |item|
+      item_name_num = item["title"]
+
+      item_name = remove_number_from_item_name(item_name_num)
+      item_type = grab_item_type_from_title(item_name)
+
+      if item["title"] == "Tie Slimming Service"
+        old_notes = order.requester_notes
+        new_notes = ""
+
+        if old_notes && old_notes.length > 0
+          new_notes = old_notes + " || Number of Ties: #{item["quantity"]}"
+        else
+          new_notes = "Number of Ties: #{item["quantity"]}"
+        end
+        order.update_attributes(requester_notes: new_notes)
+      end
+
+      new_item = self.find_or_create_by(order: order, name: item_name_num) do |new_item|
+        new_item.item_type = item_type
+      end
+
+      unless item["variant_title"] == item_name
+        alteration = find_or_create_alteration(item["variant_title"])
+        find_or_create_alteration_item(alteration, new_item)
+      end
+    end
+  end
+
   private
 
   def self.grab_item_type_from_title(title)

@@ -53,7 +53,7 @@ class Api::ShopifyController < ApplicationController
     if order.id
       order.send_order_confirmation_text
       items = update_line_items_with_quantity(data["line_items"]) || data["line_items"]
-      Item.create_items_ecomm(order, items) if order_type == TailorOrder
+      Item.create_items_shopify(order, items) if order_type == TailorOrder
     end
 
     render json: {}, status: 200

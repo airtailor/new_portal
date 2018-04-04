@@ -86,10 +86,60 @@ class Customer < ApplicationRecord
     customer
   end
 
-  def self.find_or_create_shopify(data)
-    customer = self.find_or_create_by(email: data["email"])
-    customer.agrees_to_03_09_2018 = true
-    customer.update_attributes(:email => data["email"], :first_name => data["first_name"], :last_name => data["last_name"], :phone => data["default_address"]["phone"])
+  def self.find_or_create_shopify(shopify_customer)
+    phone = shopify_customer["default_address"]["phone"]
+      .gsub("(", "")
+      .gsub(")", "")
+      .gsub("-", "")
+      .gsub(" ", "")
+      .gsub("–", "")
+      .gsub("+", "")
+
+    made_new_customer = false
+    customer = Customer.find_or_create_by(phone: phone) do |customer|
+      made_new_customer = true
+
+      cust_details = shopify_customer["default_address"]
+
+      customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
+      customer.first_name = cust_details['first_name']
+      customer.last_name = cust_details['last_name']
+
+      address_params = {
+        'street' => cust_details['address1'],
+        'unit' => cust_details['address2'],
+        'city' => cust_details['city'],
+        'state_province' => cust_details['province'],
+        'zip_code' => cust_details['zip'],
+        'country' => cust_details['country_name'],
+        'country_code' => cust_details['country_code']
+      }
+
+      customer.set_address(address_params)
+    end
+    # update with most recent shopify attributes if customer already existed
+    if !made_new_customer
+      cust_details = shopify_customer["default_address"]
+      customer.email = shopify_customer["email"]
+      customer.shopify_id = shopify_customer["id"]
+      customer.first_name = cust_details["first_name"]
+      customer.last_name = cust_details["last_name"]
+      customer.company = cust_details["company"]
+
+      address_params = {
+        'street' => cust_details['address1'],
+        'unit' => cust_details['address2'],
+        'city' => cust_details['city'],
+        'state_province' => cust_details['province'],
+        'zip_code' => cust_details['zip'],
+        'country' => cust_details['country_name'],
+        'country_code' => cust_details['country_code']
+      }
+
+      customer.set_address(address_params)
+    end
+
     customer
   end
 
