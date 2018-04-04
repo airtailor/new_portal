@@ -210,7 +210,7 @@ class Order < ApplicationRecord
   private
 
   def is_customer_direct_tailor_order
-    self.type != WELCOME_KIT && (self.retailer.name == "Air Tailor" || self.source.split(" ").last == "E-commerce")
+    self.type != WELCOME_KIT && (self.retailer.id == 1 || self.source.split(" ").last == "E-commerce")
   end
 
   def needs_delighted
