@@ -108,7 +108,7 @@ class Customer < ApplicationRecord
 
       address_params = {
         'street' => cust_details['address1'],
-        'unit' => cust_details['address2'],
+        'street_two' => cust_details['address2'],
         'city' => cust_details['city'],
         'state_province' => cust_details['province'],
         'zip_code' => cust_details['zip'],
@@ -129,7 +129,7 @@ class Customer < ApplicationRecord
 
       address_params = {
         'street' => cust_details['address1'],
-        'unit' => cust_details['address2'],
+        'street_two' => cust_details['address2'],
         'city' => cust_details['city'],
         'state_province' => cust_details['province'],
         'zip_code' => cust_details['zip'],
