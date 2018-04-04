@@ -89,7 +89,6 @@ class Customer < ApplicationRecord
   def self.find_or_create_shopify(customer_params)
     customer = self.find_or_create_by(email: customer_params[:email])
     customer.agrees_to_03_09_2018 = true
-    customer.update_attributes(customer_params)
     customer
   end
 

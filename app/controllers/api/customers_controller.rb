@@ -70,7 +70,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def customer_params
-    params.require(:customer).except(:address, :orders_count)
+    params.require(:customer).except(:address)
       .permit(*permitted_customer_fields)
   end
 
