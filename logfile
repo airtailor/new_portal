@@ -682,3 +682,15 @@
 2018-03-27 17:35:14.913 EDT [23081] STATEMENT:  SELECT  "garments".* FROM "garments" WHERE "garments"."id" = $1 LIMIT $2
 2018-03-27 17:35:24.937 EDT [23088] ERROR:  cached plan must not change result type
 2018-03-27 17:35:24.937 EDT [23088] STATEMENT:  SELECT  "garments".* FROM "garments" WHERE "garments"."id" = $1 LIMIT $2
+2018-03-29 17:06:13.697 EDT [55419] ERROR:  operator does not exist: timestamp without time zone > integer at character 57
+2018-03-29 17:06:13.697 EDT [55419] HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+2018-03-29 17:06:13.697 EDT [55419] STATEMENT:  SELECT "customers".* FROM "customers" WHERE (created_at > 0)
+2018-03-29 17:06:13.699 EDT [55419] ERROR:  operator does not exist: timestamp without time zone > integer at character 58
+2018-03-29 17:06:13.699 EDT [55419] HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+2018-03-29 17:06:13.699 EDT [55419] STATEMENT:  SELECT  "customers".* FROM "customers" WHERE (created_at > 0) LIMIT $1
+2018-03-29 17:06:20.255 EDT [55419] ERROR:  operator does not exist: timestamp without time zone > integer at character 57
+2018-03-29 17:06:20.255 EDT [55419] HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+2018-03-29 17:06:20.255 EDT [55419] STATEMENT:  SELECT "customers".* FROM "customers" WHERE (created_at > 0)
+2018-03-29 17:06:20.256 EDT [55419] ERROR:  operator does not exist: timestamp without time zone > integer at character 58
+2018-03-29 17:06:20.256 EDT [55419] HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
+2018-03-29 17:06:20.256 EDT [55419] STATEMENT:  SELECT  "customers".* FROM "customers" WHERE (created_at > 0) LIMIT $1
