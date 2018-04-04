@@ -39,7 +39,8 @@ class Api::ShopifyController < ApplicationController
       order = order_type.find_or_create(data, customer)
     rescue => e
       if !order
-        order = Order.new({source_order_id: data["name"], source: "Shopify", retailer: Retailer.first, provider_id: nil})
+        order = Order.new({source_order_id: data["name"], source: "Shopify", retailer: Retailer.first})
+
         customer = Customer.find_or_create_shopify(data["customer"])
         order.customer = customer
         puts "\n\n\nshopify controller order not able to be created"
@@ -49,6 +50,8 @@ class Api::ShopifyController < ApplicationController
         order.alert_for_bad_shopify_order
       end
     end
+
+    order.update_attributes(:provider_id => nil)
 
     if order.id
       order.send_order_confirmation_text
