@@ -54,7 +54,7 @@ class Api::CustomersController < ApplicationController
     customer = Customer.where(id: params[:id]).first
     if @current_user.roles.first.name == "retailer"
       orders = customer.orders.where(retailer: @current_user.store)
-    else 
+    else
       orders = customer.orders
     end
 
@@ -70,7 +70,7 @@ class Api::CustomersController < ApplicationController
   end
 
   def customer_params
-    params.require(:customer).except(:address)
+    params.require(:customer).except(:address, :orders_count)
       .permit(*permitted_customer_fields)
   end
 
