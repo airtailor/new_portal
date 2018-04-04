@@ -40,6 +40,7 @@ class Api::ShopifyController < ApplicationController
     rescue => e
       if !order
         order = Order.new({source_order_id: data["name"], source: "Shopify", retailer: Retailer.first})
+        order.update_attributes(:provider_id => nil)
         customer = Customer.find_or_create_shopify(data["customer"])
         order.customer = customer
         puts "\n\n\nshopify controller order not able to be created"
