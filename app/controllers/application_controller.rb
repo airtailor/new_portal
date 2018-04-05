@@ -4,6 +4,11 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   skip_before_action :verify_authenticity_token
   respond_to :json
+  after_filter :cors_set_access_control_headers
+
+  def cors_set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+  end
 
   def authorize_admin
     redirect_to root_path, alert: "Access Denied" unless current_user.admin?
