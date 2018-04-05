@@ -20,7 +20,6 @@ gem 'devise_token_auth'
 gem 'omniauth'
 gem 'cancancan'
 gem 'rolify'
-gem 'rack-cors'
 
 gem 'send_sonar'
 #gem 'shippo', '~> 2.0.4'
@@ -38,6 +37,8 @@ gem 'hashie'
 gem 'textacular', '~> 5.0'
 
 gem "pgbackups-archive"
+
+gem 'rack-cors', :require => 'rack/cors'
 
 # Background job processing + asymc
 gem 'sidekiq'

@@ -11,6 +11,15 @@ module NewAirtailorPortal
     config.autoload_paths << File.join(Rails.root, 'app', 'classes')
     config.autoload_paths << File.join(Rails.root, 'app', 'classes', 'api')
 
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*',
+        :headers => :any,
+        :methods => [:get, :post, :options]
+      end
+    end
+
     config.middleware.use Rack::Cors do
       allow do
         origins '*'
