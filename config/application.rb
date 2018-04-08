@@ -11,13 +11,13 @@ module NewAirtailorPortal
     config.autoload_paths << File.join(Rails.root, 'app', 'classes')
     config.autoload_paths << File.join(Rails.root, 'app', 'classes', 'api')
 
-    config.middleware.use Rack::Cors do
+    config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*',
+        resource '/api/v1/orders',
           :headers => :any,
-          :expose  => ['access-token', 'expiry', 'token-type', 'uid', 'client', 'X_Api_Key'],
-          :methods => [:get, :post, :options, :delete, :put]
+          :expose  => ['X_Api_Key'],
+          :methods => [:post]
       end
     end
   end
