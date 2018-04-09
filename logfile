@@ -694,3 +694,21 @@
 2018-03-29 17:06:20.256 EDT [55419] ERROR:  operator does not exist: timestamp without time zone > integer at character 58
 2018-03-29 17:06:20.256 EDT [55419] HINT:  No operator matches the given name and argument type(s). You might need to add explicit type casts.
 2018-03-29 17:06:20.256 EDT [55419] STATEMENT:  SELECT  "customers".* FROM "customers" WHERE (created_at > 0) LIMIT $1
+2018-04-09 13:40:50.229 EDT [35628] LOG:  listening on IPv6 address "::1", port 5432
+2018-04-09 13:40:50.229 EDT [35628] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2018-04-09 13:40:50.232 EDT [35628] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2018-04-09 13:40:50.262 EDT [35629] LOG:  database system was interrupted; last known up at 2018-04-04 16:10:58 EDT
+2018-04-09 13:40:50.496 EDT [35629] LOG:  database system was not properly shut down; automatic recovery in progress
+2018-04-09 13:40:50.499 EDT [35629] LOG:  redo starts at 0/2B393E8
+2018-04-09 13:40:50.499 EDT [35629] LOG:  invalid record length at 0/2B394C8: wanted 24, got 0
+2018-04-09 13:40:50.499 EDT [35629] LOG:  redo done at 0/2B39490
+2018-04-09 13:40:50.505 EDT [35628] LOG:  database system is ready to accept connections
+2018-04-09 14:22:54.857 EDT [38889] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-04-09 14:22:54.857 EDT [38889] DETAIL:  Key (id)=(492) already exists.
+2018-04-09 14:22:54.857 EDT [38889] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_03_09_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-04-09 14:25:21.345 EDT [39108] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-04-09 14:25:21.345 EDT [39108] DETAIL:  Key (id)=(493) already exists.
+2018-04-09 14:25:21.345 EDT [39108] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_03_09_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-04-09 14:29:38.441 EDT [39108] ERROR:  duplicate key value violates unique constraint "customers_pkey"
+2018-04-09 14:29:38.441 EDT [39108] DETAIL:  Key (id)=(494) already exists.
+2018-04-09 14:29:38.441 EDT [39108] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_03_09_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"

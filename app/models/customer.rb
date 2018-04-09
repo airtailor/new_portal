@@ -1,5 +1,6 @@
 class Customer < ApplicationRecord
   validates :email, :phone, uniqueness: true, presence: true
+  validates :phone, presence: true
   validates :shopify_id, uniqueness: true, allow_blank: true
   validates :first_name, :last_name, presence: true
 
