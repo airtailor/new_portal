@@ -71,7 +71,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.total = 0
     @order.weight = 0
     @order.type = TailorOrder
-    @order.tailor = @store.default_tailor
+    # @order.tailor = @store.default_tailor
   end
 
   def create_order_items
