@@ -3,9 +3,11 @@ module ItemWeights
     # id => weight
     weights = {
       6 => 680,
-      7 => 225,
+      7 => 230,
       10 => 340,
-      13 => 340
+      13 => 340,
+      12 => 710,
+      14 => 150
     }
     return weights[item_type_id]
   end
