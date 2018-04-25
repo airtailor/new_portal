@@ -68,8 +68,8 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.customer_id = @customer.id
     @order.requester_id = @store.id
     @order.source = "#{@store.company.name} E-commerce"
-    @order.total = 0
-    @order.weight = 0
+    # @order.total = 0
+    # @order.weight = 0
     @order.type = TailorOrder
     @order.tailor = @store.default_tailor
   end
