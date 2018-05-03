@@ -68,6 +68,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
     @order.customer_id = @customer.id
     @order.requester_id = @store.id
     @order.source = "#{@store.company.name} E-commerce"
+    
     # do not change the defaults for total and weight
     @order.total = 0
     @order.weight = 0
