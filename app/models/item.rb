@@ -55,6 +55,7 @@ class Item < ApplicationRecord
       end
       order.weight += weight_and_total[:weight]
       order.total += weight_and_total[:total]
+      order.save!
     end
   end
 
