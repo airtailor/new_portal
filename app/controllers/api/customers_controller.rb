@@ -41,6 +41,7 @@ class Api::CustomersController < ApplicationController
       @customer = Customer.new(customer_params)
     end
 
+
     if @customer.save
       @customer.set_address(address_params) unless address_params[:street].blank?
       data = Customer.where(id: @customer.id).includes(:addresses)
@@ -64,8 +65,8 @@ class Api::CustomersController < ApplicationController
   private
 
   def set_customer
-    phone = params[:customer].try(:[], :phone)
-    @customer_relation = Customer.where(id: params[:id]).or(Customer.where(phone: phone))
+    email = params[:customer].try(:[], :email)
+    @customer_relation = Customer.where(id: params[:id]).or(Customer.where(email: email))
     @customer = @customer_relation.first
   end
 
