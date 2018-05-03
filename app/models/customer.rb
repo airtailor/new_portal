@@ -11,6 +11,8 @@ class Customer < ApplicationRecord
   has_many :addresses, through: :customer_addresses
 
   before_validation :add_country
+
+  before_save :format_email
   after_create :create_blank_measurements
 
   def last_measurement
@@ -144,6 +146,10 @@ class Customer < ApplicationRecord
   end
 
   private
+
+  def format_email
+    self.email.downcase!
+  end
 
   def add_country
     self.country ||= "United States"
