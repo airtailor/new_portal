@@ -14,7 +14,7 @@ class Store < ApplicationRecord
   has_many :users
 
   validates :name, :phone, :company, presence: true
-  validates :default_tailor, presence: true, if: :is_retailer?
+  # validates :default_tailor, presence: true, if: :is_retailer?
 
   def set_address(params)
     address = Address.new
