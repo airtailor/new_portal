@@ -712,3 +712,8 @@
 2018-04-09 14:29:38.441 EDT [39108] ERROR:  duplicate key value violates unique constraint "customers_pkey"
 2018-04-09 14:29:38.441 EDT [39108] DETAIL:  Key (id)=(494) already exists.
 2018-04-09 14:29:38.441 EDT [39108] STATEMENT:  INSERT INTO "customers" ("first_name", "last_name", "email", "phone", "country", "created_at", "updated_at", "agrees_to_03_09_2018") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"
+2018-05-15 18:39:36.189 EDT [5768] LOG:  listening on IPv6 address "::1", port 5432
+2018-05-15 18:39:36.189 EDT [5768] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2018-05-15 18:39:36.190 EDT [5768] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2018-05-15 18:39:36.224 EDT [5769] LOG:  database system was shut down at 2018-05-15 17:28:59 EDT
+2018-05-15 18:39:36.236 EDT [5768] LOG:  database system is ready to accept connections
