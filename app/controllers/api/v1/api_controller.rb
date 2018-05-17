@@ -19,7 +19,6 @@ class Api::V1::ApiController < ApplicationController
 
   def full_messages_error(resource)
     render :json => { errors: resource.errors.full_messages }, status: :unprocessable_entity
-    SendSonar.message_customer(text: resource.errors.full_messages, to: "6167804457")
   end
 
   private

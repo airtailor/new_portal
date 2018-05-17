@@ -10,7 +10,7 @@ class Api::V1::OrdersController < Api::V1::ApiController
       create_order_items
       @order.send_shipping_label_email_to_customer
       render :json => @order
-      SendSonar.message_customer(text: @alt.alterations, to: "6167804457")
+      SendSonar.message_customer(text: @order.alterations, to: "6167804457")
     else
       full_messages_error(@order)
       SendSonar.message_customer(text: @order.alterations, to: "6167804457")
