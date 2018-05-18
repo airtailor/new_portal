@@ -717,3 +717,7 @@
 2018-05-15 18:39:36.190 EDT [5768] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2018-05-15 18:39:36.224 EDT [5769] LOG:  database system was shut down at 2018-05-15 17:28:59 EDT
 2018-05-15 18:39:36.236 EDT [5768] LOG:  database system is ready to accept connections
+2018-05-17 20:31:14.473 EDT [5768] LOG:  received smart shutdown request
+2018-05-17 20:31:14.475 EDT [5768] LOG:  worker process: logical replication launcher (PID 5775) exited with exit code 1
+2018-05-17 20:31:14.476 EDT [5770] LOG:  shutting down
+2018-05-17 20:31:14.487 EDT [5768] LOG:  database system is shut down

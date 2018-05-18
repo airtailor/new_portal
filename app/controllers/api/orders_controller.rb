@@ -182,6 +182,14 @@ class Api::OrdersController < ApplicationController
     render :json => {status: 200}
   end
 
+  # def order_data
+  #   @orders = Order.all
+  #   @current_year = Date.current.year
+  #   @current_month = Date.current.month
+  #   @orders_this_month = @year.where('extract(month from created_at) = ? and extract(year from created_at) = ?', @current_month, @current_year)
+  #   @orders_this_year = @orders.where("created_at >= ?", @current_year + "-01-01").all
+  # end
+
   private
 
   def customer_should_get_arrived_text?

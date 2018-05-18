@@ -59,7 +59,8 @@ Rails.application.routes.draw do
 
     get "/reports/current_report", to: "reports#current_report"
 
-    namespace :v1 do 
+
+    namespace :v1 do
       post "/orders", to: "orders#create"
     end
   end
