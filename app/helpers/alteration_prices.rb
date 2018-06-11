@@ -62,7 +62,7 @@ module AlterationPrices
       273 => 25.0,
       274 => 25.0,
       275 => 25.0,
-      276 =>
+      276 => 25.0
     }
     return prices[alt_id]
   end
