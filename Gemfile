@@ -16,6 +16,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'pry'
 gem 'awesome_print'
 
+gem 'sprockets', '~> 3.7.2'
+
 #gem 'bcrypt', '~> 3.1.7'
 #
 gem 'devise_token_auth'
